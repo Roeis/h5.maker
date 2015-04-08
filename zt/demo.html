@@ -17,20 +17,7 @@
         <div class="page" data-type="0">
             <div class="m_cont">
                 <div class="message" id="message">
-                    <ul class="">
-                        <li class="cf">
-                            <div class="pic"><img src="/zt/jp/arashi15/images/7.jpg" alt=""></div>
-                            <div class="reply"><p>嵐ちゃん結成１５周年おめでとー！！！皆、実際の世界には出会ったことがないが、今までありがとうございます。実際の世界には出会えないかもしれないが、これからもよろしくお願いします。ずっとついていきます。</p></div>
-                        </li>
-                        <li class="cf">
-                            <div class="pic"><img src="/zt/jp/arashi15/images/7.jpg" alt=""></div>
-                            <div class="reply"><p>嵐ちゃん結成１５周年おめでとー！！！皆、実際の世界には出会ったことがないが、今までありがとうございます。実際の世界には出会えないかもしれないが、これからもよろしくお願いします。ずっとついていきます。</p></div>
-                        </li>
-                        <li class="cf">
-                            <div class="pic"><img src="/zt/jp/arashi15/images/5.jpg" alt=""></div>
-                            <div class="reply"><p>身为岚饭，也许你也陪着他们度过了整个15年，也许你认识他们还不到五天。无论时间的长短，无论你为他们付出过多少。现在，让我一起许下承诺：陪他们度过5*5、5*10、5*15、5*n，我们一起见证永远。</p></div>
-                        </li>
-                    </ul>
+                    <ul class="muslider" id="muSlider"></ul>
                 </div>
             </div>
             
@@ -189,6 +176,7 @@
     <script src="vender/mu/mu-page-transition.js"></script>
     <!-- business -->
     <!-- <script src="scripts/mu_.js"></script> -->
+    <script src="scripts/muslider.js"></script>
     <script src="scripts/app.js"></script>
     <script>
         var URL = {
@@ -204,6 +192,20 @@
             };
         mu.cache.ajaxData(URL.ST, para.st, function(data){
             console.log(data);
+            var it = data.Value.Value.data.PostList
+                html = '';
+
+            for(var i = 0, l = it.length; i < l; i++){
+                html += '<li class="re_li">'+
+                            '<div data-id="'+ it[i].PosterID +'">' + it[i].UserName +'</div>'+
+                            '<div>' + it[i].Body +'</div>'+
+                            '<div>' + it[i].DateAdded +'</div>'+
+                        '</li>';
+            }
+            $('#muSlider').html(html);
+
+            $('.muslider').muSlider();
+            // console.log(html);
         }, false);
 
     </script>

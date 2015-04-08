@@ -367,7 +367,7 @@
                 version = app.match(/chrome\/([\d.]+)/);
             version && (version = parseInt(version[1].slice(0, 2)));
 
-            version <= 39 && alert('厂长建议你使用新版Chrome~');
+            version <= 36 && alert('厂长建议你使用新版Chrome~');
         },
 
         //初始化UI组件
@@ -442,6 +442,7 @@
                 step: 0.1,
                 slide: function(event, ui) {
                     $val_animaDura.val(ui.value);
+                    if($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-duration': ui.value + 's'
                     });
@@ -454,6 +455,7 @@
                 step: 0.1,
                 slide: function(event, ui) {
                     $val_animaDelay.val(ui.value);
+                    if($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-delay': ui.value + 's'
                     });
@@ -1214,17 +1216,19 @@
                 })
                 .on('change.derective', '#css_animaDelay', function(){
                     var val = this.value;
+                    $ui_animaDelay.slider('value', val);
+                    if($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-delay': val + 's'
                     });
-                    $ui_animaDelay.slider('value', val);
                 })
                 .on('change.derective', '#css_animaDuartion', function(){
                     var val = this.value;
+                    $ui_animaDura.slider('value', val);
+                    if($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-duration': val + 's'
                     });
-                    $ui_animaDura.slider('value', val);
                 })
                 .on('change.derective', '#input_postion .form_control', function() {
                     var val = this.value,
