@@ -17,7 +17,7 @@
         <div class="page" data-type="0">
             <div class="m_cont">
                 <div class="message" id="message">
-                    <ul class="muslider" id="muSlider"></ul>
+                    <ul class="topicList"></ul>
                 </div>
             </div>
             
@@ -176,7 +176,7 @@
     <script src="vender/mu/mu-page-transition.js"></script>
     <!-- business -->
     <!-- <script src="scripts/mu_.js"></script> -->
-    <script src="scripts/muslider.js"></script>
+    <script src="scripts/musubtitle.js"></script>
     <script src="scripts/app.js"></script>
     <script>
         var URL = {
@@ -190,21 +190,81 @@
                     pageSize:20
                 }
             };
+
+        function getUserFace(uid, psize) {
+            var level = uid.toString().substr(-4),
+                firstLevel,
+                secondLevel
+
+            firstLevel = level.substr(0,2);
+            secondLevel = level.substr(2);
+
+            return "http://i2.hjfile.cn/f" + psize + "/" + firstLevel + "/" + secondLevel + "/" + uid + ".jpg";
+        }
+
+        // function RetDateTime(objtimes, nowTime) {
+        //     var times = objtimes;
+        //     if (times == null || times == '')
+        //         return "1分钟前";
+        //     times = times.replace("T", " ").replace(/\-/g, "/");
+        //     if (times.indexOf(".") > 0)
+        //         times = times.substring(0, times.indexOf("."));
+        //     nowTime = nowTime.replace("T", " ");
+        //     var oldTime = new Date(times).getTime();
+        //     if (isNaN(oldTime))
+        //         oldTime = new Date(objtimes).getTime();
+        //     if (oldTime <= 0)
+        //         return "1分钟前";
+        //     var now = new Date(nowTime).getTime(),
+        //         ts = now - oldTime;
+        //     ts = Math.abs(ts);
+        //     if (ts < 2)
+        //         return "1分钟前";
+        //     var seconds = 1000,
+        //         minute = seconds * 60,
+        //         hour = minute * 60,
+        //         day = hour * 24,
+        //         strSeconds = parseInt(ts / seconds),
+        //         strMinute = parseInt(ts / minute),
+        //         strHour = parseInt(ts / hour),
+        //         strDay = parseInt(ts / day);
+        //     if (strSeconds < 50)
+        //         return "1分钟前";
+        //     else if (strMinute < 60)
+        //         return (strMinute + 1) + "分钟前";
+        //     else if (strMinute > 60 && strHour <= 24)
+        //         return strHour + "小时前";
+        //     else if (strHour > 24 && strDay <= 10)
+        //         return strDay + "天前";
+        //     else
+        //         return new Date(times).Format("yyyy-MM-dd hh:mm");
+        // }
+
         mu.cache.ajaxData(URL.ST, para.st, function(data){
-            console.log(data);
-            var it = data.Value.Value.data.PostList
+            
+            var it = data.Value.Value.data.PostList,
                 html = '';
+            console.log(it);
 
             for(var i = 0, l = it.length; i < l; i++){
-                html += '<li class="re_li">'+
-                            '<div data-id="'+ it[i].PosterID +'">' + it[i].UserName +'</div>'+
-                            '<div>' + it[i].Body +'</div>'+
-                            '<div>' + it[i].DateAdded +'</div>'+
+                html += '<li>'+
+                            '<div class="author_info">'+
+                                '<a href="/u/11305024/">'+
+                                    '<img src="'+ getUserFace(it[i].PosterID, 48) +'" alt="">'+
+                                        '<span class="author_name">'+ it[i].UserName +'</span>'+
+                                        '<span class="user_level_detail">'+ it[i].RankName +'</span>'+
+                                '</a>'+
+                                '<span class="topic_date">' + it[i].DateAdded +'<span class="author_floor">' + it[i].FloorID +'楼</span></span>'+
+                            '</div>'+
+                            '<div class="reply_content">'+ it[i].Body +'</div>'+
                         '</li>';
             }
-            $('#muSlider').html(html);
 
-            $('.muslider').muSlider();
+            $('.topicList').html(html);
+
+
+            // $('.topicList').muSubtitle();
+            muSub.init('.topicList');
             // console.log(html);
         }, false);
 

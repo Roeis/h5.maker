@@ -355,6 +355,34 @@ a {
     to {opacity: 0;transform: scale(0.8);}
 }
 
+.musubtitle_cont{
+    margin: 20px 10px 0;
+    background-color: #EEE;
+}
+.topicList{
+    padding: 10px;
+    li{
+        border:1px solid #ddd;
+        border-radius: 5px;
+        padding: 10px;
+        margin-bottom: 10px;
+        background-color: #FFF;
+        &:last-child{
+            margin-bottom: 0;
+        }
+        img{
+            height: 50px;
+            width: 50px;
+            display: block;
+        }
+    }
+}
+
+
+
+
+
+
 .page-current {
     visibility: visible;
     // display: block;

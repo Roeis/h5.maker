@@ -432,6 +432,30 @@ a {
     transform: scale(0.8);
   }
 }
+.musubtitle_cont {
+  margin: 20px 10px 0;
+  background-color: #EEE;
+}
+
+.topicList {
+  padding: 10px;
+}
+.topicList li {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #FFF;
+}
+.topicList li:last-child {
+  margin-bottom: 0;
+}
+.topicList li img {
+  height: 50px;
+  width: 50px;
+  display: block;
+}
+
 .page-current {
   visibility: visible;
   z-index: 999;
