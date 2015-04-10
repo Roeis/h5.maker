@@ -651,6 +651,7 @@ input[type=radio], input[type=checkbox] {
 }
 
 .input_options{
+    margin-top: -10px;
     span{
         display: block;
         width: 60px;
@@ -662,6 +663,7 @@ input[type=radio], input[type=checkbox] {
         line-height: 36px;
         color: #999;
         cursor: pointer;
+        margin-top: 10px;
         &:last-child{
             margin-right: 0;
         }

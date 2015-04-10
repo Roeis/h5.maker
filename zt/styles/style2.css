@@ -623,6 +623,9 @@ input[type=radio], input[type=checkbox] {
   vertical-align: bottom;
 }
 
+.input_options {
+  margin-top: -10px;
+}
 .input_options span {
   display: block;
   width: 60px;
@@ -634,6 +637,7 @@ input[type=radio], input[type=checkbox] {
   line-height: 36px;
   color: #999;
   cursor: pointer;
+  margin-top: 10px;
 }
 .input_options span:last-child {
   margin-right: 0;

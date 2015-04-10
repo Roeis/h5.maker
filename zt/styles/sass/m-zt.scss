@@ -1,4 +1,5 @@
-@import 'mix';
+@charset "UTF-8";
+@import "mix";
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
     margin: 0;
     padding: 0;
@@ -370,17 +371,93 @@ a {
         &:last-child{
             margin-bottom: 0;
         }
+    }
+}
+
+//社团评论
+.reply_li {
+    .info{
         img{
-            height: 50px;
-            width: 50px;
+            float: left;
             display: block;
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            margin-right: 10px;
         }
+        a{
+            display: block;
+            margin-bottom: 10px;
+        }
+        span{
+            display: inline-block;
+            vertical-align: middle;
+        }
+    }
+    .name {
+        color: #73b36b;
+        font-size: 1.5rem;
+        margin-right: 5px;
+    }
+    .mr5{
+        margin-right: 5px;
+    }
+    .userlevel{
+        border-radius: 2px;
+        font-size: 10px;
+        color: #fff;
+        height: 12px;
+        line-height: 11px;
+        width: 24px;
+        text-align: center;
+        background-color: #a4cf22;
+    }
+    .sec{
+        color: #BBB;
+        font-size: 1.2rem;
+    }
+    .content {
+        font-size: 1.6rem;
+        line-height: 26px;
+        word-break: break-all;
+        word-wrap: break-word;
     }
 }
 
 
+.player {
+    width: 50px;
+    height: 50px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    background: rgba(255, 255, 255, 0) url("http://i2.w.hjfile.cn/news/201504/201504101352362060.png") center center no-repeat;
+    background-size: 50px;
+    // background-position: 0 0;
+}
 
+.player.pause {
+    // background-position: 0 0;
+    -webkit-animation: rolling 3s linear infinite;
+    animation: rolling 3s linear infinite;
+}
 
+@-webkit-keyframes rolling {
+    from{
+        -webkit-transform: rotate(0deg);
+    }
+    to{
+        -webkit-transform: rotate(360deg);
+    }
+}
+@keyframes rolling {
+    from{
+        transform: rotate(0deg);
+    }
+    to{
+        transform: rotate(360deg);
+    }
+}
 
 
 .page-current {

@@ -152,10 +152,14 @@
        
     </div>
 
+    <div class="item_audio player" data-src="http://f1.w.hjfile.cn/doc/touch_m/arashi15/music_1.mp3">&nbsp;</div>
+    
 
-    <div class="colorboard" style="margin-top: 30px;">
+    <input type="hidden" id="hddTime" value="2015/4/10 15:14:55">
+
+<!--     <div class="colorboard" style="margin-top: 30px;">
         <div class="colorblock" style="background:#00145e"></div>
-    </div>
+    </div> -->
     <script>
         var shareTitle = 'asdf',
             clickUrl = 'http://channel.hujiang.com/ch_click.aspx',
@@ -187,7 +191,7 @@
                     op: 'GetPostListByTopicID',
                     topicid:163068829881,
                     page:1,
-                    pageSize:20
+                    pageSize: 6
                 }
             };
 
@@ -202,61 +206,74 @@
             return "http://i2.hjfile.cn/f" + psize + "/" + firstLevel + "/" + secondLevel + "/" + uid + ".jpg";
         }
 
-        // function RetDateTime(objtimes, nowTime) {
-        //     var times = objtimes;
-        //     if (times == null || times == '')
-        //         return "1分钟前";
-        //     times = times.replace("T", " ").replace(/\-/g, "/");
-        //     if (times.indexOf(".") > 0)
-        //         times = times.substring(0, times.indexOf("."));
-        //     nowTime = nowTime.replace("T", " ");
-        //     var oldTime = new Date(times).getTime();
-        //     if (isNaN(oldTime))
-        //         oldTime = new Date(objtimes).getTime();
-        //     if (oldTime <= 0)
-        //         return "1分钟前";
-        //     var now = new Date(nowTime).getTime(),
-        //         ts = now - oldTime;
-        //     ts = Math.abs(ts);
-        //     if (ts < 2)
-        //         return "1分钟前";
-        //     var seconds = 1000,
-        //         minute = seconds * 60,
-        //         hour = minute * 60,
-        //         day = hour * 24,
-        //         strSeconds = parseInt(ts / seconds),
-        //         strMinute = parseInt(ts / minute),
-        //         strHour = parseInt(ts / hour),
-        //         strDay = parseInt(ts / day);
-        //     if (strSeconds < 50)
-        //         return "1分钟前";
-        //     else if (strMinute < 60)
-        //         return (strMinute + 1) + "分钟前";
-        //     else if (strMinute > 60 && strHour <= 24)
-        //         return strHour + "小时前";
-        //     else if (strHour > 24 && strDay <= 10)
-        //         return strDay + "天前";
-        //     else
-        //         return new Date(times).Format("yyyy-MM-dd hh:mm");
-        // }
+        var nowTime = $('#hddTime').val(),
+            nowFmt = new Date(nowTime).getTime();
+        var TIME_S = 1000,
+            TIME_M = TIME_S * 60,
+            TIME_H = TIME_M * 60,
+            TIME_D = TIME_H * 24;
+
+        function RetDateTime(time, now) {
+            var time2 = time,
+                delta,
+                oldTime;
+
+            if (time2 == null || time2 == '') return "1分钟前";
+
+            time2 = time2.replace("T", " ").replace(/\-/g, "/");
+
+            time2.indexOf(".") > 0 && (time2 = time2.substring(0, time2.indexOf(".")));
+            // nowTime = nowTime.replace("T", " ");
+            oldTime = new Date(time2).getTime();
+
+            isNaN(oldTime) && (oldTime = new Date(time).getTime());
+
+            delta = Math.abs(now - oldTime);
+
+            if (oldTime <= 0 || delta < 2) return "1分钟前";
+            
+            var strSeconds = parseInt(delta / TIME_S),
+                strMinute = parseInt(delta / TIME_M),
+                strHour = parseInt(delta / TIME_H),
+                strDay = parseInt(delta / TIME_D);
+
+            console.log(oldTime, strSeconds, strMinute, strHour, strDay);
+
+            if (strSeconds < 50){
+                return "1分钟前";
+            }else if (strMinute < 60){
+                return (strMinute + 1) + "分钟前";
+            }else if (strMinute > 60 && strHour <= 24){
+                return strHour + "小时前";
+            }else if (strHour > 24 && strDay <= 10){
+                return strDay + "天前";
+            }else{
+                return time2.split(' ')[0];
+            }
+        }
 
         mu.cache.ajaxData(URL.ST, para.st, function(data){
+            console.log(data);
             
             var it = data.Value.Value.data.PostList,
                 html = '';
-            console.log(it);
-
+            it.reverse();
             for(var i = 0, l = it.length; i < l; i++){
-                html += '<li>'+
-                            '<div class="author_info">'+
-                                '<a href="/u/11305024/">'+
+                html += '<li class="reply_li">'+
+                            '<div class="info cf">'+
+                                '<a href="http://ms.hujiang.com/u/'+ it[i].PosterID +'/">'+
                                     '<img src="'+ getUserFace(it[i].PosterID, 48) +'" alt="">'+
-                                        '<span class="author_name">'+ it[i].UserName +'</span>'+
-                                        '<span class="user_level_detail">'+ it[i].RankName +'</span>'+
+                                    '<p>'+
+                                        '<span class="name">'+ it[i].UserName +'</span>'+
+                                        '<span class="userlevel">Lv'+ it[i].LevelID +'</span>'+
+                                    '</p>'+
+                                    '<p class="sec">'+
+                                        '<span class="mr5">' + RetDateTime(it[i].DateAdded, nowFmt) +'</span>'+
+                                        '<span>' + it[i].FloorID +'楼</span>'+
+                                    '</p>'+
                                 '</a>'+
-                                '<span class="topic_date">' + it[i].DateAdded +'<span class="author_floor">' + it[i].FloorID +'楼</span></span>'+
                             '</div>'+
-                            '<div class="reply_content">'+ it[i].Body +'</div>'+
+                            '<div class="content">'+ it[i].Body +'</div>'+
                         '</li>';
             }
 
@@ -264,7 +281,14 @@
 
 
             // $('.topicList').muSubtitle();
-            muSub.init('.topicList');
+            muSub.init('.topicList', {
+                // height: 400,
+                pause: 3000,
+                // reverse: false,
+                afterEdge: function(){
+                    console.log('top');
+                }
+            });
             // console.log(html);
         }, false);
 

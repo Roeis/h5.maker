@@ -450,12 +450,85 @@ a {
 .topicList li:last-child {
   margin-bottom: 0;
 }
-.topicList li img {
-  height: 50px;
-  width: 50px;
+
+.reply_li .info img {
+  float: left;
   display: block;
+  width: 36px;
+  height: 36px;
+  border-radius: 18px;
+  margin-right: 10px;
+}
+.reply_li .info a {
+  display: block;
+  margin-bottom: 10px;
+}
+.reply_li .info span {
+  display: inline-block;
+  vertical-align: middle;
+}
+.reply_li .name {
+  color: #73b36b;
+  font-size: 1.5rem;
+  margin-right: 5px;
+}
+.reply_li .mr5 {
+  margin-right: 5px;
+}
+.reply_li .userlevel {
+  border-radius: 2px;
+  font-size: 10px;
+  color: #fff;
+  height: 12px;
+  line-height: 11px;
+  width: 24px;
+  text-align: center;
+  background-color: #a4cf22;
+}
+.reply_li .sec {
+  color: #BBB;
+  font-size: 1.2rem;
+}
+.reply_li .content {
+  font-size: 1.6rem;
+  line-height: 26px;
+  word-break: break-all;
+  word-wrap: break-word;
 }
 
+.player {
+  width: 50px;
+  height: 50px;
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  background: rgba(255, 255, 255, 0) url("http://i2.w.hjfile.cn/news/201504/201504101352362060.png") center center no-repeat;
+  background-size: 50px;
+}
+
+.player.pause {
+  -webkit-animation: rolling 3s linear infinite;
+  animation: rolling 3s linear infinite;
+}
+
+@-webkit-keyframes rolling {
+  from {
+    -webkit-transform: rotate(0deg);
+  }
+
+  to {
+    -webkit-transform: rotate(360deg);
+  }
+}
+@keyframes rolling {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
 .page-current {
   visibility: visible;
   z-index: 999;

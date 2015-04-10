@@ -112,22 +112,23 @@
 
     var setting = {
         height: 400,
-        pause: 4000,
-        reverse: false
+        pause: 5000,
+        reverse: true,
+        afterEdge: null
     };
 
     var transArr = [],
         count = 0,
         timeout = null,
-        $elem = null;
+        $elem = null,
+        offsetParent, totalHeight, childHeight;
 
     var core = {
         init: function(elem, options){
             var $this = $(elem),
                 $parent,
                 $children = $this.children(),
-                childHeight = $this.height(),
-                offset, offsetParent, initialOffset;
+                childHeight,totalHeight, offsetParent, initialOffset;
             $elem = $this;
             setting = $.extend(setting, options);
 
@@ -136,7 +137,8 @@
 
             $parent = $this.parent();
             offsetParent = $parent.offset().top;
-            offset = offsetParent + setting.height;
+            totalHeight = offsetParent + setting.height;
+            childHeight = $this.height();
 
             $parent.css({
                 height: setting.height +'px',
@@ -146,33 +148,47 @@
             var html_control = '<div class="control"><div class="musub_start">start</div><div class="musub_stop">stop</div></div>';
             $(html_control).insertAfter($parent);
 
-            core._getTransArr($children, offsetParent, childHeight - offset);
-            initialOffset = '-'+ transArr[transArr.length - 1] +'px';
-            $this.css('transform', 'translateY('+ initialOffset +')');
-            transArr.reverse();
+            core._getTransArr($children, offsetParent, childHeight - totalHeight);
+
+            // console.log(offsetParent, 'child',childHeight, 'total', totalHeight, 'offset',childHeight - totalHeight);
+            if(setting.reverse){
+                initialOffset = '-'+ transArr[transArr.length - 1] +'px';
+                transArr.reverse();
+                transArr.shift();
+                transArr.push(0);
+            }else{
+                initialOffset = '0px';
+            }
+
+            $this.css({
+                '-webkit-transform': 'translateY('+ initialOffset +')',
+                'transform': 'translateY('+ initialOffset +')',
+                '-webkit-transition': '-webkit-transform .5s',
+                'transition': 'transform .5s'
+            });
 
             console.log(transArr);
 
             core._bindEvent();
-            $this.css('transition', 'transform .5s');
             core.start();
         },
 
         _bindEvent: function(){
-            $elem
-                .find('.musub_stop').on('click', function(){
-                    core.stop();
-                })
-                .find('.musub_start').on('click', function(){
-                    core.start();
-                });
+            $('.musub_stop').on('click', function(){
+
+                core.stop();
+            });
+            $('.musub_start').on('click', function(){
+                core.start();
+            });
         },
 
         _getTransArr: function(children, offsetParent, offset ){
+            transArr = [];
             for(var i = 0, l = children.length; i < l; i++){
                 var $child = $(children[i]),
                     step = $child.offset().top + $child.height() - offsetParent;
-                if(step >= offset){
+                if(step >= offset + offsetParent){
                     step = offset + offsetParent;
                     transArr.push(step);
                     break;
@@ -182,20 +198,28 @@
         },
 
         loop: function(){
+            // alert(count);
             timeout = setTimeout(function(){
                 if(count >= transArr.length) {
                     // $elem.css({
                     //     transform: 'translateY(0)'
                     // });
                     // count = 0;
+                    setting.afterEdge.call(this, count);
+                    console.log('top', count);
                     return;
                 }
                 $elem.css({
-                    transform: 'translateY(-'+ transArr[count] +'px)'
+                    '-webkit-transform': 'translateY(-'+ transArr[count] +'px)',
+                    'transform': 'translateY(-'+ transArr[count] +'px)'
                 });
                 count++;
                 core.loop();
             }, setting.pause);
+        },
+
+        refresh: function(){
+            core._getTransArr($elem.children(), offsetParent, childHeight - totalHeight);
         },
 
         start: function(){
