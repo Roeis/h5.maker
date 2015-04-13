@@ -17,8 +17,10 @@
         <div class="page" data-type="0">
             <div class="m_cont">
                 <div class="message" id="message">
+                    <div class="sub_title">热门讨论</div>
                     <ul class="topicList"></ul>
                 </div>
+                <a href="##" class="btn_reply">我要回复</a>
             </div>
             
         </div>
@@ -169,130 +171,21 @@
             url2 = 'http://sns.qzone.qq.com/cgi-bin/qzshare/cgi_qzshare_onekey?url=' + channel2 + '&showcount=0&summary=&desc=&title=' + encodeURIComponent(shareTitle);
 
     </script>
-
+    
+    <!-- vender -->
     <script src="vender/zepto/zepto.min.js"></script>
-    <!-- mobile -->
+    <!-- self made widgets -->
     <script src="vender/mu/mu.js"></script>
     <script src="vender/mu/mu-util.js"></script>
     <script src="vender/mu/mu-touch.js"></script>
     <script src="vender/mu/mu-cache.js"></script>
     <script src="vender/mu/mu-dialog.js"></script>
     <script src="vender/mu/mu-page-transition.js"></script>
-    <!-- business -->
-    <!-- <script src="scripts/mu_.js"></script> -->
-    <script src="scripts/musubtitle.js"></script>
+    <!-- current application -->
     <script src="scripts/app.js"></script>
-    <script>
-        var URL = {
-                ST: 'http://api2.site.hujiang.com/SheTuan/SheTuan.ashx'
-            },
-            para = {
-                st: {
-                    op: 'GetPostListByTopicID',
-                    topicid:163068829881,
-                    page:1,
-                    pageSize: 6
-                }
-            };
-
-        function getUserFace(uid, psize) {
-            var level = uid.toString().substr(-4),
-                firstLevel,
-                secondLevel
-
-            firstLevel = level.substr(0,2);
-            secondLevel = level.substr(2);
-
-            return "http://i2.hjfile.cn/f" + psize + "/" + firstLevel + "/" + secondLevel + "/" + uid + ".jpg";
-        }
-
-        var nowTime = $('#hddTime').val(),
-            nowFmt = new Date(nowTime).getTime();
-        var TIME_S = 1000,
-            TIME_M = TIME_S * 60,
-            TIME_H = TIME_M * 60,
-            TIME_D = TIME_H * 24;
-
-        function RetDateTime(time, now) {
-            var time2 = time,
-                delta,
-                oldTime;
-
-            if (time2 == null || time2 == '') return "1分钟前";
-
-            time2 = time2.replace("T", " ").replace(/\-/g, "/");
-
-            time2.indexOf(".") > 0 && (time2 = time2.substring(0, time2.indexOf(".")));
-            // nowTime = nowTime.replace("T", " ");
-            oldTime = new Date(time2).getTime();
-
-            isNaN(oldTime) && (oldTime = new Date(time).getTime());
-
-            delta = Math.abs(now - oldTime);
-
-            if (oldTime <= 0 || delta < 2) return "1分钟前";
-            
-            var strSeconds = parseInt(delta / TIME_S),
-                strMinute = parseInt(delta / TIME_M),
-                strHour = parseInt(delta / TIME_H),
-                strDay = parseInt(delta / TIME_D);
-
-            console.log(oldTime, strSeconds, strMinute, strHour, strDay);
-
-            if (strSeconds < 50){
-                return "1分钟前";
-            }else if (strMinute < 60){
-                return (strMinute + 1) + "分钟前";
-            }else if (strMinute > 60 && strHour <= 24){
-                return strHour + "小时前";
-            }else if (strHour > 24 && strDay <= 10){
-                return strDay + "天前";
-            }else{
-                return time2.split(' ')[0];
-            }
-        }
-
-        mu.cache.ajaxData(URL.ST, para.st, function(data){
-            console.log(data);
-            
-            var it = data.Value.Value.data.PostList,
-                html = '';
-            it.reverse();
-            for(var i = 0, l = it.length; i < l; i++){
-                html += '<li class="reply_li">'+
-                            '<div class="info cf">'+
-                                '<a href="http://ms.hujiang.com/u/'+ it[i].PosterID +'/">'+
-                                    '<img src="'+ getUserFace(it[i].PosterID, 48) +'" alt="">'+
-                                    '<p>'+
-                                        '<span class="name">'+ it[i].UserName +'</span>'+
-                                        '<span class="userlevel">Lv'+ it[i].LevelID +'</span>'+
-                                    '</p>'+
-                                    '<p class="sec">'+
-                                        '<span class="mr5">' + RetDateTime(it[i].DateAdded, nowFmt) +'</span>'+
-                                        '<span>' + it[i].FloorID +'楼</span>'+
-                                    '</p>'+
-                                '</a>'+
-                            '</div>'+
-                            '<div class="content">'+ it[i].Body +'</div>'+
-                        '</li>';
-            }
-
-            $('.topicList').html(html);
-
-
-            // $('.topicList').muSubtitle();
-            muSub.init('.topicList', {
-                // height: 400,
-                pause: 3000,
-                // reverse: false,
-                afterEdge: function(){
-                    console.log('top');
-                }
-            });
-            // console.log(html);
-        }, false);
-
-    </script>
+    <!-- plugins -->
+    <script src="scripts/plugin/plugin-subtitle.js"></script>
+    <script src="scripts/plugin/plugin-comment-st.js"></script>
 </body>
 
 </html>

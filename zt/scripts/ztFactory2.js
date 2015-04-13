@@ -111,6 +111,7 @@
 
         $pageTmpl = $('#page_templates'),
         $otherTmpl = $('#other_templates'),
+        $apiTmpl = $('#api_templates'),
         $logoTmpl = $('#logo_templates'),
 
         //log the current object
@@ -157,6 +158,7 @@
 
         tmplData = null,
         logoData = null,
+        apiData = null,
         otherData = null;
 
     //mobile variables
@@ -279,7 +281,8 @@
             6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
             7: [3, 4, 5, 6, 7, 8, 10, 11, 12],
             8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 28],
-            11: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17]
+            11: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17],
+            21: [0]
         },
         blockPattern = {
             0: [0, 1, 2],
@@ -291,7 +294,8 @@
             6: [0, 1, 2, 3, 4, 5, 9, 10, 15, 16],
             7: [3, 4, 5, 13],
             8: [0, 1, 2, 3, 4, 5, 10, 17],
-            11: [0, 1, 2, 3, 4, 5, 10, 18]
+            11: [0, 1, 2, 3, 4, 5, 10, 18],
+            21: [0]
         };
 
     //动画名称及中文对应名
@@ -1348,6 +1352,12 @@
                 $otherTmpl.html(html);
             });
 
+            $.get('scripts/data_apis.js', function(data) {
+                apiData = api_template;
+                var html = core._getTemplateHtml(api_template);
+                $apiTmpl.html(html);
+            });
+
             $.get('scripts/data_logos.js', function(data) {
                 logoData = logo_template;
                 var html = core._getTemplateHtml(logo_template);
@@ -1549,6 +1559,11 @@
                     switch(id){
                         case 'other_templates':
                             template = _.find(otherData, function(obj) {
+                                return obj.id === templateId;
+                            });
+                            break;
+                        case 'api_templates': 
+                            template = _.find(apiData, function(obj) {
                                 return obj.id === templateId;
                             });
                             break;
