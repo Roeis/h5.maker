@@ -80,7 +80,7 @@ var other_template = [
         'id': 8,
         'name': '向上绿色箭头',
         'author': 'roeis',
-        'html': '<div class="item_edit item_drag" data-type="8" style="position: absolute; left: 30%; top: 90%; width: 40%; height: 8%; z-index: 1;">'+
+        'html': '<div class="item_edit item_drag" data-type="8" style="position: absolute; left: 30%; top: 90%; width: 40%; height: 8%;">'+
                     '<div class="m_elem">'+
                         '<div class="arrow_guidedown moveTopAnima"></div>'+
                     '</div>'+
@@ -93,7 +93,7 @@ var other_template = [
         'id': 9,
         'name': '向左绿色箭头',
         'author': 'roeis',
-        'html': '<div class="item_edit item_drag" data-type="8" style="position: absolute; left: 30%; top: 90%; width: 40%; height: 8%; z-index: 1;">'+
+        'html': '<div class="item_edit item_drag" data-type="8" style="position: absolute; left: 30%; top: 90%; width: 40%; height: 8%;">'+
                     '<div class="m_elem">'+
                         '<div class="arrow_guideLeft moveLeftAnima"></div>'+
                     '</div>'+
@@ -119,7 +119,7 @@ var other_template = [
         'id': 11,
         'name': '分享块',
         'author': 'roeis',
-        'html': '<div class="item_edit item_drag item_share" data-type="8" style="position: absolute; left: 5%; top: 80%; width: 90%; height: 10%; z-index: 1;">'+
+        'html': '<div class="item_edit item_drag item_share" data-type="8" style="position: absolute; left: 5%; top: 80%; width: 90%; height: 10%;">'+
                     '<div class="m_elem">'+
                         '<div class="share_nwx cf">'+
                             '<div class="col_5">'+
@@ -142,7 +142,7 @@ var other_template = [
         'id': 12,
         'name': '自定义箭头颜色方向',
         'author': 'roeis',
-        'html': '<div class="item_edit item_drag" data-type="11" data-color="white" data-direction="top" style="position: absolute; left: 0%; top: 90%; width: 100%; height: 8%; z-index: 1;">'+
+        'html': '<div class="item_edit item_drag" data-type="11" data-color="white" data-direction="top" style="position: absolute; left: 0%; top: 90%; width: 100%; height: 8%;">'+
                     '<div class="m_elem">'+
                         '<div class="arrow_guide moveTopAnima">'+
                             '<div class="arrow_default" style="border-color: rgb(255, 255, 255);"></div>'+

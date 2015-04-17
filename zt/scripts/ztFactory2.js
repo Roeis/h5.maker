@@ -14,7 +14,7 @@
     // 实例化编辑器
     var uedit = UE.getEditor('ueditor', {
         toolbars: [
-            ['source', 'fullscreen', '|', 'undo', 'redo', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', '|', 'lineheight', '|', 'forecolor', 'backcolor', 'fontsize','|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'link', 'unlink'],
+            ['source', 'fullscreen', '|', 'undo', 'redo', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', '|', 'lineheight', '|', 'forecolor', 'backcolor', 'fontsize', '|', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|', 'link', 'unlink'],
         ],
         wordCount: false,
         //关闭elementPath
@@ -28,16 +28,7 @@
         allowDivTransToP: false,
 
     });
-    
-    var KEY = {
-        INSERT: 45,             DELETE: 46,             BACKSPACE: 8,
-        TAB: 9,                 ENTER: 13,              ESC: 27,
-        LEFT: 37,               UP: 38,                 RIGHT: 39,
-        DOWN: 40,               END: 35,                HOME: 36,
-        SPACEBAR: 32,           PAGEUP: 33,             PAGEDOWN: 34,
-        F2: 113,                F10: 121,               F12: 123,
-        NUMPAD_PLUS: 107,       NUMPAD_MINUS: 109,      NUMPAD_DOT: 110
-    };
+
 
     //cache the JQ object
     var $doc = $(document),
@@ -90,11 +81,6 @@
         $css_color = $('#css_color'),
         $cssBgImage = $('#css_bgImage'),
 
-        // $cssMartop = $('#css_mar_top'),
-        // $cssMarRight = $('#css_mar_right'),
-        // $cssMarBottom = $('#css_mar_bottom'),
-        // $cssMarLeft = $('#css_mar_left'),
-
         $cssLeft = $('#css_left'),
         $cssTop = $('#css_top'),
         // $cssPosRight = $('#css_right'),
@@ -114,6 +100,7 @@
         $apiTmpl = $('#api_templates'),
         $logoTmpl = $('#logo_templates'),
 
+        $copy = null,
         //log the current object
         $curEdit = null;
 
@@ -130,6 +117,11 @@
     // log page's data
     var html_blankpage = '<div class="page" data-type="0"><div class="m_cont"></div></div>',
         pageData = [{
+            html: '<div class="page" data-type="0" style="color:#FFF;">' +
+                '<div class="m_cont">' +
+                '</div>' +
+                '</div>'
+        }, {
             html: '<div class="page" data-type="0" style="color:#FFF; background-image: url(images/origin_05.jpg); background-size: auto 100%; background-position: 50% 50%; background-repeat: no-repeat;">' +
                 '<div class="m_cont">' +
                 '<div class="item_edit item_drag item_text" data-type="1" style="position: absolute; left: 0%; top: 50%; width: 50%; height: 40%;  color: rgb(255, 255, 255); background-color: rgba(0, 0, 0, 0.7);" >' +
@@ -160,6 +152,7 @@
         logoData = null,
         apiData = null,
         otherData = null;
+
 
     //mobile variables
     var _page = mu.widget.pagetrans,
@@ -221,7 +214,7 @@
             10: 'animation-name',
             11: 'animation-duration',
             12: 'animation-delay',
-            13: '',
+            13: 'transform',
             14: '',
             15: '',
             16: '',
@@ -257,7 +250,9 @@
             15: '#input_href',
             16: '#input_analyze',
             17: '#input_horizontal',
-            18: '#input_arrow'
+            18: '#input_arrow',
+            19: '#input_st_reply',
+            20: '#input_rotate',
         },
 
         //data-type对应关系，添加数字来开关显示模块
@@ -271,74 +266,33 @@
         //7: 拖动视频
         //8: 自定义
         //11: 箭头颜色
+        //21: 社团评论模块
         cssPattern = {
             0: [0, 1, 2],
             1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
-            2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
+            2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 26],
             3: [0, 1, 2],
             4: [],
             5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
             6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
-            7: [3, 4, 5, 6, 7, 8, 10, 11, 12],
+            7: [3, 4, 5, 6, 7, 8, 10, 11, 12, 17],
             8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 28],
             11: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17],
-            21: [0]
+            21: [0, 2]
         },
         blockPattern = {
             0: [0, 1, 2],
             1: [0, 1, 2, 3, 4, 5, 8, 9, 10, 11, 17],
-            2: [0, 1, 2, 3, 4, 5, 9, 10, 11],
+            2: [0, 1, 2, 3, 4, 5, 9, 10, 11, 20],
             3: [0, 1, 2, 7],
             4: [],
             5: [0, 1, 2, 3, 4, 5, 9, 10, 12],
             6: [0, 1, 2, 3, 4, 5, 9, 10, 15, 16],
-            7: [3, 4, 5, 13],
+            7: [3, 4, 5, 13, 17],
             8: [0, 1, 2, 3, 4, 5, 10, 17],
             11: [0, 1, 2, 3, 4, 5, 10, 18],
-            21: [0]
+            21: [0, 1, 19]
         };
-
-    //动画名称及中文对应名
-    var animaName = {
-        "none" : "无效果",
-        "flash" : "闪烁",
-        "shake" : "抖动",
-        "tada" : "嗒哒",
-        "swing" : "吊牌",
-        "wobble" : "摇一摇",
-        "pulse" : "放大",
-        "flip" : "翻转",
-        "flipInX" : "X轴翻转",
-        "flipInY" : "Y轴翻转",
-        "fadeIn" : "渐入",
-        "fadeInUp" : "从下<br>渐入",
-        "fadeInDown" : "从上<br>渐入",
-        "fadeInLeft" : "从左<br>渐入",
-        "fadeInRight" : "从右<br>渐入",
-        "fadeInUpBig" : "从下<br>大渐入",
-        "fadeInDownBig" : "从上<br>大渐入",
-        "fadeInLeftBig" : "从左<br>大渐入",
-        "fadeInRightBig" : "从右<br>大渐入",
-        'zoomIn' : '放大入',
-        'zoomInDown' : '从上<br>放大入',
-        'zoomInLeft' : '从左<br>放大入',
-        'zoomInRight' : '从右<br>放大入',
-        'zoomInUp' : '从下<br>放大入',
-        "bounceIn" : "䶮入",
-        "bounceInUp" : "从下<br>䶮入",
-        "bounceInDown" : "从上<br>䶮入",
-        "bounceInLeft" : "从左<br>䶮入",
-        "bounceInRight" : "从右<br>䶮入",
-        "rotateIn" : "转入",
-        "rotateInUpLeft" : "向左上<br>转入",
-        "rotateInDownLeft" : "向左下<br>转入",
-        "rotateInUpRight" : "向右上<br>转入",
-        "rotateInDownRight" : "向右下<br>转入",
-        "rollInRight" : "从左旋转入",
-        "rollInLeft" : "从右旋转入",
-        "lightSpeedInLeft" : "从右变形入",
-        "lightSpeedInRight" : "从左变形入"
-    };
 
     //常用位置, top right bottom left 废弃并预留
     var POS_SET = {
@@ -366,7 +320,7 @@
         },
 
         //warning old version chrome
-        _warning: function(){
+        _warning: function() {
             var app = window.navigator.appVersion.toLowerCase(),
                 version = app.match(/chrome\/([\d.]+)/);
             version && (version = parseInt(version[1].slice(0, 2)));
@@ -441,12 +395,12 @@
             });
 
             $ui_animaDura.slider({
-                min: 0.8,
-                max: 3.1,
+                min: 0,
+                max: 5.1,
                 step: 0.1,
                 slide: function(event, ui) {
                     $val_animaDura.val(ui.value);
-                    if($curEdit.hasClass('page')) return;
+                    if ($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-duration': ui.value + 's'
                     });
@@ -455,11 +409,11 @@
 
             $ui_animaDelay.slider({
                 min: 0,
-                max: 2.1,
+                max: 10.1,
                 step: 0.1,
                 slide: function(event, ui) {
                     $val_animaDelay.val(ui.value);
-                    if($curEdit.hasClass('page')) return;
+                    if ($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-delay': ui.value + 's'
                     });
@@ -478,7 +432,7 @@
             $ui_padding.slider({
                 min: 0,
                 max: 100,
-                slide: function(event, ui){
+                slide: function(event, ui) {
                     $val_padding.val(ui.value);
                     $curEdit.find('.m_elem').css('padding', ui.value + 'px');
                 }
@@ -549,38 +503,48 @@
 
         _initHtmlAnima: function() {
             var elem, html = '';
-            for (elem in animaName){
-                html += '<div class="anime anime_' + elem + '" data-anima="' + elem + '" title="' + animaName[elem] + '"><div class="'+ elem +'">' + animaName[elem] + '</div></div>';
+            for (elem in animaName) {
+                html += '<div class="anime anime_' + elem + '" data-opacity="'+ animaName[elem].opacity +'" data-anima="' + elem + '" title="' + animaName[elem].cn + '"><div class="' + elem + '">' + animaName[elem].cn + '</div></div>';
             }
 
             $htmlAnima.html(html);
 
             $doc.on('click', '#htmlAnimaName .anime', function() {
                 var $this = $(this),
+                    opacity = parseInt($this.data('opacity')),
                     anima = $this.data('anima');
 
                 $this.addClass('active').siblings().removeClass('active');
 
-                if(anima === 'none'){
-                    $curEdit.css('opacity', 1);
-                }else{
-                    $curEdit.css({
-                        'opacity': 0,
-                        'animation-fill-mode': 'forwards',
-                        'animation-duration': '1s',
-                    });
-                }
                 $curEdit.css({
+                    'opacity': opacity,
                     'animation-name': anima
                 });
+
+                if(anima === 'none'){
+                    $curEdit.css({
+                        'animation-fill-mode': 'none',
+                        'animation-duration': '0s'
+                    });
+                    $val_animaDura.val(0);
+                    $ui_animaDura.slider('value', 0);
+                }else{
+                    $curEdit.css({
+                        'animation-fill-mode': 'forwards',
+                        'animation-duration': '1s'
+                    });
+                    $val_animaDura.val(1);
+                    $ui_animaDura.slider('value', 1);
+                }
+
             });
 
-            $doc.on('mouseenter mouseleave', '#htmlAnimaName .anime', function(event){
+            $doc.on('mouseenter mouseleave', '#htmlAnimaName .anime', function(event) {
                 var $this = $(this),
                     $target = $this.find('div');
-                if(event.type === 'mouseenter'){
+                if (event.type === 'mouseenter') {
                     $target.addClass('animated');
-                }else{
+                } else {
                     $target.removeClass('animated');
                 }
             });
@@ -671,11 +635,14 @@
 
                 var $this = $(event.target),
                     $parent = $this.parents('.item_edit'),
-                    isEditable = $parent.length > 0 || $this.hasClass('item_edit');
+                    isEditable = $parent.length > 0 || $this.hasClass('item_edit'),
+                    pattern;
 
                 if (isEditable) {
                     $this.trigger('click');
 
+                    pattern = $curEdit.data('type');
+                    console.log('contextmenu', pattern);
                     $contextMenu.show().css({
                         'left': event.pageX - 20,
                         'top': event.pageY - 10
@@ -702,10 +669,11 @@
                     $curEdit = $parent;
                 } else {
                     $curEdit = $('#page' + pageInfo.index);
-
                 }
 
-                if($curEdit.length > 0){
+                $contextMenu.hide();
+
+                if ($curEdit.length > 0) {
 
                     $curEdit.addClass('m_cur');
                     /**
@@ -724,12 +692,12 @@
             //右键弹窗hover, 改变窗口大小
             $doc
                 .on('mouseenter mouseleave', '#contextMenu', function(event) {
-                    var $this = $(this);
-                    if (event.type === 'mouseenter') {
-                        $this.show();
-                    } else {
-                        $this.hide();
-                    }
+                    // var $this = $(this);
+                    // if (event.type === 'mouseenter') {
+                    //     $this.show();
+                    // } else {
+                    //     $this.hide();
+                    // }
                 })
                 .on('click', '#panel_screenChange li', function() {
                     var $this = $(this),
@@ -743,6 +711,7 @@
             //修复resizable问题, 方法废弃
 
             //右键选项的事件绑定
+            //event.stopPropagation for after click propagation to the parent dom object
             $doc
                 .on('click', '#menu_remove', function(event) {
                     $curEdit.remove();
@@ -750,6 +719,15 @@
                 })
                 .on('click', '#menu_edit', function(event) {
                     core.showUE($curEdit.find('.m_elem').html());
+                    event.stopPropagation();
+                })
+                .on('click', '#menu_zIndexUp', function(event){
+
+                    core._zIndexChange($curEdit, 'up');
+                    event.stopPropagation();
+                })
+                .on('click', '#menu_zIndexDown', function(event){
+                    core._zIndexChange($curEdit, 'down');
                     event.stopPropagation();
                 });
 
@@ -759,50 +737,50 @@
                 .on('click', '#btn_saveEdit', core.saveEdit);
 
             $doc
-                .on('click', '#btn_save', function(){
+                .on('click', '#btn_save', function() {
                     // 绑定保存数据
                 })
-                .on('click', '#btn_complete', function(){
+                .on('click', '#btn_complete', function() {
                     // 绑定提交数据
                 })
-                .on('click', '#btn_setGlobal', function(){
+                .on('click', '#btn_setGlobal', function() {
                     $curEdit = $output.find('.wrapper');
                     core._initCssToEdit($curEdit);
                 })
                 .on('click', '#sourceCode', function() {
-                    
+
                     $curEdit = $output.find('.wrapper');
                     core._destroyUiStatus();
                     core.showUE($output.html());
                 });
 
-            $doc.on('keydown', function(event){
+            $doc.on('keydown', function(event) {
                 var key = event.keyCode,
                     left = parseInt($cssLeft.val()),
                     top = parseInt($cssTop.val()),
-                    isEditable =$curEdit.hasClass('item_drag');
+                    isEditable = $curEdit.hasClass('item_drag');
 
-                if(!isEditable) return;
+                if (!isEditable) return;
 
-                switch(key){
+                switch (key) {
                     case KEY['LEFT']:
                         // if(left <= 0) return;
-                        left --;
+                        left--;
                         $cssLeft.val(left);
                         break;
                     case KEY['RIGHT']:
                         // if(left >= 100) return;
-                        left ++;
+                        left++;
                         $cssLeft.val(left);
                         break;
                     case KEY['UP']:
                         // if(top <= 0) return;
-                        top --;
+                        top--;
                         $cssTop.val(top);
                         break;
                     case KEY['DOWN']:
                         // if(top <= 100) return;
-                        top ++;
+                        top++;
                         $cssTop.val(top);
                         break;
                     default:
@@ -813,12 +791,29 @@
             });
 
             $doc
-                .on('click','.about_a', function(){
+                .on('click', '.about_a', function() {
                     $('.about').show();
                 })
-                .on('click','.about', function(){
+                .on('click', '.about', function() {
                     $('.about').hide();
                 });
+        },
+
+        _zIndexChange: function($obj, direction){
+            var val = $css_zIndex.val();
+
+            if(direction === 'up'){
+                val ++;
+            }else{
+                if(val <= 0){
+                    alert('不能再下移了~');
+                    return;
+                }
+                val --;
+            }
+            $obj.css('z-index', val);
+            $css_zIndex.val(val);
+            $contextMenu.hide();
         },
 
 
@@ -964,7 +959,7 @@
 
         },
 
-        _inlineStyleToObject: function(styles){
+        _inlineStyleToObject: function(styles) {
             var styleObject = {};
 
             styles = styles.split(';');
@@ -991,19 +986,19 @@
 
             switch (type) {
                 case 1:
-                    if($child.length > 0){
+                    if ($child.length > 0) {
                         val1 = $child.css('vertical-align');
                         val1 === 'baseline' && (val1 = 'top');
 
                         val2 = $child.css('text-align');
                         val2 === 'start' && (val2 = 'left');
-                        
-                        $vertAlign.find('.vert_'+ val1).trigger('click');
-                        $horiAlign.find('.hori_'+ val2).trigger('click');
+
+                        $vertAlign.find('.vert_' + val1).trigger('click');
+                        $horiAlign.find('.hori_' + val2).trigger('click');
                     }
                     break;
-                case 2: 
-                    if($child.length > 0){
+                case 2:
+                    if ($child.length > 0) {
                         val1 = $child.css('padding').split('px')[0];
                         $val_padding.val(val1);
                         $ui_padding.slider('value', val1);
@@ -1014,12 +1009,12 @@
                     $('#src_audio').val(val1);
                     $('#audio_demo').attr('src', val1);
                     break;
-                case 6: 
+                case 6:
                     val1 = $obj.attr('data-src');
                     $('#src_href').val(val1);
 
                     val2 = $obj.attr('data-analyze');
-                    if(val2){
+                    if (val2) {
                         $('#src_analyze').val(val2);
                     }
                     break;
@@ -1033,59 +1028,91 @@
                     $('#opts_arrowColor').find('.arrow_' + val1).addClass('active').siblings().removeClass('active');
                     $('#opts_arrowDirection').find('.ard_' + val2).addClass('active').siblings().removeClass('active');
                     break;
+                case 21:
+                    val1 = $obj.attr('data-topicId');
+                    val2 = $obj.find('.btn_reply').text();
+                    $('#src_topicId').val(val1);
+                    $('#src_textReply').val(val2);
+                    break;
                 default:
                     break;
             }
         },
-        _bindCustomEvent: function(){
+        _bindCustomEvent: function() {
             $doc
                 .off('click.custom')
                 .off('change.custom')
-                .on('click.custom', '#opts_vertAlign span', function(){
+                .on('click.custom', '#opts_vertAlign span', function() {
                     var $this = $(this),
                         value = $this.data('value');
                     $this.addClass('active').siblings().removeClass('active');
                     $curEdit.find('.m_elem').css('vertical-align', value);
                 })
-                .on('click.custom', '#opts_horiAlign span', function(){
+                .on('click.custom', '#opts_horiAlign span', function() {
                     var $this = $(this),
                         value = $this.data('value');
                     $this.addClass('active').siblings().removeClass('active');
                     $curEdit.find('.m_elem').css('text-align', value);
                 })
-                .on('click.custom', '#opts_arrowColor span, #opts_arrowDirection span', function(){
+                .on('click.custom', '#opts_arrowColor span, #opts_arrowDirection span', function() {
                     var $this = $(this),
                         value = $this.data('value'),
                         id = $this.parent().attr('id'),
                         $target = null,
                         name = $this.data('name');
                     $this.addClass('active').siblings().removeClass('active');
-                    switch(id){
+                    switch (id) {
                         case 'opts_arrowColor':
                             $target = $curEdit.attr('data-color', name).find('.arrow_default');
-                            if($target.length > 0){
+                            if ($target.length > 0) {
                                 $target.css('border-color', value);
                             }
                             break;
                         case 'opts_arrowDirection':
                             $target = $curEdit.attr('data-direction', name).find('.arrow_guide');
-                            if($target.length > 0){
-                                $target.removeClass().addClass('arrow_guide '+ value);
+                            if ($target.length > 0) {
+                                $target.removeClass().addClass('arrow_guide ' + value);
                             }
                             break;
                     }
                 })
-                .on('click.custom', '#btn_clearBg', function(){
+                .on('click.custom', '#btn_clearBg', function() {
                     $cssBgImage.val('none');
                     $curEdit.css('background-image', 'none');
                 })
-                .on('change.custom', '#src_analyze', function(){
+                .on('change.custom', '#src_topicId', function() {
+                    var $status = $curEdit.find('.status_reply');
+                    $curEdit.attr('data-topicId', this.value);
+                    $curEdit.find('.btn_reply').attr('href', 'http://ms.hujiang.com/st/topic/' + this.value + '/');
+                    if (this.value === '') {
+                        $status.html('状态：未填写帖子ID');
+                    } else {
+                        $status.html('状态：尝试提取数据中...');
+                        para.st.topicid = parseInt(this.value);
+                        mu.cache.ajaxData(URL.ST, para.st, function(data) {
+                            if (data.Code === 0 && data.Value.Value !== null) {
+                                $status.html('状态：成功, 已读取到数据, 帖子ID:' + para.st.topicid + '。<br />实际效果请访问真实页面。');
+                            } else {
+                                $status.html('状态：所填写的帖子ID或存在问题。');
+                            }
+                        }, false);
+                    }
+                })
+                .on('change.custom', '#css_rotate', function(){
+                    $curEdit.css({
+                        'transform': 'rotate('+ this.value +'deg)'
+                    });
+                })
+                .on('change.custom', '#src_textReply', function() {
+                    $curEdit.find('.btn_reply').html(this.value);
+                })
+                .on('change.custom', '#src_analyze', function() {
                     $curEdit.attr('data-analyze', this.value);
                     var cls = $curEdit.attr('class'),
                         removecls = cls.match(/\b_GA\w*\b/g);
 
-                    if(removecls && removecls.length > 0){
-                        for(var i = 0, l = removecls.length; i < l; i++){
+                    if (removecls && removecls.length > 0) {
+                        for (var i = 0, l = removecls.length; i < l; i++) {
                             $curEdit.removeClass(removecls[i]);
                         }
                     }
@@ -1158,13 +1185,13 @@
                 case 'left':
                     if (value.indexOf('%') > -1) {
                         value = value.split('%')[0];
-                    } 
+                    }
                     $cssLeft.val(value);
                     break;
                 case 'top':
                     if (value.indexOf('%') > -1) {
                         value = value.split('%')[0];
-                    } 
+                    }
                     $cssTop.val(value);
                     break;
                 default:
@@ -1184,10 +1211,10 @@
                 $(listInputBlock[arr[i]]).show();
             }
 
-            if(pattern === 0){
+            if (pattern === 0) {
                 $tabCss.trigger('mouseenter');
                 $tabAnima.hide();
-            }else{
+            } else {
                 $tabAnima.show();
             }
 
@@ -1218,18 +1245,18 @@
                     var prop = this.id.split('css_')[1];
                     $curEdit.css(prop, this.value + '%');
                 })
-                .on('change.derective', '#css_animaDelay', function(){
+                .on('change.derective', '#css_animaDelay', function() {
                     var val = this.value;
                     $ui_animaDelay.slider('value', val);
-                    if($curEdit.hasClass('page')) return;
+                    if ($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-delay': val + 's'
                     });
                 })
-                .on('change.derective', '#css_animaDuartion', function(){
+                .on('change.derective', '#css_animaDuartion', function() {
                     var val = this.value;
                     $ui_animaDura.slider('value', val);
-                    if($curEdit.hasClass('page')) return;
+                    if ($curEdit.hasClass('page')) return;
                     $curEdit.css({
                         'animation-duration': val + 's'
                     });
@@ -1317,7 +1344,7 @@
             if (isEditable) {
                 $curEdit.find('.m_elem').html(html);
             }
-            if (isOutput){
+            if (isOutput) {
                 $output.find('.wrapper').html(html);
                 core._savePage();
             }
@@ -1365,7 +1392,7 @@
             });
             // core._funcGetTmpl('scripts/data_logos.js', logoData, logo_template, $logoTmpl );
         },
-        _funcGetTmpl: function(url, jsData, exData, $tmpl){
+        _funcGetTmpl: function(url, jsData, exData, $tmpl) {
             $.get(url, function(data) {
                 jsData = exData;
                 var html = core._getTemplateHtml(exData);
@@ -1376,7 +1403,7 @@
             var html = '';
             for (var i = 0, l = data.length; i < l; i++) {
                 html += '<div class="col-5" data-tmplId="' + data[i].id + '">' +
-                    '<div class="tmpl_box">'+
+                    '<div class="tmpl_box">' +
                     '<img src="' + data[i].imgSrc + '" alt="' + data[i].name + '">' +
                     '<div class="tmpl_info">' + data[i].name + '</div>' +
                     '</div></div>';
@@ -1432,19 +1459,26 @@
 
             // $numCurPage.html(index + 1);
             _page_option.pageStart = pageInfo.index = pageInfo.index === pageData.length ? pageData.length - 1 : pageInfo.index;
-            
+
             core._renderPage();
         },
 
         //交换页面顺序
-        _swapPage: function(oldIdx, newIdx){
-            var temp = null;
+        _swapPage: function(oldIdx, newIdx) {
+            // var temp = null;
 
             core._updatePage();
 
-            temp = pageData[oldIdx].html;
-            pageData[oldIdx].html = pageData[newIdx].html;
-            pageData[newIdx].html = temp;
+            // temp = pageData[oldIdx].html;
+            // pageData[oldIdx].html = pageData[newIdx].html;
+            // pageData[newIdx].html = temp;
+
+            console.log(oldIdx, newIdx);
+            var temp = pageData[oldIdx];
+
+            pageData.splice(oldIdx, 1);
+
+            pageData.splice(newIdx, 0, temp);
 
             _page_option.pageStart = pageInfo.index = newIdx;
             core._renderPage();
@@ -1460,7 +1494,7 @@
             //摧毁pagetrans组件，返回原始DOM
             _page.destroy();
             $('.page-current').removeClass('page-current');
-            $target.each(function(idx, obj){
+            $target.each(function(idx, obj) {
                 html = core.getOriginHtml($(obj));
                 pageData[idx].html = html;
             });
@@ -1468,7 +1502,7 @@
         },
 
         //保存页面数据
-        _savePage: function(){
+        _savePage: function() {
             core._updatePage();
             core._renderPage();
         },
@@ -1483,18 +1517,18 @@
                 containment: 'parent',
                 items: '.page_square',
                 placeholder: 'ui_tip',
-                start: function(event, ui){
+                start: function(event, ui) {
                     var $item = $(ui.item);
                     old_index = $item.index();
                 },
-                stop: function(event, ui){
+                stop: function(event, ui) {
                     var $item = $(ui.item);
 
                     new_index = $item.index();
 
                     var alertString = (old_index + 1) + ' 插在' + (new_index + 1) + ' 后面吗';
 
-                    if(old_index !== new_index){
+                    if (old_index !== new_index) {
                         window.alert(alertString);
                         core._swapPage(old_index, new_index);
                     }
@@ -1544,28 +1578,32 @@
                     });
 
                     var confirm = window.confirm('确定要覆盖当前页面吗？');
-                    if(confirm){
+                    if (confirm) {
                         pageData[pageInfo.index].html = template.html;
                         core._renderPage();
                     }
                 })
-                .on('click', '.col5_template .col-5', function(event) {
+                .on('click', '.bk_tab_ui .col-5', function(event) {
                     var $this = $(this),
                         id = $this.parent().attr('id'),
                         template = null,
                         templateId = parseInt($this.attr('data-tmplId')),
                         $target = $('#page' + pageInfo.index).find('.m_cont');
 
-                    switch(id){
+                    switch (id) {
                         case 'other_templates':
                             template = _.find(otherData, function(obj) {
                                 return obj.id === templateId;
                             });
                             break;
-                        case 'api_templates': 
+                        case 'api_templates':
                             template = _.find(apiData, function(obj) {
                                 return obj.id === templateId;
                             });
+                            if (templateId === 1 && $output.find('.item_topicST').length > 0) {
+                                alert('社团评论已存在，且尚只存在一个');
+                                return;
+                            }
                             break;
                         case 'logo_templates':
                             template = _.find(logoData, function(obj) {
@@ -1573,10 +1611,9 @@
                             });
                             break;
                     }
-                    
 
                     $target.append(template.html);
-
+                    $panelTemplate.find('.bk_tab_cont').hide();
                     core._initUiStatus();
                 });
         },
@@ -1645,10 +1682,10 @@
                     // core._initCssSize(ui.size.width, ui.size.height);
                 },
                 stop: function(event, ui) {
-                    
+
                     core._resetPostion($obj, ui.position);
                     core._resetSize($obj, ui.size);
-                    
+
                 }
             });
 
@@ -1658,12 +1695,12 @@
          * _resetPostion和_resetSize方法是针对draggable和resizable重设尺寸大小和位置
          * 当前均为设置为百分比尺寸
          */
-        _resetPostion: function($obj, offset){
-            var l = ( offset.left / 360 * 100 ).toFixed(0) + '%',
-                t = ( offset.top / 540 * 100 ).toFixed(0) + '%';
+        _resetPostion: function($obj, offset) {
+            var l = (offset.left / 360 * 100).toFixed(0) + '%',
+                t = (offset.top / 540 * 100).toFixed(0) + '%';
 
             $obj.css({
-                'top': t ,
+                'top': t,
                 'left': l
             });
 
@@ -1671,9 +1708,9 @@
             core._setInputCss('left', l);
         },
 
-        _resetSize: function($obj, offset){
-            var w = ( offset.width / 360 * 100 ).toFixed(0) + '%',
-                h = ( offset.height / 540 * 100 ).toFixed(0) + '%';
+        _resetSize: function($obj, offset) {
+            var w = (offset.width / 360 * 100).toFixed(0) + '%',
+                h = (offset.height / 540 * 100).toFixed(0) + '%';
 
             $obj.css({
                 'width': w,
@@ -1739,23 +1776,28 @@
             $clone.find('.m_cur').removeClass('m_cur');
             $clone.find('.page').find('.m_cont').hide();
 
-            $clone.find('.item_drag').each(function(idx, elem){
+            $clone.find('.item_drag').each(function(idx, elem) {
                 var $elem = $(elem),
                     styleObject = core._inlineStyleToObject($elem.attr('style')),
                     inlineStyle, style,
                     webkitArr = ['-webkit-animation-duration', '-webkit-animation-name', '-webkit-animation-delay', '-webkit-animation-fill-mode'];
-                for(var i = 0, l = webkitArr.length; i < l; i++){
-                    if(_.has(styleObject, webkitArr[i])){
+                
+                for (var i = 0, l = webkitArr.length; i < l; i++) {
+                    if (_.has(styleObject, webkitArr[i])) {
                         style = webkitArr[i].split('-webkit-')[1];
                         styleObject[style] = styleObject[webkitArr[i]];
+
+                        console.log(style);
+
                     }
                 }
-                inlineStyle = JSON.stringify(styleObject).replace(/\{|\}/g, '').replace(/\"\,/g, '"; ').replace(/\"/g,'').concat(';');
-
+                inlineStyle = JSON.stringify(styleObject).replace(/\{|\}/g, '').replace(/\"\,/g, '"; ').replace(/\"/g, '').concat(';');
                 console.log(styleObject, inlineStyle);
 
                 $elem.attr('style', inlineStyle);
             });
+
+            $clone.find('.item_topicST .topicList').html('');
 
             console.log($clone.html());
             // $clone.find('.m_elem').unwrap();

@@ -51,6 +51,15 @@
                 <li id="menu_edit">
                     <span class="glyphicon glyphicon-pencil"></span> 编辑
                 </li>
+                <li id="menu_copy">
+                    <span class="glyphicon glyphicon-duplicate"></span> 复制
+                </li>
+                <li id="menu_zIndexUp">
+                    <span class="glyphicon glyphicon-chevron-up"></span> 上移一层
+                </li>
+                <li id="menu_zIndexDown">
+                    <span class="glyphicon glyphicon-chevron-down"></span> 下移一层
+                </li>
                 <li id="menu_remove">
                     <span class="glyphicon glyphicon-trash"></span> 删除
                 </li>
@@ -97,7 +106,7 @@
                     <div class="bk_cont" style="display:block;">
                         <div class="col5_template other_tmpls cf" id="other_templates"></div>
                     </div>
-                    <div class="bk_cont" style="display:block;">
+                    <div class="bk_cont">
                         <div class="col5_template api_tmpls cf" id="api_templates"></div>
                     </div>
                     <div class="bk_cont">
@@ -271,6 +280,22 @@
                         </div>
                     </div>
 
+                    <div class="input_block input_special cf" id="input_st_reply">
+                        <div class="input_title">社团帖子评论块</div>
+                        <div class="input_cont cf">
+                            <div class="col-4">帖子ID</div>
+                            <div class="col-6">
+                                <input type="text" id="src_topicId" placeholder="填写帖子ID,如:163068829881" class="form_control">
+                            </div>
+                        </div>
+                        <div class="input_cont cf">
+                            <div class="col-4">回复按钮文案</div>
+                            <div class="col-6">
+                                <input type="text" id="src_textReply" placeholder="填写文字" class="form_control">
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="input_block input_special cf" id="input_global">
                         <div class="input_title">页面滑动</div>
                         <div class="input_cont cf">
@@ -391,6 +416,21 @@
                             </div>
                             <div class="col-2">
                                 %
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input_block cf" id="input_rotate">
+                        <div class="input_title">角度</div>
+                        <div class="input_cont cf">
+                            <div class="col-4">
+                                旋转角度
+                            </div>
+                            <div class="col-3">
+                                <input id="css_rotate" class="form_control">
+                            </div>
+                            <div class="col-2">
+                                度
                             </div>
                         </div>
                     </div>
@@ -587,7 +627,7 @@
                                 <div class="ui_slider" id="ui_for_duration"></div>
                             </div>
                             <div class="col-3">
-                                <input id="css_animaDuartion" type="number" min="0.8" max="3" step="0.1" class="form_control">
+                                <input id="css_animaDuartion" type="number" min="0" max="5" step="0.1" class="form_control">
                             </div>
                             <div class="col-2">
                                 s
@@ -602,7 +642,7 @@
                                 <div class="ui_slider" id="ui_for_delay"></div>
                             </div>
                             <div class="col-3">
-                                <input id="css_animaDelay" type="number" min="0" max="3" step="0.1" class="form_control">
+                                <input id="css_animaDelay" type="number" min="0" max="10" step="0.1" class="form_control">
                             </div>
                             <div class="col-2">
                                 s
@@ -660,10 +700,12 @@
     <!-- mobile -->
     <script src="/zt/vender/mu/mu.js"></script>
     <script src="/zt/vender/mu/mu-util.js"></script>
+    <script src="/zt/vender/mu/mu-cache.js"></script>
     <script src="/zt/vender/mu/mu-dialog.js"></script>
     <script src="/zt/vender/mu/mu-page-transition.js"></script>
 
     <!-- business -->
+    <script src="scripts/variables.js"></script>
     <script src="scripts/ztFactory2.js"></script>
 </body>
 

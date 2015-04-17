@@ -591,10 +591,11 @@ body {
     color: #333;
 }
 .input_block {
-    margin-bottom: 20px;
+    margin-bottom: 15px;
     border-bottom: 1px dashed $bk_cont - #111;
     padding-bottom: 20px;
-    padding-top: 10px;
+    padding-top: 5px;
+    display: none;
     input,
     select {
         border: 1px solid;
@@ -623,7 +624,9 @@ body {
 .input_special{
     background-color: #EEF0F3;
 }
-
+#tab_anima .input_block{
+    display: block;
+}
 .form_block {
     // height: 40px;
     line-height: 40px;
@@ -704,18 +707,19 @@ input[type=radio], input[type=checkbox] {
 }
 // edit
 
-.item_sort{
-    display: table;
-    width:100%;
-    .m_elem{
-        display: table-cell;
-    }
-}
+// .item_sort{
+//     display: table;
+//     width:100%;
+//     .m_elem{
+//         display: table-cell;
+//     }
+// }
 
-.item_sort, .item_drag , .item_free{
+.item_edit{
     &:hover {
         position: relative;
         cursor: pointer;
+        // -webkit-animation-fill-mode: initial !important;
         &:after {
             position: absolute;
             content: '';
@@ -735,21 +739,42 @@ input[type=radio], input[type=checkbox] {
 }
 .item_free:hover:after {
     background-color: rgba(228, 108, 131, 0.4);
+    z-index: 0;
+}
+.item_drag{
+    &:after {
+        position: absolute;
+        content: "";
+        width: 100%;
+        height: 100%;
+        border: 1px dashed #F00;
+        bottom: 0;
+        left: 0;
+    }
 }
 .m_cur {
     position: relative;
+    // -webkit-animation-fill-mode: initial !important;
     box-shadow: 0 0 5px 5px rgba(255, 0, 0, 0.5);
     &:after {
         position: absolute;
         content: "";
         width: 100%;
         height: 100%;
-        border: 2px dashed #F00;
         bottom: 0;
         left: 0;
+        border: 2px dashed #F00;
         z-index: -1;
     }
 }
+
+.status_reply{
+    padding: 10px;
+    margin: -10px;
+    font-weight: bold;
+}
+
+
 // *[contenteditable]:focus {
 //     padding: 5px 10px;
 // }
@@ -772,6 +797,8 @@ input[type=radio], input[type=checkbox] {
     li {
         line-height: 30px;
         border-bottom: 1px solid $bk_cont;
+        text-align: left;
+        padding-left: 4px;
         &:hover {
             background-color: $bk_cont;
             cursor: pointer;

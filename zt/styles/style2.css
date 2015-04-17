@@ -562,10 +562,11 @@ body {
 }
 
 .input_block {
-  margin-bottom: 20px;
+  margin-bottom: 15px;
   border-bottom: 1px dashed #d0d6dc;
   padding-bottom: 20px;
-  padding-top: 10px;
+  padding-top: 5px;
+  display: none;
 }
 .input_block input,
 .input_block select {
@@ -594,6 +595,10 @@ body {
 
 .input_special {
   background-color: #EEF0F3;
+}
+
+#tab_anima .input_block {
+  display: block;
 }
 
 .form_block {
@@ -671,19 +676,11 @@ input[type=radio], input[type=checkbox] {
   font-size: 1rem;
 }
 
-.item_sort {
-  display: table;
-  width: 100%;
-}
-.item_sort .m_elem {
-  display: table-cell;
-}
-
-.item_sort:hover, .item_drag:hover, .item_free:hover {
+.item_edit:hover {
   position: relative;
   cursor: pointer;
 }
-.item_sort:hover:after, .item_drag:hover:after, .item_free:hover:after {
+.item_edit:hover:after {
   position: absolute;
   content: '';
   width: 100%;
@@ -702,6 +699,17 @@ input[type=radio], input[type=checkbox] {
 
 .item_free:hover:after {
   background-color: rgba(228, 108, 131, 0.4);
+  z-index: 0;
+}
+
+.item_drag:after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  border: 1px dashed #F00;
+  bottom: 0;
+  left: 0;
 }
 
 .m_cur {
@@ -713,10 +721,16 @@ input[type=radio], input[type=checkbox] {
   content: "";
   width: 100%;
   height: 100%;
-  border: 2px dashed #F00;
   bottom: 0;
   left: 0;
+  border: 2px dashed #F00;
   z-index: -1;
+}
+
+.status_reply {
+  padding: 10px;
+  margin: -10px;
+  font-weight: bold;
 }
 
 .ui_tip {
@@ -739,6 +753,8 @@ input[type=radio], input[type=checkbox] {
 .menu li {
   line-height: 30px;
   border-bottom: 1px solid #e1e7ed;
+  text-align: left;
+  padding-left: 4px;
 }
 .menu li:hover {
   background-color: #e1e7ed;
