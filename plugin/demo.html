@@ -21,6 +21,8 @@
             <a href="##">asdfa </a>
             <a href="##">asdfa 23</a>
             <a href="##">asdfa 234</a>
+
+            <div class="tool">tests fsdf </div>
     </div>
 
     <input type="hidden" id="hddTime" value="2015/4/10 15:14:55">
@@ -51,6 +53,39 @@
         $('a').beautify({
             'fontSize': '20px'
         });
+
+        // function tip(){
+        //     var args = Array.prototype.slice.call(arguments, 0);
+
+        //     console.log(args);
+        // }
+
+        // tip(1,2,345, 5,6,67, 9);
+
+        // $('.tool').tooltip('show', 'sdf');
+
+        // $('.tool').tooltip({
+        //     top: true,
+        //     left: true
+        // });
+
+        // $('.tool').plugin2();
+
+        // var tool = $('.tool').data("plugin2");
+
+        // var tool = new ScrollSub('.tool', {
+        //     color: 'purple',
+        //     callback: function(){
+        //         console.log('435');
+        //     }
+        // });
+        
+        var tool = $('.tool').scrollSub();
+
+        // tool.init();
+        
+        // console.log(tool);
+
     </script>
 </body>
 
