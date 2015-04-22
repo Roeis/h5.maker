@@ -256,6 +256,7 @@
     var ScrollSub = function(element, options){
         this.element = element;
         this.options = $.extend({}, _defaults, options);
+        this.init();
     };
 
     ScrollSub.prototype = {
@@ -268,12 +269,22 @@
             });
             this.dataArr = [];
             this.count = 0;
+
+            $element.off('click.sub').on('click', function(event){
+                that._getEvent(event);
+            });
+        },
+
+        _getEvent: function(event){
+            console.log(event, '323');
         },
         getArr: function(){
             var children  = $element.children();
 
-            
 
+        },
+        pub: function(){
+            console.log('pub yeah');
         },
         createHtml: function(arr, pattern){
 
@@ -281,7 +292,20 @@
         loop: function(){
 
         }
-    }
+    };
+
+    $.fn.test2 = function(options){
+        this.each(function(key, value){
+            var $element = $(this),
+                data = $element.data('test');
+
+            var instance = new ScrollSub(this, options);
+
+
+        });
+
+        return this;
+    };
 
 
 

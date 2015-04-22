@@ -574,11 +574,9 @@ body { /* Addresses a small issue in webkit: http://bit.ly/NEdoDq */
         opacity: 0;
         -webkit-transform: translateX(200%);
     }
-    99% {
-        -webkit-transform: translateX(0);
-    }
     100% {
         opacity: 1;
+        -webkit-transform: translateX(0);
     }
 }
 
@@ -587,11 +585,9 @@ body { /* Addresses a small issue in webkit: http://bit.ly/NEdoDq */
         opacity: 0;
         transform: translateX(200%);
     }
-    99% {
-        transform: translateX(0);
-    }
     100% {
         opacity: 1;
+        transform: translateX(0);
     }
 }
 

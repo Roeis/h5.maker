@@ -117,11 +117,6 @@
     // log page's data
     var html_blankpage = '<div class="page" data-type="0"><div class="m_cont"></div></div>',
         pageData = [{
-            html: '<div class="page" data-type="0" style="color:#FFF;">' +
-                '<div class="m_cont">' +
-                '</div>' +
-                '</div>'
-        }, {
             html: '<div class="page" data-type="0" style="color:#FFF; background-image: url(images/origin_05.jpg); background-size: auto 100%; background-position: 50% 50%; background-repeat: no-repeat;">' +
                 '<div class="m_cont">' +
                 '<div class="item_edit item_drag item_text" data-type="1" style="position: absolute; left: 0%; top: 50%; width: 50%; height: 40%;  color: rgb(255, 255, 255); background-color: rgba(0, 0, 0, 0.7);" >' +
@@ -140,6 +135,12 @@
                 '<p>点击编辑文案点击编辑文案</p>' +
                 '</div>' +
                 '</div>' +
+                '</div>' +
+                '</div>'
+        },
+        {
+            html: '<div class="page" data-type="0" style="color:#FFF;">' +
+                '<div class="m_cont">' +
                 '</div>' +
                 '</div>'
         }],
@@ -372,6 +373,23 @@
 
             this._initQrcode();
 
+            this._initLocalStatus();
+        },
+
+        _initLocalStatus: function(){
+            var $line = $('#assistLine'),
+                flag, hasLine = localStorage.isUseLine;
+            if(!hasLine){
+                localStorage.isUseLine = 'false';
+            }else{
+                if(hasLine === 'true'){
+                    $output.addClass('hasLine');
+                    flag = true;
+                }else{
+                    flag = false;
+                }
+                $line.attr('checked', flag);
+            }
         },
         //滑动组件中包含了绑定样式
         _initSlider: function() {
@@ -642,7 +660,7 @@
                     $this.trigger('click');
 
                     pattern = $curEdit.data('type');
-                    console.log('contextmenu', pattern);
+                    // console.log('contextmenu', pattern);
                     $contextMenu.show().css({
                         'left': event.pageX - 20,
                         'top': event.pageY - 10
@@ -718,8 +736,19 @@
                     // event.stopPropagation();
                 })
                 .on('click', '#menu_edit', function(event) {
+
                     core.showUE($curEdit.find('.m_elem').html());
                     event.stopPropagation();
+                })
+                .on('click', '#menu_copy', function(event){
+                    var $clone = $curEdit.clone(),
+                        html;
+                    $clone.removeClass('ui-draggable ui-draggable-handle ui-resizable m_cur')
+                        .find('.ui-resizable-handle').remove();
+                    html = core.getOriginHtml($clone);
+
+                    // cur
+                    console.log(html);
                 })
                 .on('click', '#menu_zIndexUp', function(event){
 
@@ -791,6 +820,17 @@
             });
 
             $doc
+                .on('change', '#assistLine', function(){
+                    // var val = document.getElementById("assistLine").checked;
+                    console.log(this.checked);
+                    localStorage.isUseLine = this.checked;
+                    if(this.checked){
+                        $output.addClass('hasLine');
+                    }else{
+                        $output.removeClass('hasLine');
+                    }
+
+                })
                 .on('click', '.about_a', function() {
                     $('.about').show();
                 })

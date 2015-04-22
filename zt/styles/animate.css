@@ -711,12 +711,9 @@ body {
     -webkit-transform: translateX(200%);
   }
 
-  99% {
-    -webkit-transform: translateX(0);
-  }
-
   100% {
     opacity: 1;
+    -webkit-transform: translateX(0);
   }
 }
 @keyframes fadeInRightBig {
@@ -725,12 +722,9 @@ body {
     transform: translateX(200%);
   }
 
-  99% {
-    transform: translateX(0);
-  }
-
   100% {
     opacity: 1;
+    transform: translateX(0);
   }
 }
 .animated.fadeInRightBig {
