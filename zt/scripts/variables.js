@@ -205,6 +205,22 @@
                 cn: "从左变形入",
                 opacity: 0
             },
+            "lengthLeft": {
+                cn: "从左变长",
+                opacity: 0
+            },
+            "lengthRight": {
+                cn: "从右变长",
+                opacity: 0
+            },
+            "lengthUp": {
+                cn: "从上变长",
+                opacity: 0
+            },
+            "lengthDown": {
+                cn: "从下变长",
+                opacity: 0
+            },
             "fadeOut": {
                 cn: "淡出",
                 opacity: 1

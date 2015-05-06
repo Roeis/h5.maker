@@ -40,6 +40,7 @@
             for(var i = 0; i < emo_length; i++){
                 str = str.replace(emotion[i].Ref, '<img src="'+ emotion[i].Src + '" height="'+ emotion[i].Height +'" width="'+ emotion[i].Width +'">');
             }
+            
             console.log(emotion);
 
             return str.replace(/\[!--.{5,10}--\]/g, '');
@@ -89,7 +90,7 @@
                 if(data.Code === 0 && data.Value.Value !== null){
                     var it = data.Value.Value.data.PostList,
                         html = '';
-                    it.reverse();
+                    // it.reverse();
 
                     //click for more comments
                     // html += '<li class="reply_li">'+
@@ -125,10 +126,9 @@
                     scrollSubtitle.init('.topicList', {
                         height: height || wrap_h,
                         pause: 3000,
-                        // reverse: false,
+                        reverse: false,
                         afterEdge: function(count){
                             console.log('top');
-                            count = 0;
                         }
                     });
                 }else{

@@ -453,9 +453,8 @@ a {
 }
 
 .subtitle_cont {
-  margin: 0 10px 10px;
+  margin: 0 10px;
   position: relative;
-  border-bottom: 1px solid #DDD;
 }
 .subtitle_cont .topicList {
   margin: 0;
@@ -472,15 +471,46 @@ a {
 }
 
 .subcontrol {
-  background-color: #DDD;
-  margin: 0 10px;
+  background-color: #EEE;
+  margin: 0 10px 10px;
+  border: 1px solid #ddd;
 }
-.subcontrol > div {
+.subcontrol div {
   width: 50%;
   float: left;
   text-align: center;
   line-height: 40px;
   height: 40px;
+  position: relative;
+}
+.subcontrol div:active {
+  background-color: #E8E8E8;
+}
+.subcontrol div i {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-top: 2px solid #999;
+  border-left: 2px solid #999;
+  -webkit-transform: rotate(45deg);
+  transform: rotate(45deg);
+  top: 16px;
+  left: 50%;
+  margin-left: -6px;
+}
+.subcontrol .sub_down i {
+  -webkit-transform: rotate(-135deg);
+  transform: rotate(-135deg);
+  top: 8px;
+}
+.subcontrol .sub_down:after {
+  content: "";
+  position: absolute;
+  width: 1px;
+  height: 20px;
+  background-color: #DDD;
+  top: 10px;
+  left: 0;
 }
 
 .topicList {
@@ -541,6 +571,12 @@ a {
   line-height: 26px;
   word-break: break-all;
   word-wrap: break-word;
+}
+.topicList .content audio {
+  width: 100%;
+}
+.topicList .content a {
+  color: #075DB3;
 }
 
 .loading {

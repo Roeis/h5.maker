@@ -27,9 +27,111 @@
     $.log(obj, arr, 234234, '234234');
 
 
-    function loopInvoke(){
+    // 滚动至顶部后，设置标志，滚出隐藏元素
+    //
+    var $win =$(window),
+        isTop = false,
+        isAnimating = false,
+        flagScroll = true,
+        win_H = $win.height();
 
+    var $topbanner = $('.topbanner');
+    $topbanner.css({
+        height: win_H 
+    });
+    // var tur = true; 
+    // function haha(){alert("haha"); tur = true; } 
+
+    // window.onscroll = function(){ 
+    // if(tur){ setTimeout(haha,1000); tur = false; 
+    // }else{ } 
+    // } 
+
+    // $win.on('mousewheel.scroll2', scroll2);
+
+    function scroll1(event){
+        // event.preventDefault();
+
+        var scrollTop = $('body').scrollTop(),
+            deltaY = event.deltaY;
+            isTop = scrollTop === 0 ? true : false;
+                // console.log(scrollTop , isTop);
+        if(flagScroll){
+            flagScroll = false;
+            setTimeout(function(){
+                console.log(flagScroll);
+                
+                flagScroll = true;
+            }, 1000);
+        }
+        if(isTop && deltaY >= 1 && !isAnimating){
+            isAnimating = true;
+            $topbanner.stop().slideDown(600, function(){
+                isAnimating = false;
+            });
+            $win.off('mousewheel.scroll1').on('mousewheel.scroll2', scroll2);
+        }
+        // console.log(event, deltaY);
     }
+
+    function scroll2(event){
+        event.preventDefault();
+        if(event.deltaY <= -1 && !isAnimating){
+            isAnimating = true;
+            $topbanner.stop().slideUp(600, function(){
+                isAnimating = false;
+                $win.off('mousewheel.scroll2').on('mousewheel.scroll1', scroll1);
+            });
+            isTop = false;
+        }
+        // console.log(event);
+    }
+
+    var $body = $('html, body'),
+        scrolling = false,
+        $doc = $(document),
+        root = $body.scrollTop(),
+        step = 325;
+
+    //mousewheel
+    $win.on('mousewheel', function(event){
+        console.log(event);
+    });
+
+    $win.on('mousewheel.scrollsmooth', function(event){
+        event.preventDefault();
+        console.log(event.deltaY);
+        var isScrollY = $doc.height() - $win.height();
+        if(isScrollY){
+                //scroll down
+                if(event.deltaY < 0){
+                    // root += 200;
+                    root = (root + $win.height()) >= $doc.height() ? root : root += step;
+                }else{
+                    root = root <= 0 ? 0 : root -= step;
+                }
+                console.log(root);
+                scrolling = true;
+
+                $body.stop().animate({
+
+                    scrollTop: root
+
+                }, 800, 'easeOutCubic', function() {
+
+                    scrolling = false;
+
+                });
+            
+        }
+    }).on('scroll', function(){
+
+    }).on('resize', function(){
+
+    });
+
+
+
 
     $.fn.pluginName = function(options){
         var defaults = {
@@ -249,103 +351,167 @@
         }
     ];
 
-    var _defaults = {
-            data: [],
-        };
+    // var _defaults = {
+    //         data: [],
+    //         color: 'purple'
+    //     };
 
-    var ScrollSub = function(element, options){
-        this.element = element;
-        this.options = $.extend({}, _defaults, options);
-        this.init();
-    };
+    // var ScrollSub = function(element, options){
+    //     this.$element = $(element);
+    //     this.options = $.extend({}, _defaults, options);
+    //     this.init();
+    // };
 
-    ScrollSub.prototype = {
-        init: function(){
-            var that = this,
-                $element = $(this.element);
+    // ScrollSub.prototype = {
+    //     init: function(){
+    //         var that = this;
             
-            $element.css({
-                color: this.options.color
-            });
-            this.dataArr = [];
-            this.count = 0;
+    //         // this.$element = $(this.element);
+            
+            
+    //         this.dataArr = [];
+    //         this.count = 0;
+            
+    //         this._domReady();
+    //         this._bindEvent();
 
-            $element.off('click.sub').on('click', function(event){
-                that._getEvent(event);
-            });
-        },
+    //     },
 
-        _getEvent: function(event){
-            console.log(event, '323');
-        },
-        getArr: function(){
-            var children  = $element.children();
+    //     _domReady: function(){
+    //         this.$element.css({
+    //             'color': this.options.color,
+    //             'background-color': '#ddd',
+    //             'height': '60px',
+    //             'width': '100px',
+    //             'position': 'relative',
+    //             // 'left':'60px',
+    //             // 'top':'160px',
+    //             // 'margin': '10px',
+    //             // 'padding': '10px'
+    //         });
+
+    //         var $temp = $('<div>', {
+    //                 class:'hover'
+    //             }).css({
+    //                 position: 'absolute',
+    //                 width: '40px',
+    //                 height: '40px',
+    //                 left: 0,
+    //                 top: 0,
+    //                 backgroundColor: 'rgba(0,0,0,.5)'
+    //             });
+
+    //         this.$element.append($temp);
+    //     },
+
+    //     _bindEvent: function(){
+    //         var that = this;
+    //         this.$element.off('mouseenter.sub mouseleave.sub').on('mouseenter.sub mouseleave.sub', function(event){
+    //             var $this = $(this);
+    //             if(event.type === 'mouseenter'){
+    //                 $this.find('.hover').stop().animate({
+    //                     left: 50,
+    //                     top: 0
+    //                 }, 200, 'linear', function(){
+    //                     console.log('callback enter');
+    //                 });
+    //             }else{
+    //                 $this.find('.hover').stop().animate({
+    //                     left: 0,
+    //                     top: 0
+    //                 }, 200);
+    //             }
+    //                 // $this.
+    //             that._handleEvent($this, event);
+    //         });
+    //     },
+
+    //     _handleEvent: function($obj,event){
+    //         var w = $obj.width(),
+    //             h = $obj.height(),
+    //             offset = $obj.offset(),
+    //             x = event.pageX,
+    //             y = event.pageY;
+
+    //         var deltaX = x - offset.left - w / 2,
+    //             deltaY = y - offset.top - h / 2,
+    //             direction = Math.atan2(deltaY, deltaX) * 180 /Math.PI;
+    //         console.log(x, y, deltaX, deltaY, direction);
 
 
-        },
-        pub: function(){
-            console.log('pub yeah');
-        },
-        createHtml: function(arr, pattern){
+    //         //output a direction from an event
+    //         var w = $obj.width(),
+    //             h = $obj.height(),
+    //             x = (event.pageX - $obj.offset().left - (w / 2)) * (w > h ? (h / w) : 1),
+    //             y = (event.pageY - $obj.offset().top - (h / 2)) * (h > w ? (w / h) : 1),
+    //             direction = Math.round((((Math.atan2(y, x) * (180 / Math.PI)) + 180) / 90) + 3) % 4;
+    //         // console.log(x, y);
+    //         // console.log(x1, x2, y1, y2, clientX, clientY, {'dx':directX, 'dy':directY});
+    //         // console.log('do something', direction);
+    //     },
 
-        },
-        loop: function(){
+    //     loop: function(){
+    //         console.log('asdfasdf');
+    //     }
+    // };
 
-        }
-    };
+    // $.fn.test2 = function(options){
+    //     this.each(function(key, value){
+    //         var $element = $(this),
+    //             data = $element.data('test2');
+    //             console.log(data);
+    //         var instance = new ScrollSub(this, options);
 
-    $.fn.test2 = function(options){
-        this.each(function(key, value){
-            var $element = $(this),
-                data = $element.data('test');
+    //             $element.data('test2', instance);
 
-            var instance = new ScrollSub(this, options);
+    //     });
+        
+    //     this.pub = function(){
+    //         console.log('pub yeah');
+    //     };
 
-
-        });
-
-        return this;
-    };
+    //     return this;
+    // };
 
 
 
-    var core = {
-            init: function(elem, options){
+    // var core = {
+    //         init: function(elem, options){
 
-                console.log('init');
-            },
-            test: function(){
-                console.log('test2_public');
-            },
-            _test2: function(){
-                console.log('test2_private');
-            }
-        };
+    //             console.log('init');
+    //         },
+    //         test: function(){
+    //             console.log('test2_public');
+    //         },
+    //         _test2: function(){
+    //             console.log('test2_private');
+    //         }
+    //     };
 
-    $.fn.scrollSub = function(options){
-        //
-        var that = this;
-        this.pub = function(value){
-            console.log('calculate', value);
-            this.css('color', value);
-        };
+    // $.fn.scrollSub = function(options){
+    //     //
+    //     var that = this;
+    //     this.pub = function(value){
+    //         console.log('calculate', value);
+    //         this.css('color', value);
+    //     };
 
-        return this.each(function(){
+    //     return this.each(function(){
 
-            var $this = $(this),
-                options = $.extend({}, defaults, options);
-            // console.log(this, that);
-            core.init($this, options);
+    //         var $this = $(this),
+    //             options = $.extend({}, defaults, options);
+    //         // console.log(this, that);
+    //         core.init($this, options);
 
-            $this.css({
-                color: options.color
-            });
+    //         $this.css({
+    //             color: options.color
+    //         });
 
-        });
+    //     });
 
-    };
+    // };
 
-    window.ScrollSub = ScrollSub;
+    // window.ScrollSub = ScrollSub;
 
     // window.Beautifier = Beautifier;
 

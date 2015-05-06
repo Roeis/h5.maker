@@ -119,7 +119,7 @@
         pageData = [{
             html: '<div class="page" data-type="0" style="color:#FFF; background-image: url(images/origin_05.jpg); background-size: auto 100%; background-position: 50% 50%; background-repeat: no-repeat;">' +
                 '<div class="m_cont">' +
-                '<div class="item_edit item_drag item_text" data-type="1" style="position: absolute; left: 0%; top: 50%; width: 50%; height: 40%;  color: rgb(255, 255, 255); background-color: rgba(0, 0, 0, 0.7);" >' +
+                '<div class="item_edit item_drag item_text" data-type="1" style="position: absolute; left: 0%; top: 50%; width: 50%; height: 40%;  color: rgb(255, 255, 255); background-color: rgba(0, 0, 0, 0.7);  -webkit-animation: pulse 1s 0.3s forwards; -webkit-animation-play-state: initial;" >' +
                 '<div class="m_elem" style="padding:10px;">' +
                 '<p><strong><span style="font-size: 24px;">点击编辑文案</span></strong>' +
                 '</p>' +
@@ -215,7 +215,7 @@
             10: 'animation-name',
             11: 'animation-duration',
             12: 'animation-delay',
-            13: 'transform',
+            13: 'animation',
             14: '',
             15: '',
             16: '',
@@ -270,14 +270,14 @@
         //21: 社团评论模块
         cssPattern = {
             0: [0, 1, 2],
-            1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
+            1: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 26],
             2: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 26],
             3: [0, 1, 2],
             4: [],
-            5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
-            6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 17, 26],
-            7: [3, 4, 5, 6, 7, 8, 10, 11, 12, 17],
-            8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17, 28],
+            5: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 26],
+            6: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 26],
+            7: [3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17],
+            8: [0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 17, 28],
             11: [0, 1, 2, 3, 4, 5, 6, 7, 8, 17],
             21: [0, 2]
         },
@@ -541,7 +541,7 @@
 
                 if(anima === 'none'){
                     $curEdit.css({
-                        'animation-fill-mode': 'none',
+                        'animation-fill-mode': 'initial',
                         'animation-duration': '0s'
                     });
                     $val_animaDura.val(0);
@@ -570,21 +570,21 @@
 
         _tabPanel: function() {
             //左边侧边菜单
-            $doc.on('mouseenter mouseleave', '#toolNav li', function(event) {
+            $doc.on('click', '#toolNav li', function(event) {
                 var $this = $(this),
                     index = $this.index();
-                if (event.type === 'mouseenter') {
+                // if (event.type === 'mouseenter') {
                     $panelTemplate.find('.bk_tab_cont').eq(index).show().siblings().hide();
-                } else {
-                    $panelTemplate.find('.bk_tab_cont').hide();
-                }
+                // } else {
+                //     $panelTemplate.find('.bk_tab_cont').hide();
+                // }
             }).on('mouseenter mouseleave', '.bk_tab_cont', function(event) {
-                var $this = $(this);
-                if (event.type === 'mouseenter') {
-                    $this.show();
-                } else {
-                    $this.hide();
-                }
+                // var $this = $(this);
+                // if (event.type === 'mouseenter') {
+                //     $this.show();
+                // } else {
+                //     $this.hide();
+                // }
             }).on('mouseenter', '.bk_tab_head .bk_tab_li', function(event) {
                 var $this = $(this),
                     $parent = $this.closest('.bk_tab_ui'),
@@ -649,27 +649,39 @@
         _bindEditEvent: function() {
 
             //右键事件
-            $doc.on('contextmenu', function(event) {
+            $doc.on('contextmenu', '#output', function(event) {
 
                 var $this = $(event.target),
-                    $parent = $this.parents('.item_edit'),
-                    isEditable = $parent.length > 0 || $this.hasClass('item_edit'),
-                    pattern;
+                    offset, window_h, target_h;
+                    // $parent = $this.parents('.item_edit'),
+                    // isEditable = $parent.length > 0 || $this.hasClass('item_edit'),
+                    // pattern;
 
-                if (isEditable) {
-                    $this.trigger('click');
+                $this.trigger('click');
+                // pattern = $curEdit.data('type');
+                // console.log('contextmenu', pattern);
+                
+                // if (isEditable) {
+                // }else{
+                // }
 
-                    pattern = $curEdit.data('type');
-                    // console.log('contextmenu', pattern);
-                    $contextMenu.show().css({
-                        'left': event.pageX - 20,
-                        'top': event.pageY - 10
+
+                $contextMenu.show().css({
+                    'left': event.pageX - 10,
+                    'top': event.pageY - 20
+                });
+
+                target_h = $contextMenu.height();
+                offset = target_h + $contextMenu.offset().top;
+                window_h = $(window).height();
+                if(offset >= window_h){
+                    $contextMenu.css({
+                        'top': window_h - target_h - 20
                     });
-
-                    // 取消默认contextmenu
-                    return false;
                 }
-
+                console.log(offset, $(window).height());
+                // 取消默认contextmenu
+                return false;
             });
 
             //点击事件
@@ -677,7 +689,8 @@
                 var $this = $(event.target),
                     $parent = $this.parents('.item_edit'),
                     isEditable = $parent.length > 0,
-                    isCurrent = $this.hasClass('item_edit');
+                    isCurrent = $this.hasClass('item_edit'),
+                    pattern;
 
                 $('.m_cur').removeClass('m_cur');
 
@@ -689,7 +702,9 @@
                     $curEdit = $('#page' + pageInfo.index);
                 }
 
-                $contextMenu.hide();
+                pattern = $curEdit.data('type');
+
+                core._initContextMenu(pattern);
 
                 if ($curEdit.length > 0) {
 
@@ -702,27 +717,31 @@
                 }
 
                 $('.colorboard').hide();
-
+                $contextMenu.hide();
+                $panelTemplate.find('.bk_tab_cont').hide();
                 event.stopPropagation();
 
             });
 
+            $doc.on('click', function(event){
+                var $this = $(event.target),
+                    isLeftBlock = $this.hasClass('left_side_block') || $this.hasClass('left_side_block2') || $this.parents('.left_side_block').length > 0 || $this.parents('.left_side_block2').length > 0;
+                if($contextMenu.is(':visible')){
+                    $contextMenu.hide();
+                }
+                if(!isLeftBlock){
+                    $panelTemplate.find('.bk_tab_cont').hide();
+                }
+
+            });
+
             //右键弹窗hover, 改变窗口大小
-            $doc
-                .on('mouseenter mouseleave', '#contextMenu', function(event) {
-                    // var $this = $(this);
-                    // if (event.type === 'mouseenter') {
-                    //     $this.show();
-                    // } else {
-                    //     $this.hide();
-                    // }
-                })
-                .on('click', '#panel_screenChange li', function() {
-                    var $this = $(this),
-                        cls = $this.data('size');
-                    $this.addClass('active').siblings().removeClass();
-                    $device.removeClass().addClass('device ' + cls);
-                });
+            // $doc.on('click', '#panel_screenChange li', function() {
+            //         var $this = $(this),
+            //             cls = $this.data('size');
+            //         $this.addClass('active').siblings().removeClass();
+            //         $device.removeClass().addClass('device ' + cls);
+            //     });
 
             //移动模式, 恢复到普通布局修复, 方法废弃
 
@@ -736,19 +755,37 @@
                     // event.stopPropagation();
                 })
                 .on('click', '#menu_edit', function(event) {
-
+                    $contextMenu.hide();
                     core.showUE($curEdit.find('.m_elem').html());
                     event.stopPropagation();
                 })
                 .on('click', '#menu_copy', function(event){
-                    var $clone = $curEdit.clone(),
-                        html;
-                    $clone.removeClass('ui-draggable ui-draggable-handle ui-resizable m_cur')
-                        .find('.ui-resizable-handle').remove();
-                    html = core.getOriginHtml($clone);
+                    // var $clone;
+                    core._destroyUiStatus();
 
-                    // cur
-                    console.log(html);
+                    $copy = $curEdit.clone();
+                    
+
+                    core._initUiStatus();
+                    
+                })
+                .on('click', '#menu_paste', function(event){
+                    var html, left, top;
+                    if($copy){
+                        left = parseInt($copy.css('left')) + 1;
+                        top = parseInt($copy.css('top')) + 1;
+                        $copy.css({
+                            left: left + '%',
+                            top: top + '%'
+                        });
+                        html = core.getOriginHtml($copy);
+
+                        $('#page' + pageInfo.index).find('.m_cont').append(html);
+                        core._initUiStatus();
+                    }else{
+                        alert('亲，先复制~');
+                    }
+
                 })
                 .on('click', '#menu_zIndexUp', function(event){
 
@@ -837,6 +874,20 @@
                 .on('click', '.about', function() {
                     $('.about').hide();
                 });
+        },
+
+        _initContextMenu: function(pattern){
+            switch(pattern){
+                case 0: 
+                    $contextMenu.find('li').hide().end().find('#menu_paste').show();
+                    break;
+                case 21:
+                    $contextMenu.find('li').hide().end().find('#menu_remove').show();
+                    break;
+                default:
+                    $contextMenu.find('li').show();
+                    break;
+            }
         },
 
         _zIndexChange: function($obj, direction){
@@ -1022,6 +1073,7 @@
         _setCustomProperty: function($obj, type) {
             var val1,
                 val2,
+                val3,
                 $child = $obj.find('.m_elem');
 
             switch (type) {
@@ -1035,13 +1087,10 @@
 
                         $vertAlign.find('.vert_' + val1).trigger('click');
                         $horiAlign.find('.hori_' + val2).trigger('click');
-                    }
-                    break;
-                case 2:
-                    if ($child.length > 0) {
-                        val1 = $child.css('padding').split('px')[0];
-                        $val_padding.val(val1);
-                        $ui_padding.slider('value', val1);
+
+                        val3 = parseInt($child.css('padding'));
+                        $val_padding.val(val3);
+                        $ui_padding.slider('value', val3);
                     }
                     break;
                 case 5:
@@ -1200,6 +1249,19 @@
                     value = value === 'none' ? 'none' : value.indexOf('(') > -1 ? value.split('(')[1].split(')')[0] : value;
                     $cssBgImage.val(value);
                     break;
+                case 'animation':
+                    //初始化animation 数值
+                    // if(value.indexOf('initial') > -1){
+                    //     value = value.replace('initial', 'running');
+                    // }
+                    console.log(value); 
+                    $curEdit.css('animation', value);
+
+                    if(value.indexOf('normal none') > -1){
+                        $curEdit.css('animation-fill-mode', 'forwards');
+                    }
+
+                    break;
                 case 'animation-name':
                     $htmlAnima.find('.anime_' + value).addClass('active').siblings().removeClass('active');
                     break;
@@ -1251,7 +1313,7 @@
                 $(listInputBlock[arr[i]]).show();
             }
 
-            if (pattern === 0) {
+            if(pattern === 0 || pattern === 3 || pattern === 21){
                 $tabCss.trigger('mouseenter');
                 $tabAnima.hide();
             } else {
@@ -1534,9 +1596,13 @@
             //摧毁pagetrans组件，返回原始DOM
             _page.destroy();
             $('.page-current').removeClass('page-current');
+            pageData = [];
             $target.each(function(idx, obj) {
                 html = core.getOriginHtml($(obj));
-                pageData[idx].html = html;
+                pageData.push({
+                    html : html
+                });
+                // pageData[idx].html = html;
             });
             //save the relative pure string
         },
@@ -1623,7 +1689,7 @@
                         core._renderPage();
                     }
                 })
-                .on('click', '.bk_tab_ui .col-5', function(event) {
+                .on('click', '#tab_uis .col-5', function(event) {
                     var $this = $(this),
                         id = $this.parent().attr('id'),
                         template = null,

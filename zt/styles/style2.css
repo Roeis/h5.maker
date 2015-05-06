@@ -171,11 +171,10 @@ body {
 
 .left_side_block {
   position: fixed;
-  width: 50px;
+  width: 100px;
   background-color: #242F3F;
-  top: 50%;
-  margin-top: -50px;
-  left: 110px;
+  top: 20px;
+  left: 120px;
   z-index: 99;
   color: #FFF;
 }
@@ -183,10 +182,11 @@ body {
   margin-bottom: 0;
 }
 .left_side_block li {
-  height: 50px;
+  width: 50px;
   text-align: center;
   line-height: 50px;
   position: relative;
+  float: left;
 }
 .left_side_block li:hover {
   cursor: pointer;
@@ -195,11 +195,11 @@ body {
 .left_side_block li:after {
   position: absolute;
   content: '';
-  width: 30px;
-  height: 0;
-  border-top: 1px solid #020d1d;
-  left: 10px;
-  bottom: -1px;
+  width: 1px;
+  height: 20px;
+  border-left: 1px solid #020d1d;
+  right: -1px;
+  top: 15px;
 }
 .left_side_block li:last-child:after {
   display: none;
@@ -208,9 +208,9 @@ body {
 .left_side_block2 {
   position: absolute;
   height: 80%;
-  left: 160px;
-  top: 10%;
-  z-index: 98;
+  left: 120px;
+  top: 80px;
+  z-index: 9999;
 }
 .left_side_block2 .bk_tab_container,
 .left_side_block2 .bk_tab_cont {
@@ -231,21 +231,13 @@ body {
 .bk_tab_cont {
   width: 560px;
   position: absolute;
-  left: 10px;
+  left: 0px;
   top: 0;
   background-color: #e1e7ed;
   z-index: 51;
   display: none;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   border-radius: 5px;
-}
-.bk_tab_cont:after {
-  position: absolute;
-  content: '';
-  left: -60px;
-  width: 60px;
-  height: 100%;
-  top: 0;
 }
 
 .bk_tab_head {
@@ -348,6 +340,7 @@ body {
 #btn_previewPage .qrcode {
   position: absolute;
   left: 50px;
+  z-index: 9;
   display: none;
 }
 #btn_previewPage:hover .qrcode {
@@ -754,8 +747,10 @@ input[type=radio], input[type=checkbox] {
   display: none;
   text-align: center;
   background-color: #FFF;
-  z-index: 99;
-  padding: 5px;
+  z-index: 9999;
+  padding: 3px;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+  border-radius: 2px;
 }
 .menu li {
   line-height: 30px;
@@ -1101,7 +1096,7 @@ a.about_a:visited {
   }
 
   .left_side_block {
-    left: 160px;
+    left: 180px;
   }
 
   .footer {

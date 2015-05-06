@@ -10,22 +10,24 @@
         height: 400,
         pause: 4000,
         reverse: true,
+        step: 200,
         afterEdge: null
     };
 
-    var transArr = [],
-        count = 0,
+    var count = 0,
+        delta = setting.step,
         timeout = null,
         $elem = null,
         $parent = null,
-        offsetParent, totalHeight, childHeight,
-        html_control = '<div class="subcontrol cf"><div class="sub_start">start</div><div class="sub_stop">stop</div></div>';
+        maxHeight,
+        html_control = '<div class="subcontrol cf"><div class="sub_up"><i></i></div><div class="sub_down"><i></i></div></div>';
 
     var core = {
         init: function(elem, options){
             var $this = $(elem),
                 $children = $this.children(),
-                childHeight,totalHeight, offsetParent, initialOffset;
+                wrapHeight, elemHeight, offsetParent,
+                initialOffset;
             $elem = $this;
             setting = $.extend(setting, options);
 
@@ -34,25 +36,29 @@
 
             $parent = $this.parent();
 
-            // $(html_control).insertAfter($parent);
+            $(html_control).insertAfter($parent);
+            setting.height -= 40;
 
             offsetParent = $parent.offset().top;
-            totalHeight = offsetParent + setting.height;
-            childHeight = $this.height();
+            wrapHeight = offsetParent + setting.height;
+            elemHeight = $this.height();
+
+            maxHeight = elemHeight - setting.height;
 
             $parent.css({
                 height: setting.height + 'px',
                 overflow: 'hidden'
             });
 
-            core._getTransArr($children, offsetParent, childHeight - totalHeight);
-
-            // console.log(offsetParent, 'child',childHeight, 'total', totalHeight, 'offset',childHeight - totalHeight);
+            // var arr = core._getTransArr($children, offsetParent, maxHeight);
+            // console.log(arr);
+            // console.log(offsetParent, 'child',elemHeight, 'total', wrapHeight, 'offset',elemHeight - wrapHeight);
             if(setting.reverse){
-                initialOffset = '-'+ transArr[transArr.length - 1] +'px';
-                transArr.reverse();
-                transArr.shift();
-                transArr.push(0);
+                // initialOffset = '-'+ arr[arr.length - 1] +'px';
+                // arr.reverse();
+                // arr.shift();
+                // arr.push(0);
+                // initialOffset = '0px';
             }else{
                 initialOffset = '0px';
             }
@@ -64,41 +70,48 @@
                 'transition': 'transform 1s'
             });
 
-            console.log(transArr);
-
-            // core._bindEvent();
-            // core.start();
+            core._bindEvent();
+            core.start();
         },
 
         _bindEvent: function(){
-            $('.sub_stop').on('click', function(){
-                $parent.data('status','pause');
+            $('.sub_down').on('click', function(){
                 core.stop();
+                core.scrollOnce('down');
             });
-            $('.sub_start').on('click', function(){
-                $parent.data('status','play');
-                core.start();
+            $('.sub_up').on('click', function(){
+                // core.start();
+                core.stop();
+                core.scrollOnce('up');
             });
         },
 
         _getTransArr: function(children, offsetParent, offset ){
-            transArr = [];
+            var arr = [];
             for(var i = 0, l = children.length; i < l; i++){
                 var $child = $(children[i]),
                     step = $child.offset().top + $child.height() - offsetParent;
                 if(step >= offset + offsetParent){
                     step = offset + offsetParent;
-                    transArr.push(step);
+                    arr.push(step);
                     break;
                 }
-                transArr.push(step);
+                arr.push(step);
             }
+
+            return arr;
         },
 
         loop: function(){
-            // alert(count);
+            console.log(delta, maxHeight);
             timeout = setTimeout(function(){
-                if(count >= transArr.length) {
+
+                // delta = delta >= maxHeight ? maxHeight : delta;
+
+                // core._move(delta);
+                core.scrollOnce('down');
+
+                if(delta >= maxHeight) {
                     // $elem.css({
                     //     transform: 'translateY(0)'
                     // });
@@ -106,33 +119,47 @@
                     setting.afterEdge.call(this, count);
                     return;
                 }
-                $elem.css({
-                    '-webkit-transform': 'translateY(-'+ transArr[count] +'px)',
-                    'transform': 'translateY(-'+ transArr[count] +'px)'
-                });
-                count++;
+
+                // delta += setting.step;
+
                 core.loop();
+
             }, setting.pause);
         },
 
-        destory: function(){
-            $elem.unwrap().unwrap();
+        _move: function(delta){
+            $elem.css({
+                '-webkit-transform': 'translateY(-'+ delta +'px)',
+                'transform': 'translateY(-'+ delta +'px)'
+            });
+
         },
 
-        refresh: function(){
-            core._getTransArr($elem.children(), offsetParent, childHeight - totalHeight);
+        scrollOnce: function(type){
+            // clearTimeout(timeout);
+            if(type === 'up'){
+                delta -= setting.step;
+                delta = delta < 0 ? 0: delta;
+            }else{
+                delta += setting.step;
+                delta = delta > maxHeight ? maxHeight : delta;
+            }
+            // console.log(delta);
+            core._move(delta);
+        },
+
+        destory: function(){
+            // $elem.unwrap().unwrap();
         },
 
         start: function(){
+            $parent.data('status','play');
             core.loop();
         },
 
         stop: function(){
+            $parent.data('status','pause');
             clearTimeout(timeout);
-        },
-
-        jump: function(){
-
         }
 
     };

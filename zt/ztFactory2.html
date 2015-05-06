@@ -52,7 +52,10 @@
                     <span class="glyphicon glyphicon-pencil"></span> 编辑
                 </li>
                 <li id="menu_copy">
-                    <span class="glyphicon glyphicon-duplicate"></span> 复制
+                    <span class="glyphicon glyphicon-copy"></span> 复制
+                </li>
+                <li id="menu_paste">
+                    <span class="glyphicon glyphicon-paste"></span> 粘贴
                 </li>
                 <li id="menu_zIndexUp">
                     <span class="glyphicon glyphicon-chevron-up"></span> 上移一层
@@ -76,45 +79,6 @@
                 </li>
             </ul>
         </div> -->
-        <div class="left_side_block">
-            <!-- 左侧菜单 -->
-            <div class="bk_cont" id="toolNav">
-                <ul class="list-unstyled cf">
-                    <li><span class="glyphicon glyphicon-equalizer"></span></li>
-                    <!-- <li><span class="glyphicon glyphicon-picture"></span> -->
-                    <li><span class="glyphicon glyphicon-option-horizontal"></span></li>
-                </ul>
-            </div>
-        </div>
-        <div class="left_side_block2" id="panel_template">
-            <div class="bk_tab_cont">
-                <div class="bk_tab_head cf">
-                    <div class="bk_tab_li active">模板</div>
-                    <!-- <div class="bk_tab_li">内容页</div> -->
-                </div>
-                <div class="bk_cont">
-                    <div class="col5_template cf" id="page_templates"></div>
-                </div>
-            </div>
-            <div class="bk_tab_cont bk_tab_ui">
-                <div class="bk_tab_head cf">
-                    <div class="bk_tab_li active">元素</div>
-                    <div class="bk_tab_li">接口</div>
-                    <div class="bk_tab_li">LOGO</div>
-                </div>
-                <div class="bk_tab_container">
-                    <div class="bk_cont" style="display:block;">
-                        <div class="col5_template other_tmpls cf" id="other_templates"></div>
-                    </div>
-                    <div class="bk_cont">
-                        <div class="col5_template api_tmpls cf" id="api_templates"></div>
-                    </div>
-                    <div class="bk_cont">
-                        <div class="col5_template other_tmpls cf" id="logo_templates"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
         <div class="footer">
             Chrome Only<br>
             <a href="javascript:;" class="about_a">about us</a>
@@ -183,6 +147,46 @@
                         <img src="http://i2.w.hjfile.cn/news/201504/201504082493290934.jpg" alt="">
                     </div>
                     <p class="tit">厂妹: 海狸</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="left_side_block">
+        <!-- 左侧菜单 -->
+        <div class="bk_cont" id="toolNav">
+            <ul class="list-unstyled cf">
+                <li><span class="glyphicon glyphicon-equalizer"></span></li>
+                <!-- <li><span class="glyphicon glyphicon-picture"></span> -->
+                <li><span class="glyphicon glyphicon-option-horizontal"></span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="left_side_block2" id="panel_template">
+        <div class="bk_tab_cont">
+            <div class="bk_tab_head cf">
+                <div class="bk_tab_li active">模板</div>
+                <!-- <div class="bk_tab_li">内容页</div> -->
+            </div>
+            <div class="bk_cont">
+                <div class="col5_template cf" id="page_templates"></div>
+            </div>
+        </div>
+        <div class="bk_tab_cont bk_tab_ui" id="tab_uis">
+            <div class="bk_tab_head cf">
+                <div class="bk_tab_li active">元素</div>
+                <div class="bk_tab_li">接口</div>
+                <div class="bk_tab_li">LOGO</div>
+            </div>
+            <div class="bk_tab_container">
+                <div class="bk_cont" style="display:block;">
+                    <div class="col5_template other_tmpls cf" id="other_templates"></div>
+                </div>
+                <div class="bk_cont">
+                    <div class="col5_template api_tmpls cf" id="api_templates"></div>
+                </div>
+                <div class="bk_cont">
+                    <div class="col5_template other_tmpls cf" id="logo_templates"></div>
                 </div>
             </div>
         </div>
@@ -695,7 +699,7 @@
 
     <div class="bg_layer" id="bglayer" style="display: none;"></div>
     <!-- pc -->
-    <script src="/zt/vender/jquery/jquery-2.1.3.min.js"></script>
+    <script src="/zt/vender/jquery/jquery-1.8.3.min.js"></script>
     <script src="/zt/vender/jquery-ui/jquery-ui.min.js"></script>
     <script src="/zt/vender/underscore/underscore-min.js"></script>
     <script src="/zt/vender/jquery-minicolors/jquery.minicolors.js"></script>

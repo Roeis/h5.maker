@@ -1498,3 +1498,131 @@ body {
     opacity: 0;
   }
 }
+.animated.fadeOut {
+  -webkit-animation-name: fadeOut;
+  animation-name: fadeOut;
+}
+
+@-webkit-keyframes lengthLeft {
+  0% {
+    -webkit-transform: scale(0, 1);
+    opacity: 0;
+    -webkit-transform-origin: left top;
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+    -webkit-transform-origin: left top;
+  }
+}
+@keyframes lengthLeft {
+  0% {
+    transform: scale(0, 1);
+    opacity: 0;
+    transform-origin: left top;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+    transform-origin: left top;
+  }
+}
+.animated.lengthLeft {
+  -webkit-animation-name: lengthLeft;
+  animation-name: lengthLeft;
+}
+
+@-webkit-keyframes lengthRight {
+  0% {
+    -webkit-transform: scale(0, 1);
+    opacity: 0;
+    -webkit-transform-origin: right top;
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+    -webkit-transform-origin: right top;
+  }
+}
+@keyframes lengthRight {
+  0% {
+    transform: scale(0, 1);
+    opacity: 0;
+    transform-origin: right top;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+    transform-origin: right top;
+  }
+}
+.animated.lengthRight {
+  -webkit-animation-name: lengthRight;
+  animation-name: lengthRight;
+}
+
+@-webkit-keyframes lengthUp {
+  0% {
+    -webkit-transform: scale(1, 0);
+    opacity: 0;
+    -webkit-transform-origin: left top;
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+    -webkit-transform-origin: left top;
+  }
+}
+@keyframes lengthUp {
+  0% {
+    transform: scale(1, 0);
+    opacity: 0;
+    transform-origin: left top;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+    transform-origin: left top;
+  }
+}
+.animated.lengthUp {
+  -webkit-animation-name: lengthUp;
+  animation-name: lengthUp;
+}
+
+@-webkit-keyframes lengthDown {
+  0% {
+    -webkit-transform: scale(1, 0);
+    opacity: 0;
+    -webkit-transform-origin: left bottom;
+  }
+
+  100% {
+    -webkit-transform: scale(1, 1);
+    opacity: 1;
+    -webkit-transform-origin: left bottom;
+  }
+}
+@keyframes lengthDown {
+  0% {
+    transform: scale(1, 0);
+    opacity: 0;
+    transform-origin: left bottom;
+  }
+
+  100% {
+    transform: scale(1, 1);
+    opacity: 1;
+    transform-origin: left bottom;
+  }
+}
+.animated.lengthDown {
+  -webkit-animation-name: lengthDown;
+  animation-name: lengthDown;
+}

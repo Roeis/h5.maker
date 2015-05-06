@@ -162,4 +162,37 @@ var data_template = [
         'isNew': false
     },
 
+    {
+        'id': 7,
+        'name': '手动图表',
+        'author': 'roeis',
+        'html': '<div class="page" data-type="0" style="color: rgb(51, 51, 51); background-color: rgb(255, 255, 255);">'+
+                    '<div class="m_cont" style="display: block;">'+
+                        '<div class="item_edit item_drag" data-type="2" style="position: absolute; left: 9%; top: 53%; width: 8%; height: 40%; z-index: auto; opacity: 0; -webkit-animation-name: lengthDown; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; background-image: none; background-color: rgb(253, 113, 55); background-size: 100%; background-repeat: no-repeat;">'+
+                            '<div class="m_elem"></div>'+
+                        '</div>'+
+                        '<div class="item_edit item_drag" data-type="2" style="position: absolute; left: 26%; top: 67%; width: 8%; height: 26%; z-index: auto; opacity: 0; -webkit-animation-name: lengthDown; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; -webkit-animation-delay: 0.2s; background-image: none; background-color: rgb(160, 115, 253); background-size: 100%; background-repeat: no-repeat;">'+
+                            '<div class="m_elem"></div>'+
+                        '</div>'+
+                        '<div class="item_edit item_drag" data-type="2" style="position: absolute; left: 43%; top: 59%; width: 9%; height: 34%; z-index: auto; opacity: 0; -webkit-animation-name: lengthDown; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; -webkit-animation-delay: 0.3s; background-image: none; background-color: rgb(133, 205, 76); background-size: 100%; background-repeat: no-repeat;">'+
+                            '<div class="m_elem"></div>'+
+                        '</div>'+
+                        '<div class="item_edit item_drag" data-type="2" style="position: absolute; left: 62%; top: 41%; width: 8%; height: 52%; z-index: auto; opacity: 0; -webkit-animation-name: lengthDown; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; -webkit-animation-delay: 0.4s; background-image: none; background-color: rgb(99, 146, 255); background-size: 100%; background-repeat: no-repeat;">'+
+                            '<div class="m_elem"></div>'+
+                        '</div>'+
+                        '<div class="item_edit item_drag" data-type="2" style="position: absolute; left: 80%; top: 24%; width: 9%; height: 69%; z-index: auto; opacity: 0; -webkit-animation-name: lengthDown; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; -webkit-animation-delay: 0.5s; background-image: none; background-color: rgb(254, 210, 100); background-size: 100%; background-repeat: no-repeat;">'+
+                            '<div class="m_elem"></div>'+
+                        '</div>'+
+                        '<div class="item_edit item_drag item_text" data-type="1" style="position: absolute; left: 9%; top: 14%; width: 42%; height: 10%; z-index: auto; opacity: 0; -webkit-animation-name: fadeIn; -webkit-animation-fill-mode: forwards; -webkit-animation-duration: 1s; -webkit-animation-delay: 0.6s; background-color: rgba(0, 0, 0, 0);">'+
+                            '<div class="m_elem" style="padding: 0px; vertical-align: middle; text-align: left;">'+
+                                '<p><span style="font-size: 28px;">侧四测试</span>'+
+                                '</p>'+
+                            '</div>'+
+                        '</div>'+
+                    '</div>'+
+                '</div>',
+        'imgSrc': 'http://i2.w.hjfile.cn/news/201503/201503265120411816.jpg',
+        'isNew': false
+    },
+
 ];
