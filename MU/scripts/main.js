@@ -1,34 +1,33 @@
-// require(['vender/jquery/jquery-2.1.3.min.js'], function($){
-//     console.log($);
-// });
-// 
+/**
+ * name:
+ * author: roeis
+ * description:
+ */
+(function() {
+    'use strict';
 
-require.config({
-    baseUrl: '.',
-    paths: {
-        // the left side is the module ID,
-        // the right side is the path to
-        // the jQuery file, relative to baseUrl.
-        // Also, the path should NOT include
-        // the '.js' file extension. This example
-        // is using jQuery 1.9.0 located at
-        // js/lib/jquery-1.9.0.js, relative to
-        // the HTML page.
-        jquery: 'vender/jquery/jquery-1.9.1.min'
-    }
-});
+    require.config({
+        baseUrl: 'scripts',
+        paths: {
+            jquery: 'lib/jquery-1.9.1.min',
+            underscore: 'lib/underscore-min',
+            app: './app',
+            request: 'helper/mu/mu-cache'
+        },
+        shim: {
+            'helper/jquery.helpers': ['jquery'],
+            // 'helper/mu/mu': ['jquery']
+        }
+    });
 
-require(['jquery'], function( $ ) {
-    // console.log( $ ) // OK
-    var $body = $('body');
-    console.log($body);
-});
+    require(['app/app', 'app/data'],
+        function(app, data) {
+            // console.log(app, data);
+            // for (var key in data) {
+            //     console.log(key, data[key]);
+            // }
+            app.init();
+        });
 
-require(['vender/app/select2'], function(ss){
 
-    ss.test2('body');
-});
-
-require(['vender/app/moduletest'], function(module){
-    
-});
+})();

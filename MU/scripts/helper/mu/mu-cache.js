@@ -144,4 +144,10 @@
         clear: _core.clearLocal
     };
 
+    if(typeof define === 'function' && define.amd){
+        define([], function(){
+            return mu.cache;
+        });
+    }
+
 })(this);
