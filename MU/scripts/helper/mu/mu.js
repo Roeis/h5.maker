@@ -9,7 +9,7 @@
      * @namespace
      * @global
      */
-    var h = global.mu = global.mu || {};
+    var mu = global.mu = global.mu || {};
 
     (function($) {
         if (!$) return;
@@ -17,31 +17,31 @@
          * 当前版本号
          * @memberof mu
          */
-        h.version = '0.10';
-        h.$doc = $(document);
-        h.$win = $(window);
-        h.hasTouch = 'ontouchstart' in window;
+        mu.version = '0.10';
+        mu.$doc = $(document);
+        mu.$win = $(window);
+        mu.hasTouch = 'ontouchstart' in window;
         /**
          * 当前navigator.userAgent
          * @memberof mu
          * @return {Boolean}
          */
-        h.UA = window.navigator.userAgent.toLowerCase();
+        mu.UA = window.navigator.userAgent.toLowerCase();
         /**
          * isWeixin 返回当前是否在微信中打开
          * @memberof mu
          * @return {Boolean}
          */
-        h.isWeixin = function() {
-            return h.UA.indexOf('micromessenger') > -1 ? true : false;
+        mu.isWeixin = function() {
+            return mu.UA.indexOf('micromessenger') > -1 ? true : false;
         }();
 
-    })(window.Zepto);
+    })(window.Zepto || window.jQuery);
     /**
      * 组件类
      * @memberof mu
      * @namespace
      */
-    h.widget = {};
+    mu.widget = {};
 
 })(this);

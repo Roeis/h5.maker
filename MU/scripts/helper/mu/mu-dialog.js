@@ -1,20 +1,16 @@
 (function(global) {
     "use strict";
-    /** 
-     * @namespace
-     * @global
-     */
-    var mu = global.mu || {},
-        $ = global.Zepto || global.jQuery,
+    
+    var $ = global.Zepto || global.jQuery,
         util = mu.util;
 
     var HTML_POP = '<div class="hipop" id="hipop"><div class="hipop-cont" id="hicont"></div></div>',
-        HTML_POP_BG = '<div class="hipop-bg" id="popbg"></div>',
-        HTML_CONFIRM = '<div class="hifunction cf"><a href="javascript:;" id="hi-confirm">确认</a><a href="javascript:;" id="hi-cancel">取消</a></div>';
+        HTML_POP_BG = '<div class="hipop-bg" id="popbg"></div>';
 
     var $body = $('body'),
         WIN_H = document.documentElement.clientHeight || window.innerHeight,
-        isAnimating = false,
+        isContAnimating = false,
+        isBgAnimating = false,
         isOpen = false,
         animationEnd = util.animationEnd().animationend,
         $bg, $pop, $cont;
@@ -24,8 +20,6 @@
         afterOpen: null,
         beforeClose: null,
         afterClose: null,
-        afterConfirm: null,
-        afterCancel: null,
         offset: 0,
         isMiddle: true,
         isShowbg: true,
@@ -40,7 +34,7 @@
      * @global
      * @ignore
      */
-    var _core = {
+    var core = {
 
         /**
          * 自定义弹窗方法，支持id, class, 自定义html
@@ -63,35 +57,9 @@
             }
 
             $cont.addClass('hi-common').html(html);
-            _core._showPop(option);
-            $bg.on('click.offbg', _core._bindBgEvent);
-        },
-        /**
-         * 确认框，接收字符串
-         * @param  {string} str  string;
-         * @param  {object} opts  your options
-         * @example mu.widget.dialog.confirm('are u sure',{afterConfirm: invokeName});
-         * @public
-         */
-        confirm: function(str, opts) {
-            if(isOpen) return;
-            isOpen = true;
-            var option = $.extend({}, options, opts || {}),
-                html = '<div class="hitext">' + str + '</div>';
-                
-            $cont.addClass('hi-confirm').html(html);
-            $cont.append(HTML_CONFIRM);
-            _core._showPop(option);
-            $bg.on('click.offbg', _core._bindBgEvent);
-
-            $('#hi-confirm').on('click.confirm', function(){
-                option.afterConfirm && option.afterConfirm();
-                _core.close(option);
-            });
-
-            $('#hi-cancel').on('click.cancel', function(){
-                option.afterCancel && option.afterCancel();
-                _core.close(option);
+            core._showPop(option);
+            $bg.on('click.offbg', function(event){
+                core._bindBgEvent(event, option);
             });
         },
         /**
@@ -108,8 +76,10 @@
                 html = '<div class="hitext">' + str + '</div>';
 
             $cont.addClass('hi-alert').html(html);
-            _core._showPop(option);
-            $bg.on('click.offbg', _core._bindBgEvent);
+            core._showPop(option);
+            $bg.on('click.offbg', function(event){
+                core._bindBgEvent(event, option);
+            });
         },
         /**
          * 提示框, 自动消失
@@ -125,11 +95,13 @@
                 html = '<div class="hitext">' + str + '</div>';
 
             $cont.addClass('hi-tip').html(html);
-            _core._showPop(option);
-            $bg.off('click.offbg', _core._bindBgEvent);
+            core._showPop(option);
+            $bg.off('click.offbg', function(event){
+                core._bindBgEvent(event, option);
+            });
 
             setTimeout(function() {
-                _core.close(opts);
+                core.close(opts);
             }, 1500);
         },
         /**
@@ -141,7 +113,7 @@
         close: function(opts) {
             var option = $.extend({}, options, opts || {});
             option.beforeClose && option.beforeClose();
-            _core._hidePop(option);
+            core._hidePop(option);
         },
         _init: function() {
             $body.append(HTML_POP_BG).append(HTML_POP);
@@ -149,11 +121,10 @@
             $pop = $('#hipop');
             $cont = $('#hicont');
         },
-        _bindBgEvent:function(event){
+        _bindBgEvent:function(event, opts){
             //prevent the spread of click
-            if(!isAnimating){
-                _core.close();
-            }
+            if(isBgAnimating || isContAnimating) return;
+            core.close(opts);
             event.stopPropagation();
         },
         _setPosition: function(opts) {
@@ -168,10 +139,11 @@
             $pop.css('top', offset);
         },
         _showPop: function(opts) {
-            if(isAnimating) return;
-            isAnimating = true;
-            util.preventScroll();
-            _core._setPosition(opts);
+            if(isBgAnimating || isContAnimating) return;
+            isBgAnimating = isContAnimating = true;
+
+            // util.preventScroll();
+            core._setPosition(opts);
             var style = $body.attr('style') ? '' : $body.attr('style');
             $body.css({'height': document.body.scrollHeight, 'position': 'relative'}).attr('data-style',style);
 
@@ -179,19 +151,27 @@
 
             opts.isShowbg ? $bg.removeClass('hitransparent') : $bg.addClass('hitransparent');
 
-            _core._show($bg, opts.bgShowClass);
-            _core._show($pop, opts.showClass, opts.afterOpen);
+            core._show($bg, opts.bgShowClass, function(){
+                isBgAnimating = false;
+            });
+            core._show($pop, opts.showClass, function(){
+                isContAnimating = false;
+                opts.afterOpen && opts.afterOpen();
+            });
         },
         _hidePop: function(opts) {
             isOpen = false;
-            util.recoverScroll();
-            _core._hide($bg, opts.bgHideClass, function(){
+            //使用recoverScroll()后，事件swipeUp, swipeDown将失效
+            // util.recoverScroll();
+            core._hide($bg, opts.bgHideClass, function(){
                 $body.attr('style', $body.attr('data-style'));
+                isBgAnimating = false;
             });
             // callback after hide the pop cont
-            _core._hide($pop, opts.hideClass,function(){
+            core._hide($pop, opts.hideClass,function(){
                 $cont.attr('class', 'hipop-cont');
                 $pop.attr({'class':'hipop','style':''});
+                isContAnimating = false;
                 opts.afterClose && opts.afterClose();
             });
             $cont.html('');
@@ -200,20 +180,18 @@
             $obj.addClass(cls).on(animationEnd, function() {
                 $obj.addClass('hivisible').removeClass(cls).off(animationEnd);
                 invoke && invoke();
-                isAnimating = false;
             });
         },
         _hide: function($obj, cls, invoke) {
             $obj.addClass(cls).on(animationEnd, function() {
                 $obj.removeClass(cls + ' hivisible').off(animationEnd);
                 invoke && invoke();
-                isAnimating = false;
             });
         }
 
     };
 
-    _core._init();
+    core._init();
     /**
      * Copyright (c) 2014 All rights reserved.
      * @version: 0.5.1
@@ -221,18 +199,17 @@
      * @description: dialog for mobile
      * @memberof mu.widget
      * @namespace
-     * @borrows _core.pop as pop
-     * @borrows _core.confirm as confirm
-     * @borrows _core.alert as alert
-     * @borrows _core.tip as tip
-     * @borrows _core.close as close
+     * @borrows core.pop as pop
+     * @borrows core.confirm as confirm
+     * @borrows core.alert as alert
+     * @borrows core.tip as tip
+     * @borrows core.close as close
      */
     mu.widget.dialog = {
-        pop: _core.pop,
-        confirm: _core.confirm,
-        alert: _core.alert,
-        tip: _core.tip,
-        close: _core.close
+        pop: core.pop,
+        alert: core.alert,
+        tip: core.tip,
+        close: core.close
     };
 
 })(this);

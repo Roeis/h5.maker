@@ -70,7 +70,7 @@ html {
 body {
   -webkit-text-size-adjust: none;
   font-family: "Microsoft Yahei", "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
-  font-size: 1.4em;
+  font-size: 1.4rem;
   background-color: #FFF;
   overflow-x: hidden;
 }
@@ -87,9 +87,9 @@ a {
   color: #333;
 }
 
-/*::-webkit-scrollbar {
+::-webkit-scrollbar {
   width: 0px;
-}*/
+}
 
 .container:before, .row:before, .panel:before, .cf:before {
   content: "";
@@ -453,7 +453,7 @@ a {
 }
 
 .subtitle_cont {
-  margin: 0 10px 10px;
+  margin: 0 10px;
   position: relative;
   border-bottom: 1px solid #DDD;
 }
@@ -473,7 +473,7 @@ a {
 
 .subcontrol {
   background-color: #DDD;
-  margin: 0 10px;
+  margin: 0 10px 10px;
 }
 .subcontrol > div {
   width: 50%;
@@ -731,4 +731,41 @@ a {
     -webkit-transform: translateY(100%);
     transform: translateY(100%);
   }
+}
+@media screen and (min-width: 360px) and (max-width: 960px) {
+  html {
+    font-size: 12px;
+  }
+
+  p {
+    margin-bottom: 1rem;
+    line-height: 1.8rem;
+    color: #333;
+  }
+}
+.clamp {
+  margin: 1rem;
+  display: -webkit-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+}
+
+
+
+.testAD{
+  height: 300px;
+  overflow: hidden;
+}
+
+.testli{
+  width: 240px;
+  height: 300px;
+  overflow: hidden;
+  float: left;
+  padding: 0 15px;
+}
+.testli img{
+  width: 100%;
 }
