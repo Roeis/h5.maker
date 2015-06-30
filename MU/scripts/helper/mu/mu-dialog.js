@@ -5,13 +5,12 @@
         util = mu.util;
 
     var HTML_POP = '<div class="hipop" id="hipop"><div class="hipop-cont" id="hicont"></div></div>',
-        HTML_POP_BG = '<div class="hipop-bg" id="popbg"></div>';
-
-    var $body = $('body'),
+        HTML_POP_BG = '<div class="hipop-bg" id="popbg"></div>',
         WIN_H = document.documentElement.clientHeight || window.innerHeight,
         isContAnimating = false,
         isBgAnimating = false,
         isOpen = false,
+        $body = $('body'),
         animationEnd = util.animationEnd().animationend,
         $bg, $pop, $cont;
 
