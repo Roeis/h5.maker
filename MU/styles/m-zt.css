@@ -151,7 +151,9 @@ a {
   overflow-y: scroll;
   -webkit-overflow-scrolling: touch;
 }
-
+.overhidden{
+  overflow: hidden;
+}
 .m_btn {
   display: block;
   background-color: #eee;
@@ -750,8 +752,8 @@ a {
 .testBlock {
   position: absolute;
   z-index: 4;
-  width: 300px;
-  height: 300px;
+  width: 200px;
+  height: 100px;
   right: 20px;
   bottom: 20px;
   background-color: #F40;
@@ -773,10 +775,7 @@ a {
   padding: 15px;
 }
 
-.st_body {
-  height: 80%;
-  width: 100%;
-}
+
 
 .st_head {
   position: relative;
@@ -976,4 +975,48 @@ a {
   visibility: visible;
   -webkit-animation: hizoomOut .5s ease;
   animation: hizoomOut .5s ease;
+}
+.st_body {
+  height: 80%;
+  width: 100%;
+  z-index: 10;
+  -webkit-transform-origin: 50% 50%;
+  transform-origin: 50% 50%;
+  -webkit-transform: translateZ(0) translateX(0) rotateY(0deg);
+  transform: translateZ(0) translateX(0) rotateY(0deg);
+}
+
+.wrapper2{
+  position: relative;
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
+}
+.page2{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  top: 0;
+  z-index: 2;
+}
+
+.pop{
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 9;
+  width: 100%;
+  height: 200px;
+  display: none;
+}
+.popbg{
+  display: none;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 8;
+  background-color: rgba(0,0,0,.5);
 }

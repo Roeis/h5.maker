@@ -157,6 +157,8 @@
                 isContAnimating = false;
                 opts.afterOpen && opts.afterOpen();
             });
+
+            opts.beforeOpen && opts.beforeOpen();
         },
         _hidePop: function(opts) {
             isOpen = false;

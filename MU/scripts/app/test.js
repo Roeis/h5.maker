@@ -30,9 +30,9 @@
             loop: false,
         };
 
-    page.init(option);
+    // page.init(option);
 
-    mu.util.preventScroll();
+    // mu.util.preventScroll();
 
     $('.wrapper')
         .on('swipeUp', function(){
@@ -54,6 +54,46 @@
             mu.util.preventScroll();
         });
     });
+    var isWenxinios = /iphone/.test(mu.UA) && /micromessenger/.test(mu.UA);
+    // alert(mu.UA);
+    // 
+    var $stbody = $('.st_body');
+    $('#dialog').on('click', function(){
+
+        // $('.pop').show();
+        // $('.popbg').show();
+        // $('#txtComment').focus();
+
+
+        if(!isWenxinios){
+            $('.st_body').addClass('overhidden').removeClass('overscroll');
+        }
+
+        setTimeout(function(){
+            mu.widget.dialog.pop(html_pop,{
+                isMiddle: false,
+                beforeOpen: function(){
+                    mu.util.preventScroll();
+                    // $('#txtComment').blur().focus();
+                },
+                afterOpen: function(){
+                    // alert('1')
+                    // $(window).scrollTop(0);
+                },
+                afterClose: function(){
+                    if(!isWenxinios){
+                        $stbody.addClass('overscroll').removeClass('overhidden');
+                    }
+                    mu.util.recoverScroll();
+                }
+            });
+        },300);
+
+    });
+    // $('.popbg').on('click', function(){
+    //     $('.pop').hide();
+    //     $('.popbg').hide();
+    // });
 
     // $('[data-bi]').on('click', function(event){
     //     var $this = $(this),
@@ -114,7 +154,7 @@
                     '<div class="hi_reply_cancel" >取消</div>' +
                     '</div>' +
                     '<div class="hi_reply_cont">' +
-                    '<textarea id="txtComment" placeholder="我也来说两句..." maxLength="400"></textarea>' +
+                    '<textarea id="txtComment" placeholder="我也来说两句..." maxLength="400" autofocus></textarea>' +
                     '</div>' +
                     '<div class="hi_reply_tip"></div>' +
                     '<div class="hi_reply_login" onclick="plug_st.doLogin();">以沪江用户登录</div>' +
