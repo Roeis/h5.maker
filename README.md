@@ -5,17 +5,18 @@
 ------------------------
 
 
-##### info
+##### 计划
 
-    H5专题工厂（公司内部使用）2015/3/31 -
-    
-    V2.0 TODO: 
+    V2.0 TODO:
         add cancel mechanism
         add rotate
         add new mobile ui compoent MU
         add template mechanism
         add api standard
 
+##### 日志
+    2015/09/13      再启动
+    2015/3/31-      上线(公司内部使用)
 
 ##### about
 
