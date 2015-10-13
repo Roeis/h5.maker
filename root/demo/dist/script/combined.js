@@ -1,0 +1,1 @@
+!function(){"use strict";console.log("app ok")}(),function(){"use strict";console.log("rest 2")}(),function(){"use strict";console.log("log demo3")}();

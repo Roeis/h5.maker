@@ -1,0 +1,12 @@
+@charset "utf-8";
+@import "mix/_mix.scss";
+
+p{
+    color: #666;
+}
+.example {
+    display: flex;
+    transition: all .5s;
+    user-select: none;
+    border-radius: 5px;
+}

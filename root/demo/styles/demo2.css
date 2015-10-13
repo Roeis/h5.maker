@@ -1,0 +1,15 @@
+p {
+  color: #666;
+}
+
+.example {
+  display: -webkit-box;
+  display: flex;
+  -webkit-transition: all .5s;
+          transition: all .5s;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+  border-radius: 5px;
+}
