@@ -1,13 +1,11 @@
 var path = require('path');
 var webpack = require('webpack');
 
-var base = './root';
-
 module.exports = {
     devtool: 'eval',
     entry: [
         'webpack-hot-middleware/client',
-        base + '/editor/main'
+        './root/editor/main'
     ],
     output: {
         path: path.join(__dirname, 'dist'),
@@ -23,7 +21,8 @@ module.exports = {
             {
                 test: /\.js$/,
                 exclude: /node_modules/, 
-                loader: 'babel'
+                loader: 'babel',
+                include: path.join(__dirname, './root/editor')
             },
             {
                 test: /\.scss$/,

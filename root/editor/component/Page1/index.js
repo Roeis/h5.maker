@@ -1,6 +1,7 @@
 'use strict';
 import React from 'react';
-import ReactDom from 'react-dom';
+
+// require('./style.scss');
 
 class Page extends React.Component {
     constructor(){
@@ -8,18 +9,18 @@ class Page extends React.Component {
     }
     render(){
         return(
-            <div>
-                oops , not found.
+            <div className="list">
+                this is page1 <br/>
+                and it use react transform
             </div>
         );
     }
 }
-export class NotFound extends React.Component {
+
+export class Page1 extends React.Component {
     render(){
         return (
-            <div>
-                <Page />
-            </div>
+            <Page />
         );
     }
 }

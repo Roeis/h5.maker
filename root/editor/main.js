@@ -6,11 +6,17 @@ import ReactDom from 'react-dom';
 import { Router, Route, Link } from 'react-router';
 import { createHistory, useBasename } from 'history';
 
-// import { NotFound } from './component/NotFound';
+import { NotFound } from './component/NotFound';
+import { Header } from './component/Header';
+import { Page1 } from './component/Page1';
+import { Page2 } from './component/Page2';
 
 const history = useBasename(createHistory)({
     basename: ''
 })
+
+require('./style/base.scss');
+require('./style/style.scss');
 
 class App extends React.Component {
     constructor(){
@@ -19,9 +25,8 @@ class App extends React.Component {
     render(){
         return(
             <div>
-                app
+                <Header />
                 <div className="wrapper">
-                    tsts
                     {this.props.children}
                 </div>
             </div>
@@ -30,8 +35,13 @@ class App extends React.Component {
 }
 
 const routes = {
-  path: '/',
-  component: App,
+    path: '/',
+    component: App,
+    childRoutes: [
+        {path: 'page1', component: Page1},
+        {path: 'page2', component: Page2},
+        {path: '*', component: NotFound}
+    ]
 }
 
 ReactDom.render(

@@ -1,3 +1,4 @@
+'use strict';
 var path = require('path');
 
 var express = require('express');
@@ -34,7 +35,7 @@ app.get('*', function(req, res) {
     res.sendFile(path.join(__dirname, '/root/editor/index.html'));
 });
 
-app.listen(port, function(err) {
+app.listen(port, ip, function(err) {
     if (err) {
         console.log(err);
         return;
