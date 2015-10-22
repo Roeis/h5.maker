@@ -10,6 +10,7 @@ import { NotFound } from './component/NotFound';
 import { Header } from './component/Header';
 import { Page1 } from './component/Page1';
 import { Page2 } from './component/Page2';
+import { Kanban } from './kanban';
 
 const history = useBasename(createHistory)({
     basename: ''
@@ -40,6 +41,7 @@ const routes = {
     childRoutes: [
         {path: 'page1', component: Page1},
         {path: 'page2', component: Page2},
+        {path: 'kanban', component: Kanban},
         {path: '*', component: NotFound}
     ]
 }
