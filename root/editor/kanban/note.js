@@ -13,18 +13,32 @@ export class Note extends React.Component {
         this.finishEdit = this.finishEdit.bind(this);
         this.renderEdit = this.renderEdit.bind(this);
         this.renderNote = this.renderNote.bind(this);
+        this.renderRemove = this.renderRemove.bind(this);
     }
     renderEdit(){
         return (
             <input type="text" 
                 onBlur={this.finishEdit}
+                autoFocus="true"
                 defaultValue={this.props.text}
                 onKeyPress={this.checkEnter} />
         )
     }
-    renderNote(){
+    renderRemove(){
         return (
-            <div onClick={this.edit}>{this.props.text}</div>
+            <button onClick={this.props.onRemove}>remove</button>
+        )
+    }
+    renderNote(){
+        const onRemove = this.props.onRemove;
+
+        return (
+            <div onClick={this.edit}>
+                {this.props.text}
+                {
+                    onRemove ? this.renderRemove() : null
+                }
+            </div>
         )
     }
     render(){

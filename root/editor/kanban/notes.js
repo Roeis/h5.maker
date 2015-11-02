@@ -10,7 +10,9 @@ export class Notes extends React.Component {
     renderNote(note, index){
         return (
             <li key={index}>
-                <Note text={note.text} onEdit={this.props.onEdit.bind(null, note.id)}/>
+                <Note text={note.text} 
+                    onRemove = {this.props.onRemove.bind(null, note.id)}
+                    onEdit={this.props.onEdit.bind(null, note.id)} />
             </li>
         )
     }
