@@ -1,0 +1,81 @@
+'use strict';
+import _ from 'lodash';
+import back from './back.js';
+import key from '../biz/key.js';
+import render from '../page/render';
+import pageData from '../model';
+
+var core = {
+    
+    init: function() {
+        document.onkeydown = this.keyboardEvent;
+    },
+
+    keyboardEvent: function(event) {
+        var e = event || window.event;
+        
+        // 复制
+        if(e.ctrlKey && e.keyCode === key.C){
+            console.log('copy');
+        }
+
+        // 粘贴
+        if(e.ctrlKey && e.keyCode === key.V){
+            console.log('paste');
+        }
+
+        // 剪贴
+        if(e.ctrlKey && e.keyCode === key.X){
+            console.log('cut');
+        }
+
+        // 保存
+        if(e.ctrlKey && e.keyCode === key.S){
+            console.log('save');
+        }
+
+        //自由变换
+        if(e.ctrlKey && e.keyCode === key.T){
+            console.log('transform');
+        }
+
+        //选取所有
+        if(e.ctrlKey && e.keyCode === key.A){
+            console.log('select all');
+        }
+
+        //撤销
+        if(e.ctrlKey && e.keyCode === key.Z){
+            console.log('undo');
+            back.undo(function(data){
+
+                pageData.list[0] = _.cloneDeep(data);
+                render.renderPage();
+            });
+        }
+
+        //重做
+        if(e.ctrlKey && e.keyCode === key.Y){
+            console.log('redo');
+            back.redo(function(data){
+                pageData.list[0] = _.cloneDeep(data);
+                render.renderPage();
+            });
+        }
+
+        if(e.keyCode === key.Up){
+            console.log('up arrow');
+        }
+        if(e.keyCode === key.Right){
+            console.log('right arrow');
+        }
+        if(e.keyCode === key.Down){
+            console.log('down arrow');
+        }
+        if(e.keyCode === key.Left){
+            console.log('left arrow');
+        }
+    }
+};
+
+module.exports = core;

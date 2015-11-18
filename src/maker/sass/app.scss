@@ -1,0 +1,270 @@
+@charset 'utf-8';
+
+$brand: #2a64cd;
+
+html,
+body{
+    height: 100%;
+}
+ul{
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+.app{
+    height: 100%;
+    > .row{
+        height: 100%;
+    }
+}
+
+.col-left,
+.col-right{
+    height: 100%;
+    position: relative;
+}
+.col-left{
+    background-color: #eee;
+}
+.col-right{
+    background-color: #ddd;
+}
+// 设备
+.device{
+    width: 360px;
+    height: 540px;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-left: -180px;
+    margin-top: -270px;
+    background-color: #ddd;
+    .wrapper{
+        height: 100%;
+        .page{
+            height: 100%;
+            width: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+        }
+        .cont{
+            position: relative;
+            height: 100%;
+        }
+    }
+}
+.device-helper{
+    position: absolute;
+    right: 20px;
+    bottom: 20px;
+    margin-left: 200px;
+}
+
+//元素
+.elem{
+    
+}
+.editable{
+    position: absolute;
+    display: table;
+    &:hover{
+        &:after{
+            position: absolute;
+            content: "";
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-color: rgba(228, 130, 108, 0.2);
+        }
+    }
+    .inner{
+        display: table-cell;
+        width: 100%;
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: 100% auto;
+    }
+}
+
+// 工具栏
+.tool-bar{
+    $w: 50px;
+    $c: #ddd;
+    position: absolute;
+    left: -$w;
+    top: 0;
+    width: $w;
+
+    background-color: $c;
+    li{
+        height: $w;
+        line-height: $w;
+        text-align: center;
+        &:hover{
+            background-color: $c - #111;
+        }
+    }
+}
+// 工具
+.tool{
+    margin: 0 -15px;
+    .bar{
+        background-color: #ccc;
+        padding: 10px;
+        width: 100%;
+        color: #FFF;
+    }
+    .header{
+        background-color: $brand;
+    }
+    .footer{
+
+    }
+}
+
+.menu{
+    @mixin active($bg, $border){
+        &:hover{
+            background-color: $bg;
+            border-color: $border;
+        }
+        &:active,
+        &:focus{
+            background-color: $bg - #111;
+            border-color: $border - #111;
+        }
+    }
+    background-color: #fff;
+    padding: 5px;
+    box-shadow: 3px 3px 5px rgba(0,0,0,.1);
+    ul{
+        margin-bottom: 0;
+    }
+    li{
+        position: relative;
+        height: 30px;
+        line-height: 30px;
+        padding: 0 50px 0 20px;
+        border: 1px solid #fff;
+        cursor: pointer;
+        @include active(#eee, #ddd);
+    }
+    .tip{
+        position: absolute;
+        right: 5px;
+        color: #bbb;
+        font-size: 12px;
+    }
+}
+
+.edit_group{
+    background-color: #fff;
+    padding: 10px;
+}
+
+
+.cur {
+  // position: relative;
+  // box-shadow: 0 0 0px 1px rgba(255, 0, 0, 0.5);
+}
+.cur:after {
+  position: absolute;
+  content: "";
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  left: 0;
+  border: 1px dotted #F50;
+  // z-index: -1;
+}
+
+// resizable style
+.ui-resizable-nw,
+.ui-resizable-sw,
+.ui-resizable-ne,
+.ui-resizable-se,
+.ui-resizable-s,
+.ui-resizable-n,
+.ui-resizable-e,
+.ui-resizable-w {
+  display: none !important;
+}
+
+.ui-resizable.cur .ui-resizable-nw,
+.ui-resizable.cur .ui-resizable-sw,
+.ui-resizable.cur .ui-resizable-ne,
+.ui-resizable.cur .ui-resizable-se {
+  display: block !important;
+  width: 30px !important;
+  height: 30px !important;
+}
+.ui-resizable.cur .ui-resizable-nw:after,
+.ui-resizable.cur .ui-resizable-sw:after,
+.ui-resizable.cur .ui-resizable-ne:after,
+.ui-resizable.cur .ui-resizable-se:after {
+  position: absolute;
+  content: "";
+  width: 12px;
+  height: 12px;
+  border-radius: 2px;
+  border: 1px solid #F50;
+  left: 9px;
+  top: 9px;
+}
+.ui-resizable.cur {
+    .ui-resizable-se {
+        right: -13px;
+        bottom: -13px;
+    }
+    .ui-resizable-ne {
+        right: -13px;
+        top: -13px;
+    }
+    .ui-resizable-sw {
+        left: -13px;
+        bottom: -13px;
+    }
+    .ui-resizable-nw {
+        left: -13px;
+        top: -13px;
+    }
+}
+
+.ui-resizable.cur .ui-resizable-s {
+  display: block !important;
+  height: 30px;
+  bottom: -20px;
+  width: 70%;
+  left: 15%;
+}
+.ui-resizable.cur .ui-resizable-n {
+  display: block !important;
+  height: 30px;
+  top: -20px;
+  width: 70%;
+  left: 15%;
+}
+.ui-resizable.cur .ui-resizable-e {
+  display: block !important;
+  width: 30px;
+  right: -20px;
+  height: 70%;
+  top: 15%;
+}
+.ui-resizable.cur .ui-resizable-w {
+  display: block !important;
+  width: 30px;
+  left: -20px;
+  height: 70%;
+  top: 15%;
+}
+
+.ui-resize-ok {
+  background-color: #2ecc71 !important;
+}
+
+.ui-icon {
+  background: none;
+}

@@ -1,0 +1,37 @@
+{% extends 'master/application.html' %}
+{% block head %}
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" type="text/css" href="/vendor/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" href="css/app.css">
+{% endblock %}
+{% block body %}
+    <header>
+        A6 advertisement
+    </header>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                BIG Banner
+                <div class="banner" data-aid="613"></div>
+            </div>
+            <div class="col-md-4">
+                Side Slider
+                <div class="banner" data-aid="613"></div>
+            </div>
+        </div>
+        <div class="adbi-slider-wrap">
+            <ul class="adbi-slider" id="slider">
+                <li>1</li>
+                <li>2</li>
+                <li>3</li>
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+{% block javascript %}
+    <script src="/vendor/jquery/jquery-1.9.1.min.js"></script>
+
+    <script src="js/jquery.bxslider.min.js"></script>
+    <script src="js/advslide.js"></script>
+    <script src="js/ad6.slider.js"></script>
+{% endblock %}

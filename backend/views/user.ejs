@@ -1,0 +1,19 @@
+<% include header.ejs %>
+
+<section>
+    <h3>user</h3>
+    <% if(user){ %>
+        u logged in as <%= user.username %>
+        <a href="/logout">Log out</a>
+    <% }else{ %>
+        <a href="/login">login</a>
+        <br>
+        <a href="/register">register</a>
+    <% } %>
+</section>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    
+</script>
+
+<% include footer.ejs %>

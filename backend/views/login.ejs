@@ -1,0 +1,25 @@
+<% include header.ejs %>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-md-4">
+                <form action="/login" method="post" accept-charset="utf-8">
+                    <h3>login</h3>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="username">
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary"> Submit </button>
+                    <a href="/" class="btn btn-link">cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script>
+    
+</script>
+
+<% include footer.ejs %>

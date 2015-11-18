@@ -1,0 +1,200 @@
+@import "bootstrap/variables";
+@import "bootstrap/mixins";
+
+$green: #44b336;
+$btn-primary-bg: $green;
+$panel-primary-heading-bg: $green;
+$panel-primary-border: $green;
+
+body{
+    font-family: "Helvetica Neue", Helvetica, Arial, "Microsoft Yahei", sans-serif;
+}
+a {
+  color: $green;
+
+  &:hover,
+  &:focus {
+    color: $green + #111;
+    text-decoration: $link-hover-decoration;
+  }
+
+  &:focus {
+    @include tab-focus;
+  }
+}
+
+//
+// Buttons styles
+// --------------------------------------------------
+.btn {
+    border-radius: 3px;
+    &,
+    &:active,
+    &.active {
+        &:focus,
+        &.focus {
+            outline: none;
+        }
+    }
+    &:active,
+    &.active {
+        box-shadow: none;
+    }
+}
+
+// Alternate buttons
+// --------------------------------------------------
+.btn-default {
+    $color: $btn-default-color;
+    $background: $btn-default-bg;
+    $border: $btn-default-border;
+    $green: $btn-primary-bg;
+    color: $color;
+    background-color: $background;
+    border-color: $border;
+    &:focus,
+    &.focus {
+        color: $green;
+        background-color: $background;
+        border-color: $green;
+    }
+    &:hover {
+        color: $green;
+        background-color: $background;
+        border-color: $green;
+    }
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle {
+        color: $green;
+        background-color: $background;
+        border-color: $green;
+        &:hover,
+        &:focus,
+        &.focus {
+            color: $green;
+            background-color: $background;
+            border-color: $green;
+        }
+    }
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle {
+        background-image: none;
+    }
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &:focus,
+        &.focus,
+        &:active,
+        &.active {
+            color: $color;
+            background-color: $background;
+            border-color: $border;
+        }
+    }
+}
+
+.btn-primary {
+    // @include button-variant($btn-primary-color, $btn-primary-bg, $btn-primary-bg);
+    $color: $btn-primary-color;
+    $background: $btn-primary-bg;
+    $border: $btn-primary-bg;
+    $green: $btn-primary-bg;
+    $text: #fff;
+    $hoverBgColor: #7cd569;
+    color: $color;
+    background-color: $background;
+    border-color: $border;
+    &:focus,
+    &.focus {
+        color: $text;
+        background-color: $hoverBgColor;
+        border-color: $hoverBgColor;
+    }
+    &:hover {
+        color: $text;
+        background-color: $hoverBgColor;
+        border-color: $hoverBgColor;
+    }
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle {
+        color: $text;
+        background-color: $hoverBgColor - #111;
+        border-color: $hoverBgColor - #111;
+        &:hover,
+        &:focus,
+        &.focus {
+            color: $text;
+            background-color: $hoverBgColor - #111;
+            border-color: $hoverBgColor - #111;
+        }
+    }
+    &:active,
+    &.active,
+    .open > &.dropdown-toggle {
+        background-image: none;
+    }
+    &.disabled,
+    &[disabled],
+    fieldset[disabled] & {
+        &,
+        &:hover,
+        &:focus,
+        &.focus,
+        &:active,
+        &.active {
+            color: $color;
+            background-color: $background;
+            border-color: $border;
+        }
+    }
+}
+
+// Success appears as green
+// .btn-success {
+//     @include button-variant($btn-success-color, $btn-success-bg, $btn-success-bg);
+// }
+
+// Info appears as blue-green
+// .btn-info {
+//     @include button-variant($btn-info-color, $btn-info-bg, $btn-info-bg);
+// }
+
+// Warning appears as orange
+// .btn-warning {
+//     @include button-variant($btn-warning-color, $btn-warning-bg, $btn-warning-bg);
+// }
+
+// Danger and error appear as red
+// .btn-danger {
+//     @include button-variant($btn-danger-color, $btn-danger-bg, $btn-danger-bg);
+// }
+
+// Link buttons
+// -------------------------
+// Make a button look and behave like a link
+
+// Button Sizes
+// --------------------------------------------------
+.btn-lg {
+    border-radius: $btn-border-radius-base;
+}
+// 
+.panel-primary {
+    @include panel-variant($panel-primary-border, $panel-primary-text, $panel-primary-heading-bg, $panel-primary-border);
+}
+.form-control {
+    border-radius: 0;
+    @include placeholder(#ddd);
+    &:focus {
+        border-color: $green;
+        -webkit-box-shadow: none;
+        box-shadow: none;
+    }
+}
+

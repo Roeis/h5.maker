@@ -1,0 +1,116 @@
+@charset 'UTF-8';
+$brand: #2a64cd;
+header {
+    height: 48px;
+    background-color: #333;
+    line-height: 48px;
+    color: #fff;
+}
+
+#slider{
+    li{
+        height: 100px;
+        background-color: #ddd;
+    }
+}
+.adbi-slider-wrap{
+    position: relative;
+}
+.adbi-slider{
+    position: relative;
+    li{
+        position: absolute;
+        width: 100%;
+    }
+}
+.adbi-pager{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    bottom: 0;
+    text-align: center;
+    .adbi-pager-item {
+        display: inline-block;
+        *zoom: 1;
+        *display: inline;
+        a {
+            background-color: #eee;
+            background-color: rgba(255, 255, 255, .5);
+            text-indent: -9999px;
+            display: block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            outline: 0;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+        }
+        &:hover,
+        &.active,
+        &:focus {
+            a{
+                background-color: #fff;
+            }
+        }
+    }
+}
+.adv-slider-wrap {
+    // overflow: hidden;
+    .adv-slider{
+        position: relative;
+        li {
+            background-repeat: no-repeat;
+            background-position: top center;
+        }
+    }
+    .bx-wrapper {
+        position: relative;
+        margin: 0 auto 60px;
+        padding: 0;
+        *zoom: 1;
+        -ms-touch-action: pan-y;
+        touch-action: pan-y;
+    }
+
+    .bx-viewport {
+        /*fix other elements on the page moving (on Chrome)*/
+        -webkit-transform: translatez(0);
+    }
+
+
+    /* PAGER */
+
+    .bx-wrapper .bx-pager {
+        text-align: center;
+        a {
+            background-color: #eee;
+            background-color: rgba(255, 255, 255, .5);
+            text-indent: -9999px;
+            display: block;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            outline: 0;
+            -webkit-border-radius: 5px;
+            border-radius: 5px;
+            &:hover,
+            &.active,
+            &:focus {
+                background: #fff;
+            }
+        }
+    }
+
+    .bx-pager-item {
+        display: inline-block;
+        *zoom: 1;
+        *display: inline;
+    }
+
+    .bx-controls {
+        position: absolute;
+        width: 100%;
+        left: 0;
+        bottom: 0;
+    }
+}
