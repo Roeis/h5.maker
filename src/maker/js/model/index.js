@@ -27,7 +27,7 @@ var data = {
                             top: 0,
                             width: '50px',
                             height: '50px',
-                            animation: 'wobble 1s ease 1s forwards'
+                            animation: 'wobble 1s ease 1s forwards',
                         }
                     },
                     {
@@ -37,6 +37,7 @@ var data = {
                         childStyle: {
                             'transform': 'rotate(45deg)',
                             'text-align': 'center',
+                            'vertical-align': 'middle',
                             'font-size': '15px',
                             'background-color': '#fff',
                             'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
@@ -81,12 +82,63 @@ var data = {
                 'backgounnd-color': '#fff'
             }
         },
+        {
+            elements: [
+                    {
+                        id: 'm_4',
+                        type: 'btn',
+                        value: '<div class="inner"></div>',
+                        childStyle: {
+                            'transform': 'rotate(45deg)',
+                            'text-align': 'center',
+                            'font-size': '15px',
+                            'color': '#fff',
+                            'background-color': '#fff',
+                        },
+                        style: {
+                            left: 0,
+                            top: 0,
+                            width: '50px',
+                            height: '50px',
+                            animation: 'wobble 1s ease 1s forwards'
+                        }
+                    }
+                ],
+            style: {
+                'background': 'url("http://jsdf.com/sdf.jpg")',
+                'backgounnd-color': '#fff'
+            }
+        },
+        {
+            elements: [
+                    {
+                        id: 'm_5',
+                        type: 'btn',
+                        value: '<div class="inner"></div>',
+                        childStyle: {
+                            'transform': 'rotate(45deg)',
+                            'text-align': 'center',
+                            'font-size': '15px',
+                            'color': '#fff',
+                            'background-color': '#fff',
+                        },
+                        style: {
+                            left: 0,
+                            top: 0,
+                            width: '50px',
+                            height: '50px',
+                            animation: 'wobble 1s ease 1s forwards'
+                        }
+                    }
+                ],
+            style: {
+                'background': 'url("http://jsdf.com/sdf.jpg")',
+                'backgounnd-color': '#fff'
+            }
+        },
     ],
     // generate by render function
-    listHtml: [
-        '<div class="page"></div>',
-        '<div class="page"></div>'
-    ],
+    listHtml: [],
     config: {
         isLoop: false,
         direction: 'vertical',
@@ -94,7 +146,8 @@ var data = {
     global: {
         music: '',
         style: '',
-        idx: 4
+        count: 6,
+        template: 1
     }
 
 };

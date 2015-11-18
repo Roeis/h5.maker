@@ -3,7 +3,8 @@ module.exports = {
         type: 'default',
         value: 'test elem',
         childStyle: {
-            'background-color': '#fff'
+            'background-color': '#fff',
+            'text-align': 'center'
         },
         style: {
             left: '50px',

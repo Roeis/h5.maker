@@ -1,7 +1,9 @@
 'use strict';
 import _ from 'lodash';
 import pageData from '../model';
+import Data from '../model/data.js';
 import util from '../biz/util.js';
+import history from '../stage/history.js';
 
 var core = {
     // 渲染正式DOM结构，区别于操作DOM
@@ -62,8 +64,10 @@ var core = {
         return JSON.stringify(obj).replace(/\\\"|\{|\}/g, '').replace(/\"/g, '').replace(/\,/g, ';').concat(';');
     },
 
+    // 渲染单页，当前
     renderPage: function(callback){
-        var idx = 0,
+
+        var idx = Data.index,
             data = pageData.list[idx],
             clone = _.cloneDeep(data),
             html = '';
@@ -73,16 +77,29 @@ var core = {
                 style = this.flatStyle(it.style),
                 childStyle = this.flatStyle(it.childStyle);
 
-            // console.log(it, style, childStyle);
             html += `<div class="editable" id="${it.id}" style="${style}">
                         <div class="inner" style="${childStyle}">
                             ${it.value}
                         </div>
                     </div>`;
-            // console.log(html);
         }
-        $('.page').eq(idx).find('.cont').html(html);
+
+        // console.log('render', idx, data);
+
+        $('.page').eq(0).find('.cont').html(html);
         callback && callback(clone);
+    },
+    renderStep: function(){
+        this.renderPage(function(data){
+            // 渲染当前页面， 返回素体HTML
+            // 添加HTML到cache作为缓存，（暂定20步）
+            //     添加回溯步骤，统一由本渲染方法来控制
+            // 添加素体HTML后，执行UI初始化拖拽动作
+            history.addStep(data);
+            if(Data.curElem){
+                $('#' + Data.curElem.id).trigger('click');
+            }
+        });
     }
 
 };

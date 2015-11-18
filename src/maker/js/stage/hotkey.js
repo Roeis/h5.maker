@@ -1,9 +1,10 @@
 'use strict';
 import _ from 'lodash';
-import back from './back.js';
+import pageData from '../model';
+import Data from '../model/data.js';
+import history from './history.js';
 import key from '../biz/key.js';
 import render from '../page/render';
-import pageData from '../model';
 
 var core = {
     
@@ -47,7 +48,7 @@ var core = {
         //撤销
         if(e.ctrlKey && e.keyCode === key.Z){
             console.log('undo');
-            back.undo(function(data){
+            history.undo(function(data){
 
                 pageData.list[0] = _.cloneDeep(data);
                 render.renderPage();
@@ -57,7 +58,7 @@ var core = {
         //重做
         if(e.ctrlKey && e.keyCode === key.Y){
             console.log('redo');
-            back.redo(function(data){
+            history.redo(function(data){
                 pageData.list[0] = _.cloneDeep(data);
                 render.renderPage();
             });

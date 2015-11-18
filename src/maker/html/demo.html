@@ -1,13 +1,16 @@
-{% extends 'master/application.html' %} {% block head %}
+{% extends 'master/application.html' %}
+{% block head %}
 <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="/vendor/jquery-ui-1.11.4/jquery-ui.min.css">
 <link rel="stylesheet" href="css/animate.css">
-<link rel="stylesheet" href="css/app.css"> {% endblock %} {% block body %}
+<link rel="stylesheet" href="css/app.css">
+{% endblock %}
+{% block body %}
 <div class="container-fluid app">
     <div class="row">
-        <div class="col-md-7 col-left">
+        <div class="col-md-8 col-left">
             <div class="device">
-                <div class="wrapper">
+                <div class="wrapper" id="output">
                     <div class="page">
                         <div class="cont">
                             
@@ -15,111 +18,33 @@
                     </div>
                 </div>
             </div>
-            <div class="device-helper">
+            <div class="device-helper" id="helper">
                 <button class="btn btn-primary" title="二维码">
                     <span class="glyphicon glyphicon-qrcode"></span>
                     <!-- <div class="qrcode" id="qrcode_pic">
                         <canvas width="200" height="200"></canvas>
                     </div> -->
                 </button>
-                <a href="javascript:;" class="btn btn-primary" title="保存">
-                    <span class="glyphicon glyphicon-floppy-disk"></span>
-                </a>
             </div>
+            <div id="elemList"></div>
+            <div id="toolBar"></div>
+            <div id="page"></div>
         </div>
-        <div class="col-md-5 col-right">
-            <div class="tool-bar">
-                <ul>
-                    <li class="toolbar-elem">元素</li>
-                    <li class="toolbar-tmpl">模板</li>
-                    <li class="toolbar-logo">logo</li>
-                    <li class="toolbar-apis">接口</li>
-                </ul>
-            </div>
-            <div class="tool">
-                <div class="bar header">
+        <div class="col-md-4 col-right">
+            <div class="ppd">
+                <div class="header">
                     <div class="title">H5.maker</div>
                 </div>
-                <div class="edit_panel">
-                    <div class="edit_group">
+                <div class="edit-panel" id="editPanel">
+                    <div class="edit-group">
                         <div class="row">
-                            <div class="col-md-5">
-                                <textarea class="form-control">test align </textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="edit_group">
-                        <div class="row">
-                            <div class="col-md-2">left</div>
-                            <div class="col-md-5">
-                                <input class="form-control" data-role="left" type="number">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-2">top</div>
-                            <div class="col-md-5">
-                                <input class="form-control" data-role="top" type="number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="edit_group">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="ui_slider"></div>
-                            </div>
-                            <div class="col-md-2">
-                                <input class="form-control" data-role="width" type="number">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="ui_slider"></div>
-                            </div>
-                            <div class="col-md-2">
-                                <input class="form-control" data-role="height" type="number">
-                            </div>
-                        </div>
-                    </div>
-                    <div class="edit_group">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <div class="btn-group" role="group">
-                                    <div class="btn-group" role="group">
-                                        <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">
-                                            FontSize
-                                            <span class="caret"></span>
-                                        </button>
-                                        <ul class="dropdown-menu" aria-labelledby="dropdownFont">
-                                            <li><a href="javascript:;">1</a></li>
-                                            <li><a href="javascript:;">2</a></li>
-                                            <li><a href="javascript:;">2.4</a></li>
-                                            <li><a href="javascript:;">3</a></li>
-                                        </ul>
-                                    </div>
-                                    <div class="btn-group" role="group">
-                                        <button type="button" class="btn btn-default">
-                                            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-default">
-                                            <span class="glyphicon glyphicon-align-center" aria-hidden="true"></span>
-                                        </button>
-                                        <button type="button" class="btn btn-default">
-                                            <span class="glyphicon glyphicon-align-right" aria-hidden="true"></span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="edit_group">
-                        <div class="row">
-                            <div class="col-md-5">
-                                <input class="form-control" data-role="transform" type="number">
+                            <div class="col-md-12">
+                                <textarea class="form-control">test</textarea>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="bar footer">
+                <div class="footer">
                     <button class="btn btn-success" title="保存">
                         <span class="glyphicon glyphicon-floppy-disk"></span>
                     </button>

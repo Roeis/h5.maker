@@ -29,6 +29,8 @@ ul{
 .col-right{
     background-color: #ddd;
 }
+
+
 // 设备
 .device{
     width: 360px;
@@ -56,9 +58,8 @@ ul{
 }
 .device-helper{
     position: absolute;
-    right: 20px;
+    left: 50%;
     bottom: 20px;
-    margin-left: 200px;
 }
 
 //元素
@@ -93,37 +94,89 @@ ul{
     $w: 50px;
     $c: #ddd;
     position: absolute;
-    left: -$w;
+    left: 50%;
     top: 0;
-    width: $w;
+    // width: $w;
 
     background-color: $c;
     li{
         height: $w;
+        width: $w * 1.5;
         line-height: $w;
         text-align: center;
+        float: left;
         &:hover{
             background-color: $c - #111;
         }
     }
 }
-// 工具
-.tool{
+
+
+
+// 属性 | property ppd
+.ppd{
     margin: 0 -15px;
-    .bar{
-        background-color: #ccc;
+    .header{
+        background-color: $brand;
         padding: 10px;
         width: 100%;
         color: #FFF;
-    }
-    .header{
-        background-color: $brand;
     }
     .footer{
 
     }
 }
 
+// 页面管理 | page management
+.page-ul{
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 80px;
+    height: 100%;
+    background-color: #ccc;
+    padding: 10px;
+    .page-li{
+        background-color: #bbb;
+        color: #fff;
+        margin-bottom: 10px;
+        padding: 10px;
+        text-align: center;
+        border-radius: 2px;
+        &:hover{
+            background-color: #bbb - #111;
+        }
+        &.active{
+            background-color: $brand;
+        }
+    }
+    .ui-tip{
+        border: 1px dashed $brand;
+        height: 40px;
+        margin-bottom: 10px;
+    }
+}
+
+// 查看元素
+.elem-list{
+    position: absolute;
+    left: 20px;
+    top: 50%;
+    padding: 5px;
+    margin-top: -270px;
+    background-color: #ddd;
+    border-radius: 2px;
+    .elem-li{
+        padding: 0px 10px;
+        text-align: center;
+        cursor: pointer;
+        &:hover{
+            background-color: rgba(0,0,0,.1);
+        }
+    }
+}
+
+// 右键 | context menu
 .menu{
     @mixin active($bg, $border){
         &:hover{
@@ -159,7 +212,7 @@ ul{
     }
 }
 
-.edit_group{
+.edit-group{
     background-color: #fff;
     padding: 10px;
 }
@@ -180,7 +233,7 @@ ul{
   // z-index: -1;
 }
 
-// resizable style
+// 伸缩 | resizable style
 .ui-resizable-nw,
 .ui-resizable-sw,
 .ui-resizable-ne,

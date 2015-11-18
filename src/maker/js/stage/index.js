@@ -1,40 +1,37 @@
 'use strict';
 
 import _ from 'lodash';
-import pageData from '../model';
-import elements from '../model/elements';
-import render from '../page/render';
 import util from '../biz/util.js';
+import pageData from '../model';
+import Data from '../model/data.js';
+// import elements from '../model/elements';
+// import page from '../page/';
+import render from '../page/render';
+import input from '../inputs';
+
 import hotkey from './hotkey.js';
 import menu from './menu.js';
-import back from './back.js';
-import input from './input.js';
-import operation from './operation.js';
-window.back = back;
+import history from './history.js';
+// import input from './input.js';
+import toolbar from './toolbar.js';
+// import operation from './operation.js';
 
+window.theData = Data;
 var SCREEN_WIDTH = 360,
     SCREEN_HEIGHT = 540;
 
-var countID = 0;
-
 //stage中的变量对象
 var core = {
-
-    $curElem: null,
-    $copyElement: null,
-
-    curElem: null,
-    curElems: [],
-
     init: function() {
         hotkey.init();
         menu.init();
+        toolbar.init();
+        render.renderStep();
 
         this.bindEvent();
-        input.bind(core);
-        this.render();
-        countID = pageData.global.idx + 1;
-        console.log(countID);
+
+        Data.countID = pageData.global.count + 1;
+        
     },
     bindEvent: function() {
         var self = this;
@@ -43,19 +40,6 @@ var core = {
             console.log('alert editor');
         });
         self.handleSingleClick();
-        // toolbar
-        util.$doc.on('click', '.toolbar-elem', function(){
-            
-            var elem = _.cloneDeep(elements.defaultElem);
-            elem.id = 'm_' + countID ++;
-
-            pageData.list[0].elements.push(elem);
-            console.log(pageData);
-            // var html = `<div class="elem editable" id="${id}">
-            //                 test
-            //             </div>`;
-            // $('.page').eq(0).append(html);
-        });
     },
     handleSingleClick: function(){
         var self = this;
@@ -78,19 +62,19 @@ var core = {
                     self.addCurElems(id);
                 }else{
                     // 单选情况：选中单个
-                    self.curElems = [];
-                    self.curElems.push(id);
+                    Data.curElems = [];
+                    Data.curElems.push(id);
 
-                    self.$curElem = $temp;
-                    self.curElem = self.getById(id);
+                    Data.$curElem = $temp;
+                    Data.curElem = self.getById(id);
                     self.clearCurUi();
                 }
             }else{
-                self.curElems = [];
+                Data.curElems = [];
                 self.clearCurUi();
             }
 
-            console.log(self.curElems);
+            console.log(Data.curElems);
 
             if($temp){
                 $temp.addClass('cur');
@@ -108,22 +92,22 @@ var core = {
     },
 
     addCurElems: function(id){
-        var flag = _.includes(this.curElems, id);
+        var flag = _.includes(Data.curElems, id);
         if(!flag){
-            this.curElems.push(id);
+            Data.curElems.push(id);
         }
 
     },
 
     multiCallback: function(){
-        this.curElems.each(function(index, elem){
+        Data.curElems.each(function(index, elem){
             var id = elem;
         });
         //
     },
 
     getCurElem: function(){
-        return this.$curElem;
+        return Data.$curElem;
     },
 
     intoEditable: function($obj){
@@ -136,17 +120,14 @@ var core = {
                 
             },
             drag: function(event, ui) {
-                // console.log(ui.position);
-                // core._calculatePos($obj, ui.position);
             },
             stop: function(event, ui) {
-                _.assign(self.curElem.style, {
+                _.assign(Data.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px'
                 });
                 self.syncProperty();
-                self.render();
-                // core._resetPostion($obj, ui.position);
+                render.renderStep();
             }
         });
 
@@ -159,17 +140,14 @@ var core = {
                 // core._initCssSize(ui.size.width, ui.size.height);
             },
             stop: function(event, ui) {
-                _.assign(self.curElem.style, {
+                _.assign(Data.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px',
                     width: ui.size.width + 'px',
                     height: ui.size.height + 'px'
                 });
                 self.syncProperty();
-                console.log(ui.size, ui.position);
-                self.render();
-                // core._resetPostion($obj, ui.position);
-                // core._resetSize($obj, ui.size);
+                render.renderStep();
             }
         });
     },
@@ -196,7 +174,7 @@ var core = {
     },
 
     syncProperty: function(){
-        var target = this.curElem;
+        var target = Data.curElem;
         if(!target) return;
         input.sync(target.style);
         input.sync(target.childStyle);
@@ -216,7 +194,7 @@ var core = {
     },
 
     getPosition: function(){
-        var it = this.$curElem;
+        var it = Data.$curElem;
 
         var l = it.css('left'),
             t = it.css('top'),
@@ -235,7 +213,7 @@ var core = {
         var l = SCREEN_WIDTH - pos.width,
             t = SCREEN_HEIGHT - pos.height;
         //temp test
-        this.$curElem.css({
+        Data.$curElem.css({
             left: l,
             top: t
         });
@@ -251,19 +229,6 @@ var core = {
         console.log(w, h, l ,t);
 
         // render page
-    },
-    render: function(){
-        var self = this;
-        render.renderPage(function(data){
-            // 渲染当前页面， 返回素体HTML
-            // 添加HTML到cache作为缓存，（暂定20步）
-            //     添加回溯步骤，统一由本渲染方法来控制
-            // 添加素体HTML后，执行UI初始化拖拽动作
-            back.addStep(data);
-            if(self.curElem){
-                $('#'+self.curElem.id).trigger('click');
-            }
-        });
     }
 
 };
