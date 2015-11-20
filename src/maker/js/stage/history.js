@@ -1,35 +1,36 @@
 'use strict';
-import Data from '../model/data.js';
+import stageData from '../model/stageData.js';
 
 var core = {
     addStep(step){
-        Data.cache = Data.cache.slice(0, Data.cursor + 1);
-        if(Data.cache.length >= Data.cacheMax){
-            Data.cache.shift();
+        stageData.cache = stageData.cache.slice(0, stageData.cursor + 1);
+        if(stageData.cache.length >= stageData.cacheMax){
+            stageData.cache.shift();
         }
-        Data.cache.push(step);
-        Data.cursor = Data.cache.length - 1;
-        console.log(Data.cache, Data.cursor);
+        stageData.cache.push(step);
+        stageData.cursor = stageData.cache.length - 1;
+        console.log(stageData.cache, stageData.cursor);
     },
     /**
      * 游标
-     * flag > 0: 增加游标
+     * flag > 0: 右移游标
+     * flag < 0: 左移游标
      */
     _updateCursor(flag){
         if(flag > 0){
-            if(Data.cursor < Data.cache.length - 1){
-                Data.cursor ++;
+            if(stageData.cursor < stageData.cache.length - 1){
+                stageData.cursor ++;
             }
         }else{
-            if(Data.cursor > 0){
-                Data.cursor --;
+            if(stageData.cursor > 0){
+                stageData.cursor --;
             }
         }
     },
 
     _stepCallback(flag, callback){
         this._updateCursor(flag);
-        var step = Data.cache[Data.cursor];
+        var step = stageData.cache[stageData.cursor];
         callback && callback(step);
     },
 
@@ -42,8 +43,8 @@ var core = {
     },
 
     clearLog(){
-        Data.cache = [];
-        Data.cursor = -1;
+        stageData.cache = [];
+        stageData.cursor = -1;
     }
 
 };

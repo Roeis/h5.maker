@@ -5,7 +5,7 @@ module.exports = {
     cursor: -1,
 
     $curElem: null,
-    $copyElement: null,
+    $copyElem: null,
 
     curElem: null,
     curElems: [],

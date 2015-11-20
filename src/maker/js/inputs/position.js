@@ -1,21 +1,23 @@
 'use strict';
 import task from './task.js';
-import Data from '../model/data.js';
+import stageData from '../model/stageData.js';
 
 var html = `<div class="edit-group">
-            <div class="row">
-                <div class="col-md-2">left</div>
-                <div class="col-md-10">
-                    <input class="form-control" data-role="left" type="number">
+                <div class="row">
+                    <div class="col-md-4">left</div>
+                    <div class="col-md-8">
+                        <input class="form-control" data-role="left" type="number">
+                    </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-2">top</div>
-                <div class="col-md-10">
-                    <input class="form-control" data-role="top" type="number">
+            <div class="edit-group">
+                <div class="row">
+                    <div class="col-md-4">top</div>
+                    <div class="col-md-8">
+                        <input class="form-control" data-role="top" type="number">
+                    </div>
                 </div>
-            </div>
-        </div>`;
+            </div>`;
 
 task.$el.append(html);
 

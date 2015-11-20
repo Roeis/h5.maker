@@ -23,11 +23,11 @@ var data = {
                             'border-radius': '30px'
                         },
                         style: {
-                            left: 0,
-                            top: 0,
-                            width: '50px',
-                            height: '50px',
-                            animation: 'wobble 1s ease 1s forwards',
+                            'left': 0,
+                            'top': 0,
+                            'width': '50px',
+                            'height': '50px',
+                            'animation': 'wobble 1s ease 1s forwards',
                         }
                     },
                     {
@@ -35,18 +35,43 @@ var data = {
                         type: 'btn',
                         value: '<p>testtsst sfds</p>',
                         childStyle: {
-                            'transform': 'rotate(45deg)',
+                            'transform': 'rotate(30deg)',
                             'text-align': 'center',
                             'vertical-align': 'middle',
                             'font-size': '15px',
+                            'color': '#f50',
+                            'border-radius': '10px',
                             'background-color': '#fff',
                             'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
                         },
                         style: {
-                            left: 0,
-                            top: 0,
-                            width: '100px',
-                            height: '100px',
+                            'left': 0,
+                            'top': 0,
+                            'width': '100px',
+                            'height': '100px',
+                            'z-index': 0,
+                            'animation': 'wobble 1s ease 2s forwards'
+                        }
+                    },
+                    {
+                        id: 'm_2',
+                        type: 'btn',
+                        value: '<p>testtsst sfds</p>',
+                        childStyle: {
+                            'transform': 'rotate(80deg)',
+                            'text-align': 'left',
+                            'vertical-align': 'top',
+                            'font-size': '15px',
+                            'border-radius': '10px',
+                            'background-color': '#fff',
+                            'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+                        },
+                        style: {
+                            'left': '200px',
+                            'top': '300px',
+                            'width': '100px',
+                            'height': '100px',
+                            'animation': 'wobble 1s ease 2s forwards'
                         }
                     }
                 ],

@@ -1,10 +1,10 @@
 'use strict';
-import _ from 'lodash';
-import pageData from '../model';
-import Data from '../model/data.js';
-import history from './history.js';
-import key from '../biz/key.js';
-import render from '../page/render';
+import _            from 'lodash';
+import key          from '../biz/key.js';
+import pageData     from '../model/pageData.js';
+import stageData    from '../model/stageData.js';
+import history      from './history.js';
+import render       from '../page/render';
 
 var core = {
     

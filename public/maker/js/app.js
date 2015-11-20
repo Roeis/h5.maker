@@ -40,7 +40,30 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ([
+/******/ ((function(modules) {
+	// Check all modules for deduplicated modules
+	for(var i in modules) {
+		if(Object.prototype.hasOwnProperty.call(modules, i)) {
+			switch(typeof modules[i]) {
+			case "function": break;
+			case "object":
+				// Module can be created from a template
+				modules[i] = (function(_m) {
+					var args = _m.slice(1), fn = modules[_m[0]];
+					return function (a,b,c) {
+						fn.apply(this, [a,b,c].concat(args));
+					};
+				}(modules[i]));
+				break;
+			default:
+				// Module is a copy of another module
+				modules[i] = modules[modules[i]];
+				break;
+			}
+		}
+	}
+	return modules;
+}([
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -63,7 +86,7 @@
 	
 	var _page2 = _interopRequireDefault(_page);
 	
-	var _stage = __webpack_require__(8);
+	var _stage = __webpack_require__(11);
 	
 	var _stage2 = _interopRequireDefault(_stage);
 	
@@ -106,20 +129,34 @@
 
 /***/ },
 /* 2 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _qrcodeJs = __webpack_require__(31);
+	
+	var _qrcodeJs2 = _interopRequireDefault(_qrcodeJs);
+	
+	var _warningJs = __webpack_require__(32);
+	
+	var _warningJs2 = _interopRequireDefault(_warningJs);
+	
 	var core = {
 	    init: function init() {
+	        _qrcodeJs2['default'].init();
+	        this.tooltip();
+	        _warningJs2['default'].init();
+	    },
+	    tooltip: function tooltip() {
 	        $('[title]').tooltip({
 	            position: {
 	                my: 'left bottom',
 	                at: 'left top'
 	            }
 	        });
-	    },
-	    create: function create() {}
+	    }
 	};
 	
 	module.exports = core;
@@ -136,33 +173,35 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _model = __webpack_require__(6);
-	
-	var _model2 = _interopRequireDefault(_model);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var _bizUtilJs = __webpack_require__(7);
+	var _bizUtilJs = __webpack_require__(8);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
+	var _modelPageDataJs = __webpack_require__(33);
+	
+	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
 	// import ajax from './ajax.js';
 	
-	var _renderJs = __webpack_require__(10);
+	var _renderJs = __webpack_require__(9);
 	
 	var _renderJs2 = _interopRequireDefault(_renderJs);
 	
 	var $page = $('#page'),
 	    $elemList = $('#elemList');
+	
 	var core = {
 	
 	    init: function init() {
-	        console.log('page module init');
-	        this.createPage();
 	
-	        this.listElems();
+	        this.createManager();
+	        this.createOperation();
+	        this.bindPage();
+	        this.renderElems();
 	        //渲染页面和管理页面, 包含了初始化页面滚动
 	    },
 	
@@ -170,81 +209,109 @@
 	    //增加空白分页
 	    addPage: function addPage() {
 	
-	        _model2['default'].list.push({
+	        _modelPageDataJs2['default'].list.push({
 	            elements: [],
 	            style: ''
 	        });
 	
-	        _modelDataJs2['default'].index++;
+	        _modelStageDataJs2['default'].index = _modelPageDataJs2['default'].list.length - 1;
+	
+	        core.renderOne();
 	    },
 	
 	    //复制当前分页
 	    copyPage: function copyPage() {
-	        console.log(_modelDataJs2['default']);
-	        var copy = _lodash2['default'].cloneDeep(_model2['default'].list[_modelDataJs2['default'].index]);
+	        console.log(_modelStageDataJs2['default']);
+	        var copy = _lodash2['default'].cloneDeep(_modelPageDataJs2['default'].list[_modelStageDataJs2['default'].index]);
 	        _lodash2['default'].forEach(copy.elements, function (value, key) {
-	            _modelDataJs2['default'].countID++;
-	            value.id = 'm_' + _modelDataJs2['default'].countID;
+	            _modelStageDataJs2['default'].countID++;
+	            value.id = 'm_' + _modelStageDataJs2['default'].countID;
 	        });
 	
-	        _model2['default'].list.push(copy);
-	        _modelDataJs2['default'].index++;
+	        _modelPageDataJs2['default'].list.push(copy);
+	        _modelStageDataJs2['default'].index = _modelPageDataJs2['default'].list.length - 1;
+	        core.renderOne();
 	    },
 	
 	    //删除当前分页
 	    removePage: function removePage() {
 	
-	        _model2['default'].list.splice(_modelDataJs2['default'].index, 1);
+	        _modelPageDataJs2['default'].list.splice(_modelStageDataJs2['default'].index, 1);
 	        //note: pageData.length has minused one
-	        var length = _model2['default'].list.length;
-	        _modelDataJs2['default'].index = _modelDataJs2['default'].index === length ? length - 1 : _modelDataJs2['default'].index;
+	        var length = _modelPageDataJs2['default'].list.length;
+	        _modelStageDataJs2['default'].index = _modelStageDataJs2['default'].index === length ? length - 1 : _modelStageDataJs2['default'].index;
+	
+	        core.renderOne();
 	    },
 	
 	    //交换页面顺序
 	    swapPage: function swapPage(oldIndex, newIndex) {
 	
-	        var temp = _model2['default'].list[oldIndex];
+	        var temp = _modelPageDataJs2['default'].list[oldIndex];
 	
-	        _model2['default'].list.splice(oldIndex, 1);
-	        _model2['default'].list.splice(newIndex, 0, temp);
+	        _modelPageDataJs2['default'].list.splice(oldIndex, 1);
+	        _modelPageDataJs2['default'].list.splice(newIndex, 0, temp);
 	
-	        _modelDataJs2['default'].index = newIndex;
+	        _modelStageDataJs2['default'].index = newIndex;
+	
+	        core.renderOne();
 	    },
 	
 	    //更新所有页面数据
-	    update: function update() {
-	
+	    _update: function _update() {
 	        //摧毁pagetrans组件，返回原始DOM
 	        this.destroy();
 	    },
 	
-	    destroy: function destroy() {},
+	    _destroy: function _destroy() {},
 	
-	    // 创建
-	    createPage: function createPage() {
+	    // 创建页面管理
+	    createManager: function createManager() {
 	        $page.append('<div class="page-ul"></div>');
-	        this.listPage();
-	        this.bindPage();
+	
+	        this.renderManager();
+	
+	        this.bindManager();
 	    },
 	
-	    listPage: function listPage() {
+	    renderManager: function renderManager() {
 	        var html = '';
-	        for (var i = 0; i < _model2['default'].list.length; i++) {
+	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
 	            html += '<div class="page-li">' + (i + 1) + '</div>';
 	        }
 	        html += '</div>';
 	        $page.find('.page-ul').html(html);
-	        $page.find('.page-ul').children().eq(_modelDataJs2['default'].index).addClass('active').siblings().removeClass('active');
+	        $page.find('.page-ul').children().eq(_modelStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
 	    },
 	
-	    listElems: function listElems() {
-	        var data = _model2['default'].list[_modelDataJs2['default'].index].elements,
-	            html = '<div class="elem-list">\n                    <div class="">\n                        当前视图\n                    </div>';
+	    bindManager: function bindManager() {
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', this.copyPage);
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', this.removePage);
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', this.addPage);
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="template"]', function () {
+	            console.log('%csync template with cloud', 'color: #f00;');
+	        });
+	    },
+	
+	    createOperation: function createOperation() {
+	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="template" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
+	        $page.append(html);
+	    },
+	
+	    renderElems: function renderElems() {
+	        var data = _modelPageDataJs2['default'].list[_modelStageDataJs2['default'].index].elements,
+	            html = '<div class="elem-list">\n                    <div>\n                        当前视图\n                    </div>';
 	        for (var i = 0; i < data.length; i++) {
 	            html += '<div class="elem-li" data-id="' + data[i].id + '">\n                        ' + data[i].id + '\n                    </div>';
 	        }
 	        html += '</div>';
 	        $elemList.html(html);
+	    },
+	
+	    renderOne: function renderOne() {
+	        this.renderManager();
+	        this.renderElems();
+	        _renderJs2['default'].renderPage();
 	    },
 	
 	    bindPage: function bindPage() {
@@ -265,7 +332,7 @@
 	                var alertString = old_index + 1 + ' 插在' + (old_index > new_index ? new_index : new_index + 1) + ' 后面吗?';
 	
 	                if (old_index !== new_index) {
-	                    window.alert(alertString);
+	                    // window.alert(alertString);
 	                    console.log('swap');
 	                    self.swapPage(old_index, new_index);
 	                }
@@ -274,10 +341,12 @@
 	
 	        $page.on('click', '.page-li', function () {
 	            var index = $(this).index();
-	            _modelDataJs2['default'].index = index;
-	            console.log(_model2['default']);
-	            $page.find('.page-ul').children().eq(_modelDataJs2['default'].index).addClass('active').siblings().removeClass('active');
+	            _modelStageDataJs2['default'].index = index;
+	            console.log(_modelPageDataJs2['default']);
+	            $page.find('.page-ul').children().eq(_modelStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
+	
 	            _renderJs2['default'].renderPage();
+	            self.renderElems();
 	        });
 	    }
 	};
@@ -12659,7 +12728,1435 @@
 
 
 /***/ },
-/* 6 */
+/* 6 */,
+/* 7 */,
+/* 8 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
+	    $doc: $(document),
+	
+	    copy: function copy() {
+	        console.log(32);
+	    },
+	
+	    insertStyle: function insertStyle(styleSheet, styleID) {
+	
+	        var style = document.createElement('style');
+	        var doc = document.head;
+	        style.id = styleID;
+	        doc.appendChild(style);
+	
+	        style.appendChild(document.createTextNode(styleSheet));
+	    },
+	
+	    tofixed10: function tofixed10(value) {
+	        var delta = value % 10,
+	            base = value / 10;
+	        return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
+	    }
+	
+	};
+
+/***/ },
+/* 9 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(4);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _modelPageDataJs = __webpack_require__(33);
+	
+	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _stageHistoryJs = __webpack_require__(10);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var core = {
+	    // 渲染正式DOM结构，区别于操作DOM
+	    render: function render() {
+	        var html = '',
+	            template = '<div class="elem" id="<%= id %>"><%= value %></div>',
+	            curData = _modelPageDataJs2['default'].list[this.index];
+	        for (var i = 0; i < curData.elements.length; i++) {
+	            var it = curData.elements[i];
+	            html += _lodash2['default'].template(template)(it);
+	        }
+	        console.log(html);
+	    },
+	
+	    // 样式字符串化，id, style, 生成后添加到head
+	    stringifyStyle: function stringifyStyle(obj) {
+	        // 过滤样式规则， 以及补全
+	        var styleObj = obj.style;
+	        if (styleObj.animation) {
+	            styleObj['-webkit-animation'] = styleObj.animation;
+	        }
+	        var style = JSON.stringify(styleObj);
+	        style = '#' + obj.id + style;
+	        // transform \" -> none, " -> none, , -> ;
+	        style = style.replace(/\\\"/g, '').replace(/\"/g, '').replace(/\,/g, ';');
+	        return style;
+	    },
+	
+	    // 渲染正式CSS结构，从DOM中分离到head中style标签
+	    renderStyle: function renderStyle() {
+	        var stylesheet = '';
+	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
+	            for (var j = 0; j < _modelPageDataJs2['default'].list[i].elements.length; j++) {
+	                var it = _modelPageDataJs2['default'].list[i].elements[j];
+	                var style = this.stringifyStyle(it);
+	                stylesheet += style;
+	            }
+	        }
+	        _bizUtilJs2['default'].insertStyle(stylesheet, 'maker');
+	    },
+	
+	    percentValue: function percentValue(value, standard) {
+	        return (value / standard * 100).toFixed(0) + '%';
+	    },
+	    // use when renderng output html
+	    _adjustPosition: function _adjustPosition(id) {
+	        // var pageData = _.find()
+	        // var l = this.percentValue(left, SCREEN_WIDTH),
+	        //     t = this.percentValue(top, SCREEN_HEIGHT),
+	        //     w = this.percentValue(width, SCREEN_WIDTH),
+	        //     h = this.percentValue(height, SCREEN_HEIGHT);
+	
+	    },
+	
+	    //渲染
+	    flatStyle: function flatStyle(obj) {
+	        return JSON.stringify(obj).replace(/\\\"|\{|\}/g, '').replace(/\"/g, '').replace(/\,/g, ';').concat(';');
+	    },
+	
+	    // 渲染单页，当前
+	    renderPage: function renderPage(callback) {
+	
+	        var idx = _modelStageDataJs2['default'].index,
+	            data = _modelPageDataJs2['default'].list[idx],
+	            clone = _lodash2['default'].cloneDeep(data),
+	            html = '';
+	
+	        for (var i = 0; i < data.elements.length; i++) {
+	            var it = data.elements[i],
+	                style = this.flatStyle(it.style),
+	                childStyle = this.flatStyle(it.childStyle);
+	
+	            html += '<div class="editable" id="' + it.id + '" style="' + style + '">\n                        <div class="inner" style="' + childStyle + '">\n                            ' + it.value + '\n                        </div>\n                    </div>';
+	        }
+	
+	        // console.log('render', idx, data);
+	
+	        $('.page').eq(0).find('.cont').html(html);
+	        callback && callback(clone);
+	    },
+	
+	    renderStep: function renderStep() {
+	        this.renderPage(function (data) {
+	            // 渲染当前页面， 返回素体HTML
+	            // 添加HTML到cache作为缓存，（暂定20步）
+	            //     添加回溯步骤，统一由本渲染方法来控制
+	            // 添加素体HTML后，执行UI初始化拖拽动作
+	            _stageHistoryJs2['default'].addStep(data);
+	            if (_modelStageDataJs2['default'].curElem) {
+	                $('#' + _modelStageDataJs2['default'].curElem.id).trigger('click');
+	            }
+	        });
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var core = {
+	    addStep: function addStep(step) {
+	        _modelStageDataJs2['default'].cache = _modelStageDataJs2['default'].cache.slice(0, _modelStageDataJs2['default'].cursor + 1);
+	        if (_modelStageDataJs2['default'].cache.length >= _modelStageDataJs2['default'].cacheMax) {
+	            _modelStageDataJs2['default'].cache.shift();
+	        }
+	        _modelStageDataJs2['default'].cache.push(step);
+	        _modelStageDataJs2['default'].cursor = _modelStageDataJs2['default'].cache.length - 1;
+	        console.log(_modelStageDataJs2['default'].cache, _modelStageDataJs2['default'].cursor);
+	    },
+	    /**
+	     * 游标
+	     * flag > 0: 右移游标
+	     * flag < 0: 左移游标
+	     */
+	    _updateCursor: function _updateCursor(flag) {
+	        if (flag > 0) {
+	            if (_modelStageDataJs2['default'].cursor < _modelStageDataJs2['default'].cache.length - 1) {
+	                _modelStageDataJs2['default'].cursor++;
+	            }
+	        } else {
+	            if (_modelStageDataJs2['default'].cursor > 0) {
+	                _modelStageDataJs2['default'].cursor--;
+	            }
+	        }
+	    },
+	
+	    _stepCallback: function _stepCallback(flag, callback) {
+	        this._updateCursor(flag);
+	        var step = _modelStageDataJs2['default'].cache[_modelStageDataJs2['default'].cursor];
+	        callback && callback(step);
+	    },
+	
+	    redo: function redo(callback) {
+	        this._stepCallback(1, callback);
+	    },
+	
+	    undo: function undo(callback) {
+	        this._stepCallback(-1, callback);
+	    },
+	
+	    clearLog: function clearLog() {
+	        _modelStageDataJs2['default'].cache = [];
+	        _modelStageDataJs2['default'].cursor = -1;
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(4);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _modelPageDataJs = __webpack_require__(33);
+	
+	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	// import elements from '../model/elements';
+	// import page from '../page/';
+	
+	var _pageRender = __webpack_require__(9);
+	
+	var _pageRender2 = _interopRequireDefault(_pageRender);
+	
+	var _inputs = __webpack_require__(12);
+	
+	var _inputs2 = _interopRequireDefault(_inputs);
+	
+	var _hotkeyJs = __webpack_require__(20);
+	
+	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
+	
+	var _menuJs = __webpack_require__(22);
+	
+	var _menuJs2 = _interopRequireDefault(_menuJs);
+	
+	var _historyJs = __webpack_require__(10);
+	
+	var _historyJs2 = _interopRequireDefault(_historyJs);
+	
+	// import input from './input.js';
+	
+	var _toolbarJs = __webpack_require__(23);
+	
+	var _toolbarJs2 = _interopRequireDefault(_toolbarJs);
+	
+	// import operation from './operation.js';
+	
+	window.theData = _modelStageDataJs2['default'];
+	var SCREEN_WIDTH = 360,
+	    SCREEN_HEIGHT = 540;
+	
+	var core = {
+	    init: function init() {
+	
+	        _hotkeyJs2['default'].init();
+	        _menuJs2['default'].init();
+	        _toolbarJs2['default'].init();
+	        _pageRender2['default'].renderStep();
+	
+	        this.bindEvent();
+	
+	        _modelStageDataJs2['default'].countID = _modelPageDataJs2['default'].global.count + 1;
+	    },
+	
+	    bindEvent: function bindEvent() {
+	        var self = this;
+	
+	        _bizUtilJs2['default'].$doc.on('dblclick', '.device', function (event) {
+	            console.log('alert editor');
+	        });
+	        self.handleSingleClick();
+	    },
+	
+	    handleSingleClick: function handleSingleClick() {
+	        var self = this;
+	        _bizUtilJs2['default'].$doc.on('click', '.device', function (event) {
+	
+	            var $this = $(event.target),
+	                $parent = $this.closest('.editable'),
+	                isEditable = $parent.length > 0,
+	                isCurrent = $this.hasClass('editable'),
+	                $temp = null,
+	                id,
+	                e = event || window.event;
+	
+	            // 选中元素时
+	            if (isEditable || isCurrent) {
+	                $temp = isCurrent ? $this : $parent;
+	                id = $temp.attr('id');
+	                // 连选情况：插入选中元素
+	                if (e.shiftKey) {
+	                    self.addCurElems(id);
+	                } else {
+	                    // 单选情况：选中单个
+	                    _modelStageDataJs2['default'].curElems = [];
+	                    _modelStageDataJs2['default'].curElems.push(id);
+	
+	                    _modelStageDataJs2['default'].$curElem = $temp;
+	                    _modelStageDataJs2['default'].curElem = self.getById(id);
+	                    self.clearCurUi();
+	                }
+	            } else {
+	                _modelStageDataJs2['default'].curElems = [];
+	                self.clearCurUi();
+	            }
+	
+	            console.log(_modelStageDataJs2['default'].curElems);
+	
+	            if ($temp) {
+	                $temp.addClass('cur');
+	                self.intoEditable($temp);
+	                self.syncProperty();
+	            }
+	
+	            _menuJs2['default'].$elem.hide();
+	        });
+	    },
+	
+	    clearCurUi: function clearCurUi() {
+	        $('.cur').removeClass('cur');
+	        this.destroyEditable();
+	    },
+	
+	    addCurElems: function addCurElems(id) {
+	        var flag = _lodash2['default'].includes(_modelStageDataJs2['default'].curElems, id);
+	        if (!flag) {
+	            _modelStageDataJs2['default'].curElems.push(id);
+	        }
+	    },
+	
+	    multiCallback: function multiCallback() {
+	        _modelStageDataJs2['default'].curElems.each(function (index, elem) {
+	            var id = elem;
+	        });
+	        //
+	    },
+	
+	    intoEditable: function intoEditable($obj) {
+	        var self = this;
+	        $obj.draggable({
+	            containment: 'parent',
+	            grid: [2, 2],
+	            zIndex: 9,
+	            start: function start() {},
+	            drag: function drag(event, ui) {},
+	            stop: function stop(event, ui) {
+	                _lodash2['default'].assign(_modelStageDataJs2['default'].curElem.style, {
+	                    left: ui.position.left + 'px',
+	                    top: ui.position.top + 'px'
+	                });
+	                self.syncProperty();
+	                _pageRender2['default'].renderStep();
+	            }
+	        });
+	
+	        $obj.resizable({
+	            grid: [2, 2],
+	            containment: 'parent',
+	            handles: 'n, e, s, w, ne, se, sw, nw',
+	            resize: function resize(event, ui) {
+	
+	                // core._initCssSize(ui.size.width, ui.size.height);
+	            },
+	            stop: function stop(event, ui) {
+	                _lodash2['default'].assign(_modelStageDataJs2['default'].curElem.style, {
+	                    left: ui.position.left + 'px',
+	                    top: ui.position.top + 'px',
+	                    width: ui.size.width + 'px',
+	                    height: ui.size.height + 'px'
+	                });
+	                self.syncProperty();
+	                _pageRender2['default'].renderStep();
+	            }
+	        });
+	    },
+	
+	    destroyEditable: function destroyEditable() {
+	        // NM 当前页面的editable
+	        var $editables = $('.editable');
+	
+	        $editables.each(function () {
+	            var $this = $(this);
+	
+	            if ($this.draggable('instance') !== undefined) {
+	                $this.draggable('destroy');
+	            }
+	            // destroy the resizable instance
+	            if ($this.resizable('instance') !== undefined) {
+	                $this.resizable('destroy');
+	            }
+	        });
+	    },
+	
+	    syncUi: function syncUi() {},
+	
+	    syncProperty: function syncProperty() {
+	        var target = _modelStageDataJs2['default'].curElem;
+	        if (!target) return;
+	        _inputs2['default'].sync(target.style);
+	        _inputs2['default'].sync(target.childStyle);
+	    },
+	
+	    getById: function getById(id) {
+	        var target = null,
+	            it;
+	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
+	            it = _modelPageDataJs2['default'].list[i].elements;
+	            // console.log(it);
+	            target = _lodash2['default'].find(it, { 'id': id });
+	            if (target) {
+	                break;
+	            }
+	        }
+	        return target;
+	    },
+	
+	    getPosition: function getPosition() {
+	        var it = _modelStageDataJs2['default'].$curElem;
+	
+	        var l = it.css('left'),
+	            t = it.css('top'),
+	            w = it.css('width'),
+	            h = it.css('height');
+	        return {
+	            left: parseInt(l),
+	            top: parseInt(t),
+	            width: parseInt(w),
+	            height: parseInt(h)
+	        };
+	    },
+	
+	    setBottom: function setBottom() {
+	        var pos = this.getPosition();
+	        var l = SCREEN_WIDTH - pos.width,
+	            t = SCREEN_HEIGHT - pos.height;
+	        //temp test
+	        _modelStageDataJs2['default'].$curElem.css({
+	            left: l,
+	            top: t
+	        });
+	    },
+	
+	    autoAdjust: function autoAdjust() {
+	        var pos = this.getPosition();
+	
+	        var w = _bizUtilJs2['default'].tofixed10(pos.width),
+	            h = _bizUtilJs2['default'].tofixed10(pos.height),
+	            l = _bizUtilJs2['default'].tofixed10(pos.left),
+	            t = _bizUtilJs2['default'].tofixed10(pos.top);
+	        console.log(w, h, l, t);
+	
+	        // render page
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(4);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var files = ['text', 'transform', 'background', 'animation', 'zindex', 'size', 'position'];
+	
+	for (var i = 0; i < files.length; i++) {
+	    __webpack_require__(26)("./" + files[i] + '.js');
+	}
+	
+	var core = {
+	    // 同步样式数据
+	    sync: function sync(style) {
+	        _lodash2['default'].forEach(style, function (value, key) {
+	            core.syncValue(key, value);
+	        });
+	    },
+	    //
+	    syncValue: function syncValue(key, value) {
+	        if (!_taskJs2['default'].events[key]) return;
+	        _taskJs2['default'].events[key](value);
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(4);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	module.exports = {
+	    events: {},
+	    register: function register(name, callback) {
+	        var task = {};
+	        task[name] = callback;
+	        _lodash2['default'].extend(this.events, task);
+	    },
+	    $el: $('#editPanel')
+	};
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    FontSize\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">\n                                    <li><a href="javascript:;">1</a></li>\n                                    <li><a href="javascript:;">2</a></li>\n                                    <li><a href="javascript:;">2.4</a></li>\n                                    <li><a href="javascript:;">3</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-horizontal">\n                                <button type="button" class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </button>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-vertical">\n                                <button type="button" class="btn btn-default" data-value="top">\n                                    <span class="glyphicon glyphicon-object-align-top"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="middle">\n                                    <span class="glyphicon glyphicon-object-align-vertical"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="bottom">\n                                    <span class="glyphicon glyphicon-object-align-bottom"></span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $horizontal = _taskJs2['default'].$el.find('[data-role="align-horizontal"]');
+	var $vertical = _taskJs2['default'].$el.find('[data-role="align-vertical"]');
+	
+	_taskJs2['default'].register('text-align', function (value) {
+	    // console.log(value);
+	    $horizontal.find('[data-value="' + value + '"]').removeClass('btn-default');
+	});
+	
+	_taskJs2['default'].register('vertical-align', function (value) {
+	    // console.log(value);
+	    $vertical.find('[data-value="' + value + '"]').removeClass('btn-default');
+	});
+	
+	_taskJs2['default'].register('color', function (value) {
+	    console.log('%ccolor:', 'color: #f00', value);
+	});
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(9);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        transform\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $target = _taskJs2['default'].$el.find('[data-role="transform"]');
+	
+	/**
+	 * register a value callback function
+	 * get a value of some property, how to handle with the value,
+	 * it'll be called by sync function that sync up the data
+	 */
+	_taskJs2['default'].register('transform', function (value) {
+	    value = value.match(/\-?\d+/)[0];
+	    $target.val(value);
+	    console.log(_modelStageDataJs2['default']);
+	});
+	
+	/*
+	    example: 
+	    bind event to change the property
+	    then call render.renderStep to log the step, that includes
+	    add a step into history storage, and then render the template 
+	    with the changed data
+	 */
+	$target.on('change.input', function () {
+	
+	    Data.curElem.childStyle.transform = 'rotate(' + this.value + 'deg)';
+	
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $width = _taskJs2['default'].$el.find('[data-role="width"]');
+	var $height = _taskJs2['default'].$el.find('[data-role="height"]');
+	
+	_taskJs2['default'].register('width', function (value) {
+	    value = parseInt(value, 10);
+	    $width.val(value);
+	});
+	
+	_taskJs2['default'].register('height', function (value) {
+	    value = parseInt(value, 10);
+	    $height.val(value);
+	});
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $left = _taskJs2['default'].$el.find('[data-role="left"]');
+	var $top = _taskJs2['default'].$el.find('[data-role="top"]');
+	// this.$left = $('[data-role="left"]');
+	_taskJs2['default'].register('left', function (value) {
+	    value = parseInt(value, 10);
+	    $left.val(value);
+	});
+	
+	_taskJs2['default'].register('top', function (value) {
+	    value = parseInt(value, 10);
+	    $top.val(value);
+	});
+
+/***/ },
+/* 18 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-color">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $image = _taskJs2['default'].$el.find('[data-role="bg-image"]');
+	var $color = _taskJs2['default'].$el.find('[data-role="bg-color"]');
+	_taskJs2['default'].register('background-image', function (value) {
+	    value = value.match(/\((.*)\)/);
+	    if (value) {
+	        value = value[1];
+	    }
+	    console.log('%cbackground-image:', 'color: #f00', value);
+	    $image.val(value);
+	});
+	_taskJs2['default'].register('background-color', function (value) {
+	
+	    console.log('%cbackground-color:', 'color: #f00', value);
+	    $color.val(value);
+	});
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var _bizAnimasJs = __webpack_require__(24);
+	
+	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" data-role="animation-duration"></input>\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" data-role="animation-delay"></input>\n                    </div>\n                </div>\n            </div>';
+	html += '<div class="edit-group">\n                <div class="row">';
+	for (var key in _bizAnimasJs2['default']) {
+	    if (_bizAnimasJs2['default'].hasOwnProperty(key)) {
+	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                    <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n                </div>';
+	    }
+	}
+	html += '</div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $duration = _taskJs2['default'].$el.find('[data-role="animation-duration"]'),
+	    $delay = _taskJs2['default'].$el.find('[data-role="animation-delay"]');
+	_taskJs2['default'].register('animation', function (value) {
+	    value = value.split(' ');
+	    // wobble       1s         ease       2s
+	    // name      duration    time-func   delay
+	    var name = value[0],
+	        duration = parseFloat(value[1]),
+	        delay = parseFloat(value[3]);
+	
+	    $duration.val(duration);
+	    $delay.val(delay);
+	
+	    console.log('%canimation:', 'color: #f00', name, duration, delay);
+	});
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(4);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizKeyJs = __webpack_require__(21);
+	
+	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
+	
+	var _modelPageDataJs = __webpack_require__(33);
+	
+	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var _historyJs = __webpack_require__(10);
+	
+	var _historyJs2 = _interopRequireDefault(_historyJs);
+	
+	var _pageRender = __webpack_require__(9);
+	
+	var _pageRender2 = _interopRequireDefault(_pageRender);
+	
+	var core = {
+	
+	    init: function init() {
+	        document.onkeydown = this.keyboardEvent;
+	    },
+	
+	    keyboardEvent: function keyboardEvent(event) {
+	        var e = event || window.event;
+	
+	        // 复制
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].C) {
+	            console.log('copy');
+	        }
+	
+	        // 粘贴
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].V) {
+	            console.log('paste');
+	        }
+	
+	        // 剪贴
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].X) {
+	            console.log('cut');
+	        }
+	
+	        // 保存
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].S) {
+	            console.log('save');
+	        }
+	
+	        //自由变换
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].T) {
+	            console.log('transform');
+	        }
+	
+	        //选取所有
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].A) {
+	            console.log('select all');
+	        }
+	
+	        //撤销
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Z) {
+	            console.log('undo');
+	            _historyJs2['default'].undo(function (data) {
+	
+	                _modelPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
+	                _pageRender2['default'].renderPage();
+	            });
+	        }
+	
+	        //重做
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Y) {
+	            console.log('redo');
+	            _historyJs2['default'].redo(function (data) {
+	                _modelPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
+	                _pageRender2['default'].renderPage();
+	            });
+	        }
+	
+	        if (e.keyCode === _bizKeyJs2['default'].Up) {
+	            console.log('up arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Right) {
+	            console.log('right arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Down) {
+	            console.log('down arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Left) {
+	            console.log('left arrow');
+	        }
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 21 */
+/***/ function(module, exports) {
+
+	// 键盘
+	"use strict";
+	
+	module.exports = {
+	    BackSpace: 8,
+	    Tab: 9,
+	    Enter: 13,
+	    Shift: 16,
+	    Ctrl: 17,
+	    Alt: 18,
+	    Pause: 19,
+	    Escape: 27,
+	    Space: 32,
+	    Next: 34,
+	    End: 35,
+	    Home: 36,
+	    Left: 37,
+	    Up: 38,
+	    Right: 39,
+	    Down: 40,
+	    Insert: 45,
+	    Delete: 46,
+	    A: 65,
+	    B: 66,
+	    C: 67,
+	    D: 68,
+	    E: 69,
+	    F: 70,
+	    G: 71,
+	    H: 72,
+	    I: 73,
+	    J: 74,
+	    K: 75,
+	    L: 76,
+	    M: 77,
+	    N: 78,
+	    O: 79,
+	    P: 80,
+	    Q: 81,
+	    R: 82,
+	    S: 83,
+	    T: 84,
+	    U: 85,
+	    V: 86,
+	    W: 87,
+	    X: 88,
+	    Y: 89,
+	    Z: 90
+	};
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var core = {
+	
+	    init: function init() {
+	        this.createMenu();
+	        this.bindMenu();
+	    },
+	    /**
+	     * 创建右键
+	     * @return {[type]} [description]
+	     */
+	    createMenu: function createMenu() {
+	        var html = '<div class="menu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="edit">\n                                <span class="glyphicon glyphicon-pencil"></span>\n                                编辑\n                            </li>\n                            <li data-role="copy">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                                <span class="tip">Ctrl+C</span>\n                            </li>\n                            <li data-role="paste">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                                <span class="tip">Ctrl+V</span>\n                            </li>\n                            <li data-role="moveup">\n                                <span class="glyphicon glyphicon-chevron-up"></span>\n                                上移一层\n                            </li>\n                            <li data-role="movedown">\n                                <span class="glyphicon glyphicon-chevron-down"></span>\n                                下移一层\n                            </li>\n                            <li data-role="delete">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
+	        this.$elem = $(html);
+	        $('body').append(this.$elem);
+	    },
+	
+	    showContextmenu: function showContextmenu(event) {
+	        var left, top;
+	        left = event.pageX - 20;
+	        top = event.pageY - 10;
+	
+	        // handle when reach bottom
+	        var target_height = this.$elem.height();
+	        var offset = target_height + this.$elem.offset().top;
+	        var window_height = $(window).height();
+	
+	        if (offset >= window_height) {
+	            top = window_height - target_height - 20;
+	        }
+	
+	        this.$elem.show().css({
+	            position: 'absolute',
+	            left: left,
+	            top: top
+	        });
+	    },
+	    bindMenu: function bindMenu() {
+	        var self = this;
+	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
+	
+	            // var $this = $(event.target);
+	            // $this.trigger('click');
+	
+	            self.showContextmenu(event);
+	            // 取消默认contextmenu
+	            return false;
+	        });
+	
+	        self.$elem.find('[data-role="copy"]').on('click', function () {
+	            console.log('copy');
+	        });
+	        self.$elem.find('[data-role="paste"]').on('click', function () {
+	            console.log('copy');
+	        });
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _modelPageDataJs = __webpack_require__(33);
+	
+	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	
+	var $toolBar = $('#toolBar');
+	
+	var tabs = [{
+	    id: 'toolElem',
+	    cn: '元素'
+	}, {
+	    id: 'toolTmpl',
+	    cn: '模板'
+	}, {
+	    id: 'toolLogo',
+	    cn: 'logo'
+	}, {
+	    id: 'toolApis',
+	    cn: '接口'
+	}, {
+	    id: 'toolSrcs',
+	    cn: '素材'
+	}];
+	var core = {
+	
+	    init: function init() {
+	        this._create();
+	        this._createTabcont();
+	        this._bind();
+	    },
+	    /**
+	     * 创建右键
+	     * @return {[type]} [description]
+	     */
+	    _create: function _create() {
+	        var html = '<div class="tool-bar">\n                        <ul>';
+	
+	        for (var i = 0; i < tabs.length; i++) {
+	            html += '<li data-id="' + tabs[i].id + '">' + tabs[i].cn + '</li>';
+	        }
+	
+	        html += '</ul>\n                    </div>';
+	
+	        this.$elem = $(html);
+	        $toolBar.append(this.$elem);
+	    },
+	    _createTabcont: function _createTabcont() {
+	        var html = '<div class="tool-bar-cont">';
+	
+	        for (var i = 0; i < tabs.length; i++) {
+	            html += '<div class="tool-bar-cont-li" id="' + tabs[i].id + '">\n                    this is #' + tabs[i].id + '\n                </div>';
+	        }
+	        html += '</div>';
+	
+	        this.$cont = $(html);
+	        $toolBar.append(this.$cont);
+	    },
+	
+	    _insertData: function _insertData() {},
+	
+	    _bind: function _bind() {
+	        var self = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.tool-bar li', function () {
+	            var $this = $(this),
+	                index = $this.index(),
+	                id = $this.attr('data-id');
+	            self.$elem.find('li').removeClass('active');
+	            $this.addClass('active');
+	            self.$cont.children().hide();
+	            self.$cont.show().find('#' + id).show();
+	
+	            console.log(id, index);
+	        });
+	
+	        _bizUtilJs2['default'].$doc.on('click', function (event) {
+	            var $this = $(event.target),
+	                isIn = $this.closest('#toolBar').length > 0;
+	            if (!isIn) {
+	                self.$cont.hide();
+	                self.$elem.find('li').removeClass('active');
+	            }
+	            // console.log(event.target);
+	            // console.log(isIn);
+	        });
+	
+	        // clone 一个元素，id变化
+	        // var elem = _.cloneDeep(elements.defaultElem);
+	        // stageData.countID ++;
+	        // elem.id = 'm_' + stageData.countID;
+	        // pageData.list[Data.index].elements.push(elem);
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 24 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/*
+	    animation name and cn version
+	    动画名称及中文对应名
+	 */
+	
+	var animas = {
+	    "none": {
+	        cn: "无效果",
+	        opacity: 1
+	    },
+	    "flash": {
+	        cn: "闪烁",
+	        opacity: 0
+	    },
+	    "shake": {
+	        cn: "抖动",
+	        opacity: 0
+	    },
+	    "tada": {
+	        cn: "嗒哒",
+	        opacity: 0
+	    },
+	    "swing": {
+	        cn: "吊牌",
+	        opacity: 0
+	    },
+	    "wobble": {
+	        cn: "摇一摇",
+	        opacity: 0
+	    },
+	    "pulse": {
+	        cn: "放大",
+	        opacity: 0
+	    },
+	    "flip": {
+	        cn: "翻转",
+	        opacity: 0
+	    },
+	    "flipInX": {
+	        cn: "X轴翻转",
+	        opacity: 0
+	    },
+	    "flipInY": {
+	        cn: "Y轴翻转",
+	        opacity: 0
+	    },
+	    "fadeIn": {
+	        cn: "渐入",
+	        opacity: 0
+	    },
+	    "fadeInUp": {
+	        cn: "从下<br>渐入",
+	        opacity: 0
+	    },
+	    "fadeInDown": {
+	        cn: "从上<br>渐入",
+	        opacity: 0
+	    },
+	    "fadeInLeft": {
+	        cn: "从左<br>渐入",
+	        opacity: 0
+	    },
+	    "fadeInRight": {
+	        cn: "从右<br>渐入",
+	        opacity: 0
+	    },
+	    "fadeInUpBig": {
+	        cn: "从下<br>大渐入",
+	        opacity: 0
+	    },
+	    "fadeInDownBig": {
+	        cn: "从上<br>大渐入",
+	        opacity: 0
+	    },
+	    "fadeInLeftBig": {
+	        cn: "从左<br>大渐入",
+	        opacity: 0
+	    },
+	    "fadeInRightBig": {
+	        cn: "从右<br>大渐入",
+	        opacity: 0
+	    },
+	    'zoomIn': {
+	        cn: '放大入',
+	        opacity: 0
+	    },
+	    'zoomInDown': {
+	        cn: '从上<br>放大入',
+	        opacity: 0
+	    },
+	    'zoomInLeft': {
+	        cn: '从左<br>放大入',
+	        opacity: 0
+	    },
+	    'zoomInRight': {
+	        cn: '从右<br>放大入',
+	        opacity: 0
+	    },
+	    'zoomInUp': {
+	        cn: '从下<br>放大入',
+	        opacity: 0
+	    },
+	    "bounceIn": {
+	        cn: "䶮入",
+	        opacity: 0
+	    },
+	    "bounceInUp": {
+	        cn: "从下<br>䶮入",
+	        opacity: 0
+	    },
+	    "bounceInDown": {
+	        cn: "从上<br>䶮入",
+	        opacity: 0
+	    },
+	    "bounceInLeft": {
+	        cn: "从左<br>䶮入",
+	        opacity: 0
+	    },
+	    "bounceInRight": {
+	        cn: "从右<br>䶮入",
+	        opacity: 0
+	    },
+	    "rotateIn": {
+	        cn: "转入",
+	        opacity: 0
+	    },
+	    "rotateInUpLeft": {
+	        cn: "向左上<br>转入",
+	        opacity: 0
+	    },
+	    "rotateInDownLeft": {
+	        cn: "向左下<br>转入",
+	        opacity: 0
+	    },
+	    "rotateInUpRight": {
+	        cn: "向右上<br>转入",
+	        opacity: 0
+	    },
+	    "rotateInDownRight": {
+	        cn: "向右下<br>转入",
+	        opacity: 0
+	    },
+	    "rollInRight": {
+	        cn: "从左旋转入",
+	        opacity: 0
+	    },
+	    "rollInLeft": {
+	        cn: "从右旋转入",
+	        opacity: 0
+	    },
+	    "lightSpeedInLeft": {
+	        cn: "从右变形入",
+	        opacity: 0
+	    },
+	    "lightSpeedInRight": {
+	        cn: "从左变形入",
+	        opacity: 0
+	    },
+	    "lengthLeft": {
+	        cn: "从左变长",
+	        opacity: 0
+	    },
+	    "lengthRight": {
+	        cn: "从右变长",
+	        opacity: 0
+	    },
+	    "lengthUp": {
+	        cn: "从上变长",
+	        opacity: 0
+	    },
+	    "lengthDown": {
+	        cn: "从下变长",
+	        opacity: 0
+	    }
+	};
+	
+	module.exports = animas;
+
+/***/ },
+/* 25 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(13);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _modelStageDataJs = __webpack_require__(34);
+	
+	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        z-index\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $zindex = _taskJs2['default'].$el.find('[data-role="z-index"]');
+	
+	_taskJs2['default'].register('z-index', function (value) {
+	    console.log('%cz-index', 'color: #f00', value);
+	    $zindex.val(value);
+	});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var map = {
+		"./analyze.js": 27,
+		"./animation.js": 19,
+		"./audio.js": 28,
+		"./background.js": 18,
+		"./index.js": 12,
+		"./link.js": 29,
+		"./position.js": 17,
+		"./size.js": 16,
+		"./task.js": 13,
+		"./text.js": 14,
+		"./transform.js": 15,
+		"./video.js": 30,
+		"./zindex.js": 25
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 26;
+
+
+/***/ },
+/* 27 */
+/***/ function(module, exports) {
+
+	"use strict";
+
+/***/ },
+/* 28 */
+27,
+/* 29 */
+27,
+/* 30 */
+27,
+/* 31 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	// 生成二维码
+	// var qrcode = window.CUR_DATA.qrcode;
+	var $helper = $('#helper');
+	var mQrcode = 'http://www.baidu.com/';
+	var core = {
+	    init: function init() {
+	        this.create();
+	        this.initCode();
+	    },
+	    create: function create() {
+	        var html = '<div class="qrcode-helper">\n                        <span class="glyphicon glyphicon-qrcode"></span>\n                        <div class="qrcode" id="qrcode"></div>\n                    </div>';
+	        $helper.append(html);
+	    },
+	    initCode: function initCode() {
+	        $('#qrcode').qrcode({
+	            text: mQrcode,
+	            width: 200,
+	            height: 200
+	        });
+	    }
+	};
+	module.exports = core;
+
+/***/ },
+/* 32 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var core = {
+	    init: function init() {
+	        var app = window.navigator.appVersion.toLowerCase(),
+	            version = app.match(/chrome\/([\d.]+)/),
+	            isChrome = /chrome/i.test(app);
+	
+	        version && (version = parseInt(version[1].slice(0, 2)));
+	
+	        version <= 36 && alert('厂长建议你使用新版Chrome~');
+	        !isChrome && alert('请使用chrome来体验这款神器~');
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 33 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -12685,29 +14182,53 @@
 	                'border-radius': '30px'
 	            },
 	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                animation: 'wobble 1s ease 1s forwards'
+	                'left': 0,
+	                'top': 0,
+	                'width': '50px',
+	                'height': '50px',
+	                'animation': 'wobble 1s ease 1s forwards'
 	            }
 	        }, {
 	            id: 'm_1',
 	            type: 'btn',
 	            value: '<p>testtsst sfds</p>',
 	            childStyle: {
-	                'transform': 'rotate(45deg)',
+	                'transform': 'rotate(30deg)',
 	                'text-align': 'center',
 	                'vertical-align': 'middle',
 	                'font-size': '15px',
+	                'color': '#f50',
+	                'border-radius': '10px',
 	                'background-color': '#fff',
 	                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
 	            },
 	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '100px',
-	                height: '100px'
+	                'left': 0,
+	                'top': 0,
+	                'width': '100px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation': 'wobble 1s ease 2s forwards'
+	            }
+	        }, {
+	            id: 'm_2',
+	            type: 'btn',
+	            value: '<p>testtsst sfds</p>',
+	            childStyle: {
+	                'transform': 'rotate(80deg)',
+	                'text-align': 'left',
+	                'vertical-align': 'top',
+	                'font-size': '15px',
+	                'border-radius': '10px',
+	                'background-color': '#fff',
+	                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+	            },
+	            style: {
+	                'left': '200px',
+	                'top': '300px',
+	                'width': '100px',
+	                'height': '100px',
+	                'animation': 'wobble 1s ease 2s forwards'
 	            }
 	        }],
 	        style: {
@@ -12805,778 +14326,7 @@
 	module.exports = data;
 
 /***/ },
-/* 7 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	module.exports = {
-	    $doc: $(document),
-	
-	    copy: function copy() {
-	        console.log(32);
-	    },
-	
-	    insertStyle: function insertStyle(styleSheet, styleID) {
-	
-	        var style = document.createElement('style');
-	        var doc = document.head;
-	        style.id = styleID;
-	        doc.appendChild(style);
-	
-	        style.appendChild(document.createTextNode(styleSheet));
-	    },
-	
-	    tofixed10: function tofixed10(value) {
-	        var delta = value % 10,
-	            base = value / 10;
-	        return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
-	    }
-	
-	};
-
-/***/ },
-/* 8 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _bizUtilJs = __webpack_require__(7);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _model = __webpack_require__(6);
-	
-	var _model2 = _interopRequireDefault(_model);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	// import elements from '../model/elements';
-	// import page from '../page/';
-	
-	var _pageRender = __webpack_require__(10);
-	
-	var _pageRender2 = _interopRequireDefault(_pageRender);
-	
-	var _inputs = __webpack_require__(23);
-	
-	var _inputs2 = _interopRequireDefault(_inputs);
-	
-	var _hotkeyJs = __webpack_require__(11);
-	
-	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
-	
-	var _menuJs = __webpack_require__(14);
-	
-	var _menuJs2 = _interopRequireDefault(_menuJs);
-	
-	var _historyJs = __webpack_require__(18);
-	
-	var _historyJs2 = _interopRequireDefault(_historyJs);
-	
-	// import input from './input.js';
-	
-	var _toolbarJs = __webpack_require__(19);
-	
-	var _toolbarJs2 = _interopRequireDefault(_toolbarJs);
-	
-	// import operation from './operation.js';
-	
-	window.theData = _modelDataJs2['default'];
-	var SCREEN_WIDTH = 360,
-	    SCREEN_HEIGHT = 540;
-	
-	//stage中的变量对象
-	var core = {
-	    init: function init() {
-	        _hotkeyJs2['default'].init();
-	        _menuJs2['default'].init();
-	        _toolbarJs2['default'].init();
-	        _pageRender2['default'].renderStep();
-	
-	        this.bindEvent();
-	
-	        _modelDataJs2['default'].countID = _model2['default'].global.count + 1;
-	    },
-	    bindEvent: function bindEvent() {
-	        var self = this;
-	
-	        _bizUtilJs2['default'].$doc.on('dblclick', '.device', function (event) {
-	            console.log('alert editor');
-	        });
-	        self.handleSingleClick();
-	    },
-	    handleSingleClick: function handleSingleClick() {
-	        var self = this;
-	        _bizUtilJs2['default'].$doc.on('click', '.device', function (event) {
-	
-	            var $this = $(event.target),
-	                $parent = $this.closest('.editable'),
-	                isEditable = $parent.length > 0,
-	                isCurrent = $this.hasClass('editable'),
-	                $temp = null,
-	                id,
-	                e = event || window.event;
-	
-	            // 选中元素时
-	            if (isEditable || isCurrent) {
-	                $temp = isCurrent ? $this : $parent;
-	                id = $temp.attr('id');
-	                // 连选情况：插入选中元素
-	                if (e.shiftKey) {
-	                    self.addCurElems(id);
-	                } else {
-	                    // 单选情况：选中单个
-	                    _modelDataJs2['default'].curElems = [];
-	                    _modelDataJs2['default'].curElems.push(id);
-	
-	                    _modelDataJs2['default'].$curElem = $temp;
-	                    _modelDataJs2['default'].curElem = self.getById(id);
-	                    self.clearCurUi();
-	                }
-	            } else {
-	                _modelDataJs2['default'].curElems = [];
-	                self.clearCurUi();
-	            }
-	
-	            console.log(_modelDataJs2['default'].curElems);
-	
-	            if ($temp) {
-	                $temp.addClass('cur');
-	                self.intoEditable($temp);
-	                self.syncProperty();
-	            }
-	
-	            _menuJs2['default'].$elem.hide();
-	        });
-	    },
-	
-	    clearCurUi: function clearCurUi() {
-	        $('.cur').removeClass('cur');
-	        this.destroyEditable();
-	    },
-	
-	    addCurElems: function addCurElems(id) {
-	        var flag = _lodash2['default'].includes(_modelDataJs2['default'].curElems, id);
-	        if (!flag) {
-	            _modelDataJs2['default'].curElems.push(id);
-	        }
-	    },
-	
-	    multiCallback: function multiCallback() {
-	        _modelDataJs2['default'].curElems.each(function (index, elem) {
-	            var id = elem;
-	        });
-	        //
-	    },
-	
-	    getCurElem: function getCurElem() {
-	        return _modelDataJs2['default'].$curElem;
-	    },
-	
-	    intoEditable: function intoEditable($obj) {
-	        var self = this;
-	        $obj.draggable({
-	            containment: 'parent',
-	            grid: [2, 2],
-	            zIndex: 9,
-	            start: function start() {},
-	            drag: function drag(event, ui) {},
-	            stop: function stop(event, ui) {
-	                _lodash2['default'].assign(_modelDataJs2['default'].curElem.style, {
-	                    left: ui.position.left + 'px',
-	                    top: ui.position.top + 'px'
-	                });
-	                self.syncProperty();
-	                _pageRender2['default'].renderStep();
-	            }
-	        });
-	
-	        $obj.resizable({
-	            grid: [2, 2],
-	            containment: 'parent',
-	            handles: 'n, e, s, w, ne, se, sw, nw',
-	            resize: function resize(event, ui) {
-	
-	                // core._initCssSize(ui.size.width, ui.size.height);
-	            },
-	            stop: function stop(event, ui) {
-	                _lodash2['default'].assign(_modelDataJs2['default'].curElem.style, {
-	                    left: ui.position.left + 'px',
-	                    top: ui.position.top + 'px',
-	                    width: ui.size.width + 'px',
-	                    height: ui.size.height + 'px'
-	                });
-	                self.syncProperty();
-	                _pageRender2['default'].renderStep();
-	            }
-	        });
-	    },
-	
-	    destroyEditable: function destroyEditable() {
-	        // NM 当前页面的editable
-	        var $editables = $('.editable');
-	
-	        $editables.each(function () {
-	            var $this = $(this);
-	
-	            if ($this.draggable('instance') !== undefined) {
-	                $this.draggable('destroy');
-	            }
-	            // destroy the resizable instance
-	            if ($this.resizable('instance') !== undefined) {
-	                $this.resizable('destroy');
-	            }
-	        });
-	    },
-	
-	    syncUi: function syncUi() {},
-	
-	    syncProperty: function syncProperty() {
-	        var target = _modelDataJs2['default'].curElem;
-	        if (!target) return;
-	        _inputs2['default'].sync(target.style);
-	        _inputs2['default'].sync(target.childStyle);
-	    },
-	
-	    getById: function getById(id) {
-	        var target = null,
-	            it;
-	        for (var i = 0; i < _model2['default'].list.length; i++) {
-	            it = _model2['default'].list[i].elements;
-	            // console.log(it);
-	            target = _lodash2['default'].find(it, { 'id': id });
-	            if (target) {
-	                break;
-	            }
-	        }
-	        return target;
-	    },
-	
-	    getPosition: function getPosition() {
-	        var it = _modelDataJs2['default'].$curElem;
-	
-	        var l = it.css('left'),
-	            t = it.css('top'),
-	            w = it.css('width'),
-	            h = it.css('height');
-	        return {
-	            left: parseInt(l),
-	            top: parseInt(t),
-	            width: parseInt(w),
-	            height: parseInt(h)
-	        };
-	    },
-	
-	    setBottom: function setBottom() {
-	        var pos = this.getPosition();
-	        var l = SCREEN_WIDTH - pos.width,
-	            t = SCREEN_HEIGHT - pos.height;
-	        //temp test
-	        _modelDataJs2['default'].$curElem.css({
-	            left: l,
-	            top: t
-	        });
-	    },
-	
-	    autoAdjust: function autoAdjust() {
-	        var pos = this.getPosition();
-	
-	        var w = _bizUtilJs2['default'].tofixed10(pos.width),
-	            h = _bizUtilJs2['default'].tofixed10(pos.height),
-	            l = _bizUtilJs2['default'].tofixed10(pos.left),
-	            t = _bizUtilJs2['default'].tofixed10(pos.top);
-	        console.log(w, h, l, t);
-	
-	        // render page
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 9 */,
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _model = __webpack_require__(6);
-	
-	var _model2 = _interopRequireDefault(_model);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var _bizUtilJs = __webpack_require__(7);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _stageHistoryJs = __webpack_require__(18);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var core = {
-	    // 渲染正式DOM结构，区别于操作DOM
-	    render: function render() {
-	        var html = '',
-	            template = '<div class="elem" id="<%= id %>"><%= value %></div>',
-	            curData = _model2['default'].list[this.index];
-	        for (var i = 0; i < curData.elements.length; i++) {
-	            var it = curData.elements[i];
-	            html += _lodash2['default'].template(template)(it);
-	        }
-	        console.log(html);
-	    },
-	
-	    // 样式字符串化，id, style, 生成后添加到head
-	    stringifyStyle: function stringifyStyle(obj) {
-	        // 过滤样式规则， 以及补全
-	        var styleObj = obj.style;
-	        if (styleObj.animation) {
-	            styleObj['-webkit-animation'] = styleObj.animation;
-	        }
-	        var style = JSON.stringify(styleObj);
-	        style = '#' + obj.id + style;
-	        // transform \" -> none, " -> none, , -> ;
-	        style = style.replace(/\\\"/g, '').replace(/\"/g, '').replace(/\,/g, ';');
-	        return style;
-	    },
-	
-	    // 渲染正式CSS结构，从DOM中分离到head中style标签
-	    renderStyle: function renderStyle() {
-	        var stylesheet = '';
-	        for (var i = 0; i < _model2['default'].list.length; i++) {
-	            for (var j = 0; j < _model2['default'].list[i].elements.length; j++) {
-	                var it = _model2['default'].list[i].elements[j];
-	                var style = this.stringifyStyle(it);
-	                stylesheet += style;
-	            }
-	        }
-	        _bizUtilJs2['default'].insertStyle(stylesheet, 'maker');
-	    },
-	
-	    percentValue: function percentValue(value, standard) {
-	        return (value / standard * 100).toFixed(0) + '%';
-	    },
-	    // use when renderng output html
-	    _adjustPosition: function _adjustPosition(id) {
-	        // var pageData = _.find()
-	        // var l = this.percentValue(left, SCREEN_WIDTH),
-	        //     t = this.percentValue(top, SCREEN_HEIGHT),
-	        //     w = this.percentValue(width, SCREEN_WIDTH),
-	        //     h = this.percentValue(height, SCREEN_HEIGHT);
-	
-	    },
-	
-	    //渲染
-	    flatStyle: function flatStyle(obj) {
-	        return JSON.stringify(obj).replace(/\\\"|\{|\}/g, '').replace(/\"/g, '').replace(/\,/g, ';').concat(';');
-	    },
-	
-	    // 渲染单页，当前
-	    renderPage: function renderPage(callback) {
-	
-	        var idx = _modelDataJs2['default'].index,
-	            data = _model2['default'].list[idx],
-	            clone = _lodash2['default'].cloneDeep(data),
-	            html = '';
-	
-	        for (var i = 0; i < data.elements.length; i++) {
-	            var it = data.elements[i],
-	                style = this.flatStyle(it.style),
-	                childStyle = this.flatStyle(it.childStyle);
-	
-	            html += '<div class="editable" id="' + it.id + '" style="' + style + '">\n                        <div class="inner" style="' + childStyle + '">\n                            ' + it.value + '\n                        </div>\n                    </div>';
-	        }
-	
-	        // console.log('render', idx, data);
-	
-	        $('.page').eq(0).find('.cont').html(html);
-	        callback && callback(clone);
-	    },
-	    renderStep: function renderStep() {
-	        this.renderPage(function (data) {
-	            // 渲染当前页面， 返回素体HTML
-	            // 添加HTML到cache作为缓存，（暂定20步）
-	            //     添加回溯步骤，统一由本渲染方法来控制
-	            // 添加素体HTML后，执行UI初始化拖拽动作
-	            _stageHistoryJs2['default'].addStep(data);
-	            if (_modelDataJs2['default'].curElem) {
-	                $('#' + _modelDataJs2['default'].curElem.id).trigger('click');
-	            }
-	        });
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _model = __webpack_require__(6);
-	
-	var _model2 = _interopRequireDefault(_model);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var _historyJs = __webpack_require__(18);
-	
-	var _historyJs2 = _interopRequireDefault(_historyJs);
-	
-	var _bizKeyJs = __webpack_require__(13);
-	
-	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
-	
-	var _pageRender = __webpack_require__(10);
-	
-	var _pageRender2 = _interopRequireDefault(_pageRender);
-	
-	var core = {
-	
-	    init: function init() {
-	        document.onkeydown = this.keyboardEvent;
-	    },
-	
-	    keyboardEvent: function keyboardEvent(event) {
-	        var e = event || window.event;
-	
-	        // 复制
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].C) {
-	            console.log('copy');
-	        }
-	
-	        // 粘贴
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].V) {
-	            console.log('paste');
-	        }
-	
-	        // 剪贴
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].X) {
-	            console.log('cut');
-	        }
-	
-	        // 保存
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].S) {
-	            console.log('save');
-	        }
-	
-	        //自由变换
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].T) {
-	            console.log('transform');
-	        }
-	
-	        //选取所有
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].A) {
-	            console.log('select all');
-	        }
-	
-	        //撤销
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Z) {
-	            console.log('undo');
-	            _historyJs2['default'].undo(function (data) {
-	
-	                _model2['default'].list[0] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	            });
-	        }
-	
-	        //重做
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Y) {
-	            console.log('redo');
-	            _historyJs2['default'].redo(function (data) {
-	                _model2['default'].list[0] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	            });
-	        }
-	
-	        if (e.keyCode === _bizKeyJs2['default'].Up) {
-	            console.log('up arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Right) {
-	            console.log('right arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Down) {
-	            console.log('down arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Left) {
-	            console.log('left arrow');
-	        }
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 12 */,
-/* 13 */
-/***/ function(module, exports) {
-
-	// 键盘
-	"use strict";
-	
-	module.exports = {
-	    BackSpace: 8,
-	    Tab: 9,
-	    Enter: 13,
-	    Shift: 16,
-	    Ctrl: 17,
-	    Alt: 18,
-	    Pause: 19,
-	    Escape: 27,
-	    Space: 32,
-	    Next: 34,
-	    End: 35,
-	    Home: 36,
-	    Left: 37,
-	    Up: 38,
-	    Right: 39,
-	    Down: 40,
-	    Insert: 45,
-	    Delete: 46,
-	    A: 65,
-	    B: 66,
-	    C: 67,
-	    D: 68,
-	    E: 69,
-	    F: 70,
-	    G: 71,
-	    H: 72,
-	    I: 73,
-	    J: 74,
-	    K: 75,
-	    L: 76,
-	    M: 77,
-	    N: 78,
-	    O: 79,
-	    P: 80,
-	    Q: 81,
-	    R: 82,
-	    S: 83,
-	    T: 84,
-	    U: 85,
-	    V: 86,
-	    W: 87,
-	    X: 88,
-	    Y: 89,
-	    Z: 90
-	};
-
-/***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(7);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var core = {
-	
-	    init: function init() {
-	        this.createMenu();
-	        this.bindMenu();
-	    },
-	    /**
-	     * 创建右键
-	     * @return {[type]} [description]
-	     */
-	    createMenu: function createMenu() {
-	        var html = '<div class="menu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="edit">\n                                <span class="glyphicon glyphicon-pencil"></span>\n                                编辑\n                            </li>\n                            <li data-role="copy">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                                <span class="tip">Ctrl+C</span>\n                            </li>\n                            <li data-role="paste">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                                <span class="tip">Ctrl+V</span>\n                            </li>\n                            <li data-role="moveup">\n                                <span class="glyphicon glyphicon-chevron-up"></span>\n                                上移一层\n                            </li>\n                            <li data-role="movedown">\n                                <span class="glyphicon glyphicon-chevron-down"></span>\n                                下移一层\n                            </li>\n                            <li data-role="delete">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
-	        this.$elem = $(html);
-	        $('body').append(this.$elem);
-	    },
-	
-	    showContextmenu: function showContextmenu(event) {
-	        var left, top;
-	        left = event.pageX - 20;
-	        top = event.pageY - 10;
-	
-	        // handle when reach bottom
-	        var target_height = this.$elem.height();
-	        var offset = target_height + this.$elem.offset().top;
-	        var window_height = $(window).height();
-	
-	        if (offset >= window_height) {
-	            top = window_height - target_height - 20;
-	        }
-	
-	        this.$elem.show().css({
-	            position: 'absolute',
-	            left: left,
-	            top: top
-	        });
-	    },
-	    bindMenu: function bindMenu() {
-	        var self = this;
-	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
-	
-	            // var $this = $(event.target);
-	            // $this.trigger('click');
-	
-	            self.showContextmenu(event);
-	            // 取消默认contextmenu
-	            return false;
-	        });
-	
-	        self.$elem.find('[data-role="copy"]').on('click', function () {
-	            console.log('copy');
-	        });
-	        self.$elem.find('[data-role="paste"]').on('click', function () {
-	            console.log('copy');
-	        });
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 15 */,
-/* 16 */,
-/* 17 */,
-/* 18 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var core = {
-	    addStep: function addStep(step) {
-	        _modelDataJs2['default'].cache = _modelDataJs2['default'].cache.slice(0, _modelDataJs2['default'].cursor + 1);
-	        if (_modelDataJs2['default'].cache.length >= _modelDataJs2['default'].cacheMax) {
-	            _modelDataJs2['default'].cache.shift();
-	        }
-	        _modelDataJs2['default'].cache.push(step);
-	        _modelDataJs2['default'].cursor = _modelDataJs2['default'].cache.length - 1;
-	        console.log(_modelDataJs2['default'].cache, _modelDataJs2['default'].cursor);
-	    },
-	    /**
-	     * 游标
-	     * flag > 0: 增加游标
-	     */
-	    _updateCursor: function _updateCursor(flag) {
-	        if (flag > 0) {
-	            if (_modelDataJs2['default'].cursor < _modelDataJs2['default'].cache.length - 1) {
-	                _modelDataJs2['default'].cursor++;
-	            }
-	        } else {
-	            if (_modelDataJs2['default'].cursor > 0) {
-	                _modelDataJs2['default'].cursor--;
-	            }
-	        }
-	    },
-	
-	    _stepCallback: function _stepCallback(flag, callback) {
-	        this._updateCursor(flag);
-	        var step = _modelDataJs2['default'].cache[_modelDataJs2['default'].cursor];
-	        callback && callback(step);
-	    },
-	
-	    redo: function redo(callback) {
-	        this._stepCallback(1, callback);
-	    },
-	
-	    undo: function undo(callback) {
-	        this._stepCallback(-1, callback);
-	    },
-	
-	    clearLog: function clearLog() {
-	        _modelDataJs2['default'].cache = [];
-	        _modelDataJs2['default'].cursor = -1;
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(7);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var core = {
-	
-	    init: function init() {
-	        this._create();
-	        this._bind();
-	    },
-	    /**
-	     * 创建右键
-	     * @return {[type]} [description]
-	     */
-	    _create: function _create() {
-	        var html = '<div class="tool-bar">\n                        <ul>\n                            <li class="toolbar-elem">元素</li>\n                            <li class="toolbar-tmpl">模板</li>\n                            <li class="toolbar-logo">logo</li>\n                            <li class="toolbar-apis">接口</li>\n                            <li class="toolbar-srcs">素材</li>\n                        </ul>\n                    </div>';
-	        this.$elem = $(html);
-	        $('#toolBar').append(this.$elem);
-	    },
-	
-	    _bind: function _bind() {
-	        // toolbar
-	        _bizUtilJs2['default'].$doc.on('click', '.toolbar-elem', function () {
-	
-	            // var elem = _.cloneDeep(elements.defaultElem);
-	            // elem.id = 'm_' + countID ++;
-	
-	            // pageData.list[0].elements.push(elem);
-	            // console.log(pageData);
-	            // var html = `<div class="elem editable" id="${id}">
-	            //                 test
-	            //             </div>`;
-	            // $('.page').eq(0).append(html);
-	        });
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 20 */,
-/* 21 */,
-/* 22 */
+/* 34 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -13588,7 +14338,7 @@
 	    cursor: -1,
 	
 	    $curElem: null,
-	    $copyElement: null,
+	    $copyElem: null,
 	
 	    curElem: null,
 	    curElems: [],
@@ -13598,281 +14348,6 @@
 	    index: 0
 	};
 
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _textJs = __webpack_require__(28);
-	
-	var _textJs2 = _interopRequireDefault(_textJs);
-	
-	var _transformJs = __webpack_require__(27);
-	
-	var _transformJs2 = _interopRequireDefault(_transformJs);
-	
-	var _sizeJs = __webpack_require__(24);
-	
-	var _sizeJs2 = _interopRequireDefault(_sizeJs);
-	
-	var _positionJs = __webpack_require__(25);
-	
-	var _positionJs2 = _interopRequireDefault(_positionJs);
-	
-	var _backgroundJs = __webpack_require__(29);
-	
-	var _backgroundJs2 = _interopRequireDefault(_backgroundJs);
-	
-	var _animationJs = __webpack_require__(30);
-	
-	var _animationJs2 = _interopRequireDefault(_animationJs);
-	
-	var core = {
-	    // 同步样式数据
-	    sync: function sync(style) {
-	        _lodash2['default'].forEach(style, function (value, key) {
-	            core.syncValue(key, value);
-	        });
-	    },
-	    //
-	    syncValue: function syncValue(key, value) {
-	        if (!_taskJs2['default'].events[key]) return;
-	        _taskJs2['default'].events[key](value);
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 24 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-5">\n                        <div class="ui_slider"></div>\n                    </div>\n                    <div class="col-md-7">\n                        <input class="form-control" data-role="width" type="number">\n                    </div>\n                </div>\n                <div class="row">\n                    <div class="col-md-5">\n                        <div class="ui_slider"></div>\n                    </div>\n                    <div class="col-md-7">\n                        <input class="form-control" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $width = _taskJs2['default'].$el.find('[data-role="width"]');
-	var $height = _taskJs2['default'].$el.find('[data-role="height"]');
-	
-	_taskJs2['default'].register('width', function (value) {
-	    value = parseInt(value, 10);
-	    $width.val(value);
-	});
-	
-	_taskJs2['default'].register('height', function (value) {
-	    value = parseInt(value, 10);
-	    $height.val(value);
-	});
-
-/***/ },
-/* 25 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var html = '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-2">left</div>\n                <div class="col-md-10">\n                    <input class="form-control" data-role="left" type="number">\n                </div>\n            </div>\n            <div class="row">\n                <div class="col-md-2">top</div>\n                <div class="col-md-10">\n                    <input class="form-control" data-role="top" type="number">\n                </div>\n            </div>\n        </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $left = _taskJs2['default'].$el.find('[data-role="left"]');
-	var $top = _taskJs2['default'].$el.find('[data-role="top"]');
-	// this.$left = $('[data-role="left"]');
-	_taskJs2['default'].register('left', function (value) {
-	    value = parseInt(value, 10);
-	    $left.val(value);
-	});
-	
-	_taskJs2['default'].register('top', function (value) {
-	    value = parseInt(value, 10);
-	    $top.val(value);
-	});
-
-/***/ },
-/* 26 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	module.exports = {
-	    events: {},
-	    register: function register(name, callback) {
-	        var task = {};
-	        task[name] = callback;
-	        _lodash2['default'].extend(this.events, task);
-	    },
-	    $el: $('#editPanel')
-	};
-
-/***/ },
-/* 27 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var _pageRenderJs = __webpack_require__(10);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-5">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $target = _taskJs2['default'].$el.find('[data-role="transform"]');
-	
-	_taskJs2['default'].register('transform', function (value) {
-	    value = value.match(/\-?\d+/)[0];
-	    $target.val(value);
-	    console.log(_modelDataJs2['default']);
-	});
-	
-	$target.on('change.input', function () {
-	
-	    _modelDataJs2['default'].curElem.childStyle.transform = 'rotate(' + this.value + 'deg)';
-	    _pageRenderJs2['default'].renderStep();
-	});
-
-/***/ },
-/* 28 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    FontSize\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">\n                                    <li><a href="javascript:;">1</a></li>\n                                    <li><a href="javascript:;">2</a></li>\n                                    <li><a href="javascript:;">2.4</a></li>\n                                    <li><a href="javascript:;">3</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-horizontal">\n                                <button type="button" class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </button>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-vertical">\n                                <button type="button" class="btn btn-default" data-value="top">\n                                    <span class="glyphicon glyphicon-object-align-top"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="middle">\n                                    <span class="glyphicon glyphicon-object-align-vertical"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="bottom">\n                                    <span class="glyphicon glyphicon-object-align-bottom"></span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $horizontal = _taskJs2['default'].$el.find('[data-role="align-horizontal"]');
-	var $vertical = _taskJs2['default'].$el.find('[data-role="align-vertical"]');
-	_taskJs2['default'].register('text-align', function (value) {
-	    console.log(value);
-	    $horizontal.find('[data-value="' + value + '"]').removeClass('btn-default');
-	});
-	
-	_taskJs2['default'].register('vertical-align', function (value) {
-	    console.log(value);
-	    $vertical.find('[data-value="' + value + '"]').removeClass('btn-default');
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n                <div class="row">\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-color">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $image = _taskJs2['default'].$el.find('[data-role="bg-image"]');
-	var $color = _taskJs2['default'].$el.find('[data-role="bg-color"]');
-	_taskJs2['default'].register('background-image', function (value) {
-	    value = value.match(/\((.*)\)/);
-	    if (value) {
-	        value = value[1];
-	    }
-	    console.log(value);
-	    $image.val(value);
-	});
-	_taskJs2['default'].register('background-color', function (value) {
-	
-	    console.log(value);
-	    $color.val(value);
-	});
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(26);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelDataJs = __webpack_require__(22);
-	
-	var _modelDataJs2 = _interopRequireDefault(_modelDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-8">\n                        动画模块\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	_taskJs2['default'].register('animation', function (value) {
-	
-	    console.log('##animation##', value);
-	});
-
 /***/ }
-/******/ ]);
+/******/ ])));
 //# sourceMappingURL=app.js.map

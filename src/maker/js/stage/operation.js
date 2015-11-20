@@ -1,7 +1,6 @@
 'use strict';
 
 import _ from 'lodash';
-import stage from './index.js';
 
 var core = {
     alignHorizontal: function(){

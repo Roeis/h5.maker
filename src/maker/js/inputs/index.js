@@ -2,12 +2,21 @@
 
 import _            from 'lodash';
 import task         from './task.js';
-import text         from './text.js';
-import transform    from './transform.js';
-import size         from './size.js';
-import position     from './position.js';
-import background   from './background.js';
-import animation    from './animation.js';
+
+
+var files = [
+    'text',
+    'transform',
+    'background',
+    'animation',
+    'zindex',
+    'size',
+    'position',
+];
+
+for(var i = 0; i < files.length; i++){
+    require('./'+files[i]+ '.js');
+}
 
 var core = {
     // 同步样式数据

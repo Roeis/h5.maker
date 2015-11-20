@@ -1,9 +1,9 @@
 'use strict';
 
-import _ from 'lodash';
-import util from '../biz/util.js';
-import pageData from '../model';
-import Data from '../model/data.js';
+import _            from 'lodash';
+import util         from '../biz/util.js';
+import pageData     from '../model/pageData.js';
+import stageData    from '../model/stageData.js';
 // import elements from '../model/elements';
 // import page from '../page/';
 import render from '../page/render';
@@ -16,13 +16,14 @@ import history from './history.js';
 import toolbar from './toolbar.js';
 // import operation from './operation.js';
 
-window.theData = Data;
+window.theData = stageData;
 var SCREEN_WIDTH = 360,
     SCREEN_HEIGHT = 540;
 
-//stage中的变量对象
+
 var core = {
     init: function() {
+
         hotkey.init();
         menu.init();
         toolbar.init();
@@ -30,9 +31,10 @@ var core = {
 
         this.bindEvent();
 
-        Data.countID = pageData.global.count + 1;
+        stageData.countID = pageData.global.count + 1;
         
     },
+
     bindEvent: function() {
         var self = this;
 
@@ -41,6 +43,7 @@ var core = {
         });
         self.handleSingleClick();
     },
+
     handleSingleClick: function(){
         var self = this;
         util.$doc.on('click', '.device', (event) => {
@@ -62,19 +65,19 @@ var core = {
                     self.addCurElems(id);
                 }else{
                     // 单选情况：选中单个
-                    Data.curElems = [];
-                    Data.curElems.push(id);
+                    stageData.curElems = [];
+                    stageData.curElems.push(id);
 
-                    Data.$curElem = $temp;
-                    Data.curElem = self.getById(id);
+                    stageData.$curElem = $temp;
+                    stageData.curElem = self.getById(id);
                     self.clearCurUi();
                 }
             }else{
-                Data.curElems = [];
+                stageData.curElems = [];
                 self.clearCurUi();
             }
 
-            console.log(Data.curElems);
+            console.log(stageData.curElems);
 
             if($temp){
                 $temp.addClass('cur');
@@ -92,22 +95,18 @@ var core = {
     },
 
     addCurElems: function(id){
-        var flag = _.includes(Data.curElems, id);
+        var flag = _.includes(stageData.curElems, id);
         if(!flag){
-            Data.curElems.push(id);
+            stageData.curElems.push(id);
         }
 
     },
 
     multiCallback: function(){
-        Data.curElems.each(function(index, elem){
+        stageData.curElems.each(function(index, elem){
             var id = elem;
         });
         //
-    },
-
-    getCurElem: function(){
-        return Data.$curElem;
     },
 
     intoEditable: function($obj){
@@ -122,7 +121,7 @@ var core = {
             drag: function(event, ui) {
             },
             stop: function(event, ui) {
-                _.assign(Data.curElem.style, {
+                _.assign(stageData.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px'
                 });
@@ -140,7 +139,7 @@ var core = {
                 // core._initCssSize(ui.size.width, ui.size.height);
             },
             stop: function(event, ui) {
-                _.assign(Data.curElem.style, {
+                _.assign(stageData.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px',
                     width: ui.size.width + 'px',
@@ -174,7 +173,7 @@ var core = {
     },
 
     syncProperty: function(){
-        var target = Data.curElem;
+        var target = stageData.curElem;
         if(!target) return;
         input.sync(target.style);
         input.sync(target.childStyle);
@@ -194,7 +193,7 @@ var core = {
     },
 
     getPosition: function(){
-        var it = Data.$curElem;
+        var it = stageData.$curElem;
 
         var l = it.css('left'),
             t = it.css('top'),
@@ -213,7 +212,7 @@ var core = {
         var l = SCREEN_WIDTH - pos.width,
             t = SCREEN_HEIGHT - pos.height;
         //temp test
-        Data.$curElem.css({
+        stageData.$curElem.css({
             left: l,
             top: t
         });

@@ -1,14 +1,22 @@
 'use strict';
 import task from './task.js';
-import Data from '../model/data.js';
+import stageData from '../model/stageData.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
+                    <div class="col-md-4">
+                        background image
+                    </div>
                     <div class="col-md-8">
                         <input type="text" class="form-control" data-role="bg-image">
                     </div>
                 </div>
+            </div>
+            <div class="edit-group">
                 <div class="row">
+                    <div class="col-md-4">
+                        background color
+                    </div>
                     <div class="col-md-8">
                         <input type="text" class="form-control" data-role="bg-color">
                     </div>
@@ -24,11 +32,11 @@ task.register('background-image', function(value){
     if(value){
         value = value[1];
     }
-    console.log(value);
+    console.log('%cbackground-image:', 'color: #f00', value);
     $image.val(value);
 });
 task.register('background-color', function(value){
    
-    console.log(value);
+    console.log('%cbackground-color:', 'color: #f00', value);
     $color.val(value);
 });

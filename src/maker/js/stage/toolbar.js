@@ -1,10 +1,36 @@
 'use strict';
-import util from '../biz/util.js';
+import util         from '../biz/util.js';
+import pageData     from '../model/pageData.js';
 
+var $toolBar = $('#toolBar');
+
+var tabs = [
+    {
+        id: 'toolElem',
+        cn: '元素'
+    },
+    {
+        id: 'toolTmpl',
+        cn: '模板'
+    },
+    {
+        id: 'toolLogo',
+        cn: 'logo'
+    },
+    {
+        id: 'toolApis',
+        cn: '接口'
+    },
+    {
+        id: 'toolSrcs',
+        cn: '素材'
+    }
+];
 var core = {
 
     init: function() {
         this._create();
+        this._createTabcont();
         this._bind();
     },
     /**
@@ -13,32 +39,67 @@ var core = {
      */
     _create: function(){
         var html = `<div class="tool-bar">
-                        <ul>
-                            <li class="toolbar-elem">元素</li>
-                            <li class="toolbar-tmpl">模板</li>
-                            <li class="toolbar-logo">logo</li>
-                            <li class="toolbar-apis">接口</li>
-                            <li class="toolbar-srcs">素材</li>
-                        </ul>
+                        <ul>`;
+
+                for(var i = 0; i < tabs.length; i++){
+                    html += `<li data-id="${tabs[i].id}">${tabs[i].cn}</li>`;
+                }
+
+                html += `</ul>
                     </div>`;
+
         this.$elem = $(html);
-        $('#toolBar').append(this.$elem);
+        $toolBar.append(this.$elem);
+    },
+    _createTabcont: function(){
+        var html = `<div class="tool-bar-cont">`;
+
+            for(var i = 0; i < tabs.length; i++){
+                html += `<div class="tool-bar-cont-li" id="${tabs[i].id}">
+                    this is #${tabs[i].id}
+                </div>`;
+            }
+            html += `</div>`;
+
+        this.$cont = $(html);
+        $toolBar.append(this.$cont);
+    },
+
+    _insertData: function(){
+
     },
 
     _bind: function() {
-        // toolbar
-        util.$doc.on('click', '.toolbar-elem', function(){
-            
-            // var elem = _.cloneDeep(elements.defaultElem);
-            // elem.id = 'm_' + countID ++;
+        var self = this;
 
-            // pageData.list[0].elements.push(elem);
-            // console.log(pageData);
-            // var html = `<div class="elem editable" id="${id}">
-            //                 test
-            //             </div>`;
-            // $('.page').eq(0).append(html);
+        util.$doc.on('click', '.tool-bar li', function(){
+            var $this = $(this),
+                index = $this.index(),
+                id = $this.attr('data-id');
+            self.$elem.find('li').removeClass('active');
+            $this.addClass('active');
+            self.$cont.children().hide();
+            self.$cont.show().find('#'+id).show();
+
+            console.log(id, index);
         });
+
+        util.$doc.on('click', function(event){
+            var $this = $(event.target),
+                isIn = $this.closest('#toolBar').length > 0;
+            if(!isIn){
+                self.$cont.hide();
+                self.$elem.find('li').removeClass('active');
+            }
+            // console.log(event.target);
+            // console.log(isIn);
+        });
+
+        // clone 一个元素，id变化
+        // var elem = _.cloneDeep(elements.defaultElem);
+        // stageData.countID ++;
+        // elem.id = 'm_' + stageData.countID;
+        // pageData.list[Data.index].elements.push(elem);
     },
 };
 

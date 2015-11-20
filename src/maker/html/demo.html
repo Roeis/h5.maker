@@ -8,7 +8,7 @@
 {% block body %}
 <div class="container-fluid app">
     <div class="row">
-        <div class="col-md-8 col-left">
+        <div class="col-md-8 stage" id="stage">
             <div class="device">
                 <div class="wrapper" id="output">
                     <div class="page">
@@ -18,31 +18,18 @@
                     </div>
                 </div>
             </div>
-            <div class="device-helper" id="helper">
-                <button class="btn btn-primary" title="二维码">
-                    <span class="glyphicon glyphicon-qrcode"></span>
-                    <!-- <div class="qrcode" id="qrcode_pic">
-                        <canvas width="200" height="200"></canvas>
-                    </div> -->
-                </button>
-            </div>
+            <div id="helper"></div>
             <div id="elemList"></div>
             <div id="toolBar"></div>
             <div id="page"></div>
         </div>
-        <div class="col-md-4 col-right">
+        <div class="col-md-4 back-stage" id="backStage">
             <div class="ppd">
                 <div class="header">
                     <div class="title">H5.maker</div>
                 </div>
-                <div class="edit-panel" id="editPanel">
-                    <div class="edit-group">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <textarea class="form-control">test</textarea>
-                            </div>
-                        </div>
-                    </div>
+                <div class="body">
+                    <div class="edit-panel" id="editPanel"></div>
                 </div>
                 <div class="footer">
                     <button class="btn btn-success" title="保存">
@@ -60,5 +47,6 @@
 <script src="/vendor/jquery/jquery-1.9.1.min.js"></script>
 <script src="/vendor/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/vendor/jquery.qrcode.min.js"></script>
 <script src="js/app.js"></script>
 {% endblock %}

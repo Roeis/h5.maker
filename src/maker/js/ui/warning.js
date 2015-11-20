@@ -1,7 +1,7 @@
 'use strict';
 
 var core = {
-    warn: function(){
+    init: function(){
         var app = window.navigator.appVersion.toLowerCase(),
             version = app.match(/chrome\/([\d.]+)/),
             isChrome = /chrome/i.test(app);

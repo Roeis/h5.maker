@@ -1,21 +1,23 @@
 'use strict';
 import task from './task.js';
-import Data from '../model/data.js';
+import stageData from '../model/stageData.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-5">
-                        <div class="ui_slider"></div>
+                    <div class="col-md-4">
+                        width
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-8">
                         <input class="form-control" data-role="width" type="number">
                     </div>
                 </div>
+            </div>
+            <div class="edit-group">
                 <div class="row">
-                    <div class="col-md-5">
-                        <div class="ui_slider"></div>
+                    <div class="col-md-4">
+                        height
                     </div>
-                    <div class="col-md-7">
+                    <div class="col-md-8">
                         <input class="form-control" data-role="height" type="number">
                     </div>
                 </div>

@@ -9,6 +9,16 @@ ul {
   list-style: none;
 }
 
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+/* Track */
+::-webkit-scrollbar-thumb {
+  background-color: #728291;
+}
+
 .app {
   height: 100%;
 }
@@ -16,18 +26,14 @@ ul {
   height: 100%;
 }
 
-.col-left,
-.col-right {
+.stage,
+.back-stage {
   height: 100%;
   position: relative;
 }
 
-.col-left {
+.stage {
   background-color: #eee;
-}
-
-.col-right {
-  background-color: #ddd;
 }
 
 .device {
@@ -55,10 +61,36 @@ ul {
   height: 100%;
 }
 
-.device-helper {
+.qrcode-helper {
   position: absolute;
-  left: 50%;
+  right: 100px;
   bottom: 20px;
+  font-size: 24px;
+  z-index: 9;
+  color: #aaa;
+  padding: 10px;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.qrcode-helper span {
+  display: block;
+}
+.qrcode-helper:hover {
+  color: #666;
+}
+.qrcode-helper:hover .qrcode {
+  display: block;
+}
+.qrcode-helper .qrcode {
+  padding: 10px;
+  background-color: #fff;
+  position: absolute;
+  display: none;
+  bottom: 50px;
+  right: 0;
+}
+.qrcode-helper canvas {
+  display: block;
 }
 
 .editable {
@@ -86,9 +118,11 @@ ul {
   position: absolute;
   left: 50%;
   top: 0;
+  margin-left: -180px;
   background-color: #ddd;
 }
 .tool-bar li {
+  position: relative;
   height: 50px;
   width: 75px;
   line-height: 50px;
@@ -98,15 +132,85 @@ ul {
 .tool-bar li:hover {
   background-color: #cccccc;
 }
+.tool-bar li.active:after {
+  position: absolute;
+  content: '';
+  width: 0px;
+  height: 0px;
+  left: 50%;
+  bottom: -5px;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #fff #fff transparent transparent;
+  -webkit-transform: rotate(-45deg);
+          transform: rotate(-45deg);
+}
+
+.tool-bar-cont {
+  position: absolute;
+  display: none;
+  width: 90%;
+  height: 90%;
+  z-index: 9;
+  top: 50px;
+  left: 5%;
+}
+.tool-bar-cont .tool-bar-cont-li {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  box-shadow: 0px 20px 20px 5px rgba(0, 0, 0, 0.1);
+}
 
 .ppd {
   margin: 0 -15px;
+  height: 100%;
 }
 .ppd .header {
   background-color: #2a64cd;
   padding: 10px;
   width: 100%;
   color: #FFF;
+}
+.ppd .body {
+  height: 100%;
+  padding: 50px 0;
+  margin: -50px 0;
+}
+
+.edit-panel {
+  height: 100%;
+  overflow: scroll;
+}
+
+.edit-group {
+  background-color: #fff;
+  padding: 10px;
+}
+.edit-group .row {
+  margin: 0;
+}
+
+.anima {
+  position: relative;
+  width: 60px;
+  height: 60px;
+  margin: 0 12px 20px 0;
+  box-shadow: 0 0 0 2px #EEE;
+  float: left;
+  font-size: 1rem;
+  cursor: pointer;
+  text-align: center;
+  line-height: 18px;
+  padding: 10px;
+  color: #999;
+}
+.anima:hover, .anima.active {
+  box-shadow: 0 0 0 2px #3b75de;
+  color: #3b75de;
 }
 
 .page-ul {
@@ -117,6 +221,7 @@ ul {
   height: 100%;
   background-color: #ccc;
   padding: 10px;
+  overflow: scroll;
 }
 .page-ul .page-li {
   background-color: #bbb;
@@ -136,6 +241,14 @@ ul {
   border: 1px dashed #2a64cd;
   height: 40px;
   margin-bottom: 10px;
+}
+
+.page-operation {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  margin-top: 280px;
+  margin-left: -180px;
 }
 
 .elem-list {
@@ -185,11 +298,6 @@ ul {
   right: 5px;
   color: #bbb;
   font-size: 12px;
-}
-
-.edit-group {
-  background-color: #fff;
-  padding: 10px;
 }
 
 .cur:after {

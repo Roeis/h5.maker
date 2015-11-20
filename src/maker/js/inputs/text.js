@@ -1,6 +1,6 @@
 'use strict';
-import task from './task.js';
-import Data from '../model/data.js';
+import task         from './task.js';
+import stageData    from '../model/stageData.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
@@ -49,12 +49,17 @@ task.$el.append(html);
 
 var $horizontal = task.$el.find('[data-role="align-horizontal"]');
 var $vertical = task.$el.find('[data-role="align-vertical"]');
+
 task.register('text-align', function(value){
-    console.log(value);
+    // console.log(value);
     $horizontal.find(`[data-value="${value}"]`).removeClass('btn-default');
 });
 
 task.register('vertical-align', function(value){
-    console.log(value);
+    // console.log(value);
     $vertical.find(`[data-value="${value}"]`).removeClass('btn-default');
+});
+
+task.register('color', function(value){
+    console.log('%ccolor:', 'color: #f00', value);
 });
