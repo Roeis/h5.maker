@@ -1,6 +1,7 @@
 'use strict';
-import task from './task.js';
-import stageData from '../model/stageData.js';
+import task         from './task.js';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
@@ -18,6 +19,11 @@ task.$el.append(html);
 var $zindex = task.$el.find('[data-role="z-index"]');
 
 task.register('z-index', function(value){
-    console.log('%cz-index', 'color: #f00', value);
+    // console.log('%cz-index', 'color: #f00', value);
     $zindex.val(value);
+});
+
+$zindex.on('change.property', function(){
+    stageData.curElem.style['z-index'] = this.value;
+    render.renderStep();
 });

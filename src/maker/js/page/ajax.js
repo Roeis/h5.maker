@@ -1,6 +1,6 @@
 'use strict';
 
-import pageData from '../model';
+// import pageData from '../data';
 
 var URL = '';
 var pageId = window.CUR_DATA.pageId;

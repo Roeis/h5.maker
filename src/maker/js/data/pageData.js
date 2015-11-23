@@ -12,51 +12,70 @@ var data = {
                     {
                         id: 'm_0',
                         type: 'btn',
-                        value: '',
+                        innerHtml: '',
+                        extra: {
+                            link: 'template link',
+                            audio: '',
+                            video: '',
+                            analyze: ''
+                        },
                         childStyle: {
-                            'transform': 'rotate(45deg)',
+                            'transform': 'rotate(0deg)',
                             'text-align': 'center',
                             'vertical-align': 'center',
                             'font-size': '15px',
-                            'background-image': 'url(https://www.npmjs.com/static/images/wombat-avatar-small.png)',
-                            'background-color': '#fff',
-                            'border-radius': '30px'
+                            'background-image': 'none',
+                            'background-color': '#f50',
+                            'border-radius': '0px'
                         },
                         style: {
                             'left': 0,
-                            'top': 0,
-                            'width': '50px',
-                            'height': '50px',
-                            'animation': 'wobble 1s ease 1s forwards',
+                            'top': '200px',
+                            'width': '360px',
+                            'height': '100px',
+                            'z-index': 0,
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
                         }
                     },
                     {
                         id: 'm_1',
                         type: 'btn',
-                        value: '<p>testtsst sfds</p>',
+                        innerHtml: '<p>testtsst sfds</p>',
+                        extra: {
+                            link: 'template link',
+                            audio: 'audio link',
+                            video: 'video link',
+                            analyze: 'analyze link'
+                        },
                         childStyle: {
-                            'transform': 'rotate(30deg)',
+                            'transform': 'rotate(0deg)',
                             'text-align': 'center',
                             'vertical-align': 'middle',
                             'font-size': '15px',
                             'color': '#f50',
-                            'border-radius': '10px',
+                            'border-radius': '0px',
                             'background-color': '#fff',
-                            'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+                            'background-image': 'none'
                         },
                         style: {
                             'left': 0,
                             'top': 0,
-                            'width': '100px',
+                            'width': '360px',
                             'height': '100px',
                             'z-index': 0,
-                            'animation': 'wobble 1s ease 2s forwards'
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
                         }
                     },
                     {
                         id: 'm_2',
                         type: 'btn',
-                        value: '<p>testtsst sfds</p>',
+                        innerHtml: '<p>testtsst sfds</p>',
                         childStyle: {
                             'transform': 'rotate(80deg)',
                             'text-align': 'left',
@@ -68,10 +87,14 @@ var data = {
                         },
                         style: {
                             'left': '200px',
-                            'top': '300px',
+                            'top': '250px',
                             'width': '100px',
                             'height': '100px',
-                            'animation': 'wobble 1s ease 2s forwards'
+                            'z-index': 0,
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
                         }
                     }
                 ],
@@ -85,7 +108,7 @@ var data = {
                     {
                         id: 'm_3',
                         type: 'btn',
-                        value: '<div class="inner"></div>',
+                        innerHtml: '<div class="inner"></div>',
                         childStyle: {
                             'transform': 'rotate(45deg)',
                             'text-align': 'center',
@@ -98,7 +121,9 @@ var data = {
                             top: 0,
                             width: '50px',
                             height: '50px',
-                            animation: 'wobble 1s ease 1s forwards'
+                            'animation-name': 'wobble',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s'
                         }
                     }
                 ],
@@ -112,7 +137,7 @@ var data = {
                     {
                         id: 'm_4',
                         type: 'btn',
-                        value: '<div class="inner"></div>',
+                        innerHtml: '<div class="inner"></div>',
                         childStyle: {
                             'transform': 'rotate(45deg)',
                             'text-align': 'center',
@@ -125,34 +150,9 @@ var data = {
                             top: 0,
                             width: '50px',
                             height: '50px',
-                            animation: 'wobble 1s ease 1s forwards'
-                        }
-                    }
-                ],
-            style: {
-                'background': 'url("http://jsdf.com/sdf.jpg")',
-                'backgounnd-color': '#fff'
-            }
-        },
-        {
-            elements: [
-                    {
-                        id: 'm_5',
-                        type: 'btn',
-                        value: '<div class="inner"></div>',
-                        childStyle: {
-                            'transform': 'rotate(45deg)',
-                            'text-align': 'center',
-                            'font-size': '15px',
-                            'color': '#fff',
-                            'background-color': '#fff',
-                        },
-                        style: {
-                            left: 0,
-                            top: 0,
-                            width: '50px',
-                            height: '50px',
-                            animation: 'wobble 1s ease 1s forwards'
+                            'animation-name': 'tada',
+                            'animation-duration': '1s',
+                            'animation-delay': '0s'
                         }
                     }
                 ],

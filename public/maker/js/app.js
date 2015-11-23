@@ -40,30 +40,7 @@
 /******/ 	return __webpack_require__(0);
 /******/ })
 /************************************************************************/
-/******/ ((function(modules) {
-	// Check all modules for deduplicated modules
-	for(var i in modules) {
-		if(Object.prototype.hasOwnProperty.call(modules, i)) {
-			switch(typeof modules[i]) {
-			case "function": break;
-			case "object":
-				// Module can be created from a template
-				modules[i] = (function(_m) {
-					var args = _m.slice(1), fn = modules[_m[0]];
-					return function (a,b,c) {
-						fn.apply(this, [a,b,c].concat(args));
-					};
-				}(modules[i]));
-				break;
-			default:
-				// Module is a copy of another module
-				modules[i] = modules[modules[i]];
-				break;
-			}
-		}
-	}
-	return modules;
-}([
+/******/ ([
 /* 0 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -82,11 +59,11 @@
 	
 	var _ui2 = _interopRequireDefault(_ui);
 	
-	var _page = __webpack_require__(3);
+	var _page = __webpack_require__(5);
 	
 	var _page2 = _interopRequireDefault(_page);
 	
-	var _stage = __webpack_require__(11);
+	var _stage = __webpack_require__(13);
 	
 	var _stage2 = _interopRequireDefault(_stage);
 	
@@ -135,11 +112,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _qrcodeJs = __webpack_require__(31);
+	var _qrcodeJs = __webpack_require__(3);
 	
 	var _qrcodeJs2 = _interopRequireDefault(_qrcodeJs);
 	
-	var _warningJs = __webpack_require__(32);
+	var _warningJs = __webpack_require__(4);
 	
 	var _warningJs2 = _interopRequireDefault(_warningJs);
 	
@@ -163,198 +140,93 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _bizUtilJs = __webpack_require__(8);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _modelPageDataJs = __webpack_require__(33);
-	
-	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	// import ajax from './ajax.js';
-	
-	var _renderJs = __webpack_require__(9);
-	
-	var _renderJs2 = _interopRequireDefault(_renderJs);
-	
-	var $page = $('#page'),
-	    $elemList = $('#elemList');
+	// 生成二维码
+	// var qrcode = window.CUR_DATA.qrcode;
+	var $helper = $('#helper');
+	var mQrcode = 'http://www.baidu.com/';
+	var core = {
+	    init: function init() {
+	        this.create();
+	        this.initCode();
+	    },
+	    create: function create() {
+	        var html = '<div class="qrcode-helper">\n                        <span class="glyphicon glyphicon-qrcode"></span>\n                        <div class="qrcode" id="qrcode"></div>\n                    </div>';
+	        $helper.append(html);
+	    },
+	    initCode: function initCode() {
+	        $('#qrcode').qrcode({
+	            text: mQrcode,
+	            width: 200,
+	            height: 200
+	        });
+	    }
+	};
+	module.exports = core;
+
+/***/ },
+/* 4 */
+/***/ function(module, exports) {
+
+	'use strict';
 	
 	var core = {
-	
 	    init: function init() {
+	        var app = window.navigator.appVersion.toLowerCase(),
+	            version = app.match(/chrome\/([\d.]+)/),
+	            isChrome = /chrome/i.test(app);
 	
-	        this.createManager();
-	        this.createOperation();
-	        this.bindPage();
-	        this.renderElems();
-	        //渲染页面和管理页面, 包含了初始化页面滚动
-	    },
+	        version && (version = parseInt(version[1].slice(0, 2)));
 	
-	    //得到当前显示页面内容，保存到数组,
-	    //增加空白分页
-	    addPage: function addPage() {
-	
-	        _modelPageDataJs2['default'].list.push({
-	            elements: [],
-	            style: ''
-	        });
-	
-	        _modelStageDataJs2['default'].index = _modelPageDataJs2['default'].list.length - 1;
-	
-	        core.renderOne();
-	    },
-	
-	    //复制当前分页
-	    copyPage: function copyPage() {
-	        console.log(_modelStageDataJs2['default']);
-	        var copy = _lodash2['default'].cloneDeep(_modelPageDataJs2['default'].list[_modelStageDataJs2['default'].index]);
-	        _lodash2['default'].forEach(copy.elements, function (value, key) {
-	            _modelStageDataJs2['default'].countID++;
-	            value.id = 'm_' + _modelStageDataJs2['default'].countID;
-	        });
-	
-	        _modelPageDataJs2['default'].list.push(copy);
-	        _modelStageDataJs2['default'].index = _modelPageDataJs2['default'].list.length - 1;
-	        core.renderOne();
-	    },
-	
-	    //删除当前分页
-	    removePage: function removePage() {
-	
-	        _modelPageDataJs2['default'].list.splice(_modelStageDataJs2['default'].index, 1);
-	        //note: pageData.length has minused one
-	        var length = _modelPageDataJs2['default'].list.length;
-	        _modelStageDataJs2['default'].index = _modelStageDataJs2['default'].index === length ? length - 1 : _modelStageDataJs2['default'].index;
-	
-	        core.renderOne();
-	    },
-	
-	    //交换页面顺序
-	    swapPage: function swapPage(oldIndex, newIndex) {
-	
-	        var temp = _modelPageDataJs2['default'].list[oldIndex];
-	
-	        _modelPageDataJs2['default'].list.splice(oldIndex, 1);
-	        _modelPageDataJs2['default'].list.splice(newIndex, 0, temp);
-	
-	        _modelStageDataJs2['default'].index = newIndex;
-	
-	        core.renderOne();
-	    },
-	
-	    //更新所有页面数据
-	    _update: function _update() {
-	        //摧毁pagetrans组件，返回原始DOM
-	        this.destroy();
-	    },
-	
-	    _destroy: function _destroy() {},
-	
-	    // 创建页面管理
-	    createManager: function createManager() {
-	        $page.append('<div class="page-ul"></div>');
-	
-	        this.renderManager();
-	
-	        this.bindManager();
-	    },
-	
-	    renderManager: function renderManager() {
-	        var html = '';
-	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
-	            html += '<div class="page-li">' + (i + 1) + '</div>';
-	        }
-	        html += '</div>';
-	        $page.find('.page-ul').html(html);
-	        $page.find('.page-ul').children().eq(_modelStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
-	    },
-	
-	    bindManager: function bindManager() {
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', this.copyPage);
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', this.removePage);
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', this.addPage);
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="template"]', function () {
-	            console.log('%csync template with cloud', 'color: #f00;');
-	        });
-	    },
-	
-	    createOperation: function createOperation() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="template" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
-	        $page.append(html);
-	    },
-	
-	    renderElems: function renderElems() {
-	        var data = _modelPageDataJs2['default'].list[_modelStageDataJs2['default'].index].elements,
-	            html = '<div class="elem-list">\n                    <div>\n                        当前视图\n                    </div>';
-	        for (var i = 0; i < data.length; i++) {
-	            html += '<div class="elem-li" data-id="' + data[i].id + '">\n                        ' + data[i].id + '\n                    </div>';
-	        }
-	        html += '</div>';
-	        $elemList.html(html);
-	    },
-	
-	    renderOne: function renderOne() {
-	        this.renderManager();
-	        this.renderElems();
-	        _renderJs2['default'].renderPage();
-	    },
-	
-	    bindPage: function bindPage() {
-	        var self = this,
-	            old_index,
-	            new_index;
-	
-	        $page.find('.page-ul').sortable({
-	            containment: 'parent',
-	            items: '.page-li',
-	            placeholder: 'ui-tip',
-	            start: function start(event, ui) {
-	                old_index = $(ui.item).index();
-	            },
-	            stop: function stop(event, ui) {
-	                new_index = $(ui.item).index();
-	
-	                var alertString = old_index + 1 + ' 插在' + (old_index > new_index ? new_index : new_index + 1) + ' 后面吗?';
-	
-	                if (old_index !== new_index) {
-	                    // window.alert(alertString);
-	                    console.log('swap');
-	                    self.swapPage(old_index, new_index);
-	                }
-	            }
-	        });
-	
-	        $page.on('click', '.page-li', function () {
-	            var index = $(this).index();
-	            _modelStageDataJs2['default'].index = index;
-	            console.log(_modelPageDataJs2['default']);
-	            $page.find('.page-ul').children().eq(_modelStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
-	
-	            _renderJs2['default'].renderPage();
-	            self.renderElems();
-	        });
+	        version <= 36 && alert('厂长建议你使用新版Chrome~');
+	        !isChrome && alert('请使用chrome来体验这款神器~');
 	    }
 	};
 	
 	module.exports = core;
 
 /***/ },
-/* 4 */
+/* 5 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	// import ajax from './ajax.js';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _renderJs = __webpack_require__(11);
+	
+	var _renderJs2 = _interopRequireDefault(_renderJs);
+	
+	var _watchlistJs = __webpack_require__(61);
+	
+	var _watchlistJs2 = _interopRequireDefault(_watchlistJs);
+	
+	var _managerJs = __webpack_require__(62);
+	
+	var _managerJs2 = _interopRequireDefault(_managerJs);
+	
+	var $page = $('#page');
+	
+	var core = {
+	
+	    init: function init() {
+	        _managerJs2['default'].init();
+	        _watchlistJs2['default'].init();
+	
+	        //渲染页面和管理页面, 包含了初始化页面滚动
+	        _renderJs2['default'].renderPage();
+	        _renderJs2['default'].pushHistory();
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -12709,10 +12581,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(5)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(7)(module), (function() { return this; }())))
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -12728,8 +12600,6 @@
 
 
 /***/ },
-/* 6 */,
-/* 7 */,
 /* 8 */
 /***/ function(module, exports) {
 
@@ -12737,10 +12607,8 @@
 	
 	module.exports = {
 	    $doc: $(document),
-	
-	    copy: function copy() {
-	        console.log(32);
-	    },
+	    SCREEN_WIDTH: 360,
+	    SCREEN_HEIGHT: 540,
 	
 	    insertStyle: function insertStyle(styleSheet, styleID) {
 	
@@ -12756,35 +12624,267 @@
 	        var delta = value % 10,
 	            base = value / 10;
 	        return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
-	    }
+	    },
+	    rgb2hex: function rgb2hex(rgb) {
 	
+	        if (rgb.indexOf('#') > -1) {
+	            return {
+	                hex: rgb,
+	                opacity: 1
+	            };
+	        } else {
+	            var rgba = rgb.split('(')[1].split(')')[0].split(','),
+	                hex = [parseInt(rgba[0]).toString(16), parseInt(rgba[1]).toString(16), parseInt(rgba[2]).toString(16)],
+	                opacity = rgba.length === 4 ? rgba[3] : 1;
+	
+	            $.each(hex, function (idx, val) {
+	                if (val.length === 1) {
+	                    hex[idx] = '0' + val;
+	                }
+	            });
+	            return {
+	                hex: '#' + hex.join(''),
+	                opacity: opacity
+	            };
+	        }
+	    },
+	
+	    percentValue: function percentValue(value, standard) {
+	        return (value / standard * 100).toFixed(0) + '%';
+	    },
+	
+	    //渲染
+	    flatStyle: function flatStyle(obj) {
+	
+	        var str = _.map(obj, function (value, key) {
+	            return key + ':' + value + ';';
+	        }).join('');
+	        // console.log(str)
+	        return str;
+	    }
 	};
 
 /***/ },
 /* 9 */
+/***/ function(module, exports) {
+
+	'use strict';
+	/**
+	 list           : 元数据， 直接操作舞台上的属性
+	 listHtml       : 生成数据，用于前台页面
+	 config         : 配置，模板的属性
+	 global         : 全局属性
+	 */
+	var data = {
+	    list: [{
+	        elements: [{
+	            id: 'm_0',
+	            type: 'btn',
+	            innerHtml: '',
+	            extra: {
+	                link: 'template link',
+	                audio: '',
+	                video: '',
+	                analyze: ''
+	            },
+	            childStyle: {
+	                'transform': 'rotate(0deg)',
+	                'text-align': 'center',
+	                'vertical-align': 'center',
+	                'font-size': '15px',
+	                'background-image': 'none',
+	                'background-color': '#f50',
+	                'border-radius': '0px'
+	            },
+	            style: {
+	                'left': 0,
+	                'top': '200px',
+	                'width': '360px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s',
+	                'opacity': 1
+	            }
+	        }, {
+	            id: 'm_1',
+	            type: 'btn',
+	            innerHtml: '<p>testtsst sfds</p>',
+	            extra: {
+	                link: 'template link',
+	                audio: 'audio link',
+	                video: 'video link',
+	                analyze: 'analyze link'
+	            },
+	            childStyle: {
+	                'transform': 'rotate(0deg)',
+	                'text-align': 'center',
+	                'vertical-align': 'middle',
+	                'font-size': '15px',
+	                'color': '#f50',
+	                'border-radius': '0px',
+	                'background-color': '#fff',
+	                'background-image': 'none'
+	            },
+	            style: {
+	                'left': 0,
+	                'top': 0,
+	                'width': '360px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s',
+	                'opacity': 1
+	            }
+	        }, {
+	            id: 'm_2',
+	            type: 'btn',
+	            innerHtml: '<p>testtsst sfds</p>',
+	            childStyle: {
+	                'transform': 'rotate(80deg)',
+	                'text-align': 'left',
+	                'vertical-align': 'top',
+	                'font-size': '15px',
+	                'border-radius': '10px',
+	                'background-color': '#fff',
+	                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+	            },
+	            style: {
+	                'left': '200px',
+	                'top': '250px',
+	                'width': '100px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s',
+	                'opacity': 1
+	            }
+	        }],
+	        style: {
+	            'background': 'url("http://jsdf.com/sdf.jpg")',
+	            'backgounnd-color': '#fff'
+	        }
+	    }, {
+	        elements: [{
+	            id: 'm_3',
+	            type: 'btn',
+	            innerHtml: '<div class="inner"></div>',
+	            childStyle: {
+	                'transform': 'rotate(45deg)',
+	                'text-align': 'center',
+	                'font-size': '15px',
+	                'color': '#fff',
+	                'background-color': '#fff'
+	            },
+	            style: {
+	                left: 0,
+	                top: 0,
+	                width: '50px',
+	                height: '50px',
+	                'animation-name': 'wobble',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s'
+	            }
+	        }],
+	        style: {
+	            'background': 'url("http://jsdf.com/sdf.jpg")',
+	            'backgounnd-color': '#fff'
+	        }
+	    }, {
+	        elements: [{
+	            id: 'm_4',
+	            type: 'btn',
+	            innerHtml: '<div class="inner"></div>',
+	            childStyle: {
+	                'transform': 'rotate(45deg)',
+	                'text-align': 'center',
+	                'font-size': '15px',
+	                'color': '#fff',
+	                'background-color': '#fff'
+	            },
+	            style: {
+	                left: 0,
+	                top: 0,
+	                width: '50px',
+	                height: '50px',
+	                'animation-name': 'tada',
+	                'animation-duration': '1s',
+	                'animation-delay': '0s'
+	            }
+	        }],
+	        style: {
+	            'background': 'url("http://jsdf.com/sdf.jpg")',
+	            'backgounnd-color': '#fff'
+	        }
+	    }],
+	    // generate by render function
+	    listHtml: [],
+	    config: {
+	        isLoop: false,
+	        direction: 'vertical'
+	    },
+	    global: {
+	        music: '',
+	        style: '',
+	        count: 6,
+	        template: 1
+	    }
+	
+	};
+	
+	module.exports = data;
+
+/***/ },
+/* 10 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	module.exports = {
+	
+	    cache: [],
+	    cacheMax: 20,
+	    cursor: -1,
+	
+	    $curElem: null,
+	
+	    clone: null,
+	    curElem: null,
+	    curElems: [],
+	
+	    countID: 0,
+	
+	    index: 0
+	};
+
+/***/ },
+/* 11 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(4);
+	var _lodash = __webpack_require__(6);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _modelPageDataJs = __webpack_require__(33);
+	var _dataPageDataJs = __webpack_require__(9);
 	
-	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
 	var _bizUtilJs = __webpack_require__(8);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _stageHistoryJs = __webpack_require__(10);
+	var _stageHistoryJs = __webpack_require__(12);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
@@ -12793,7 +12893,7 @@
 	    render: function render() {
 	        var html = '',
 	            template = '<div class="elem" id="<%= id %>"><%= value %></div>',
-	            curData = _modelPageDataJs2['default'].list[this.index];
+	            curData = _dataPageDataJs2['default'].list[this.index];
 	        for (var i = 0; i < curData.elements.length; i++) {
 	            var it = curData.elements[i];
 	            html += _lodash2['default'].template(template)(it);
@@ -12818,9 +12918,9 @@
 	    // 渲染正式CSS结构，从DOM中分离到head中style标签
 	    renderStyle: function renderStyle() {
 	        var stylesheet = '';
-	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
-	            for (var j = 0; j < _modelPageDataJs2['default'].list[i].elements.length; j++) {
-	                var it = _modelPageDataJs2['default'].list[i].elements[j];
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            for (var j = 0; j < _dataPageDataJs2['default'].list[i].elements.length; j++) {
+	                var it = _dataPageDataJs2['default'].list[i].elements[j];
 	                var style = this.stringifyStyle(it);
 	                stylesheet += style;
 	            }
@@ -12828,57 +12928,49 @@
 	        _bizUtilJs2['default'].insertStyle(stylesheet, 'maker');
 	    },
 	
-	    percentValue: function percentValue(value, standard) {
-	        return (value / standard * 100).toFixed(0) + '%';
-	    },
-	    // use when renderng output html
-	    _adjustPosition: function _adjustPosition(id) {
-	        // var pageData = _.find()
-	        // var l = this.percentValue(left, SCREEN_WIDTH),
-	        //     t = this.percentValue(top, SCREEN_HEIGHT),
-	        //     w = this.percentValue(width, SCREEN_WIDTH),
-	        //     h = this.percentValue(height, SCREEN_HEIGHT);
-	
-	    },
-	
-	    //渲染
-	    flatStyle: function flatStyle(obj) {
-	        return JSON.stringify(obj).replace(/\\\"|\{|\}/g, '').replace(/\"/g, '').replace(/\,/g, ';').concat(';');
-	    },
-	
 	    // 渲染单页，当前
-	    renderPage: function renderPage(callback) {
+	    renderPage: function renderPage() {
 	
-	        var idx = _modelStageDataJs2['default'].index,
-	            data = _modelPageDataJs2['default'].list[idx],
-	            clone = _lodash2['default'].cloneDeep(data),
+	        var idx = _dataStageDataJs2['default'].index,
+	            data = _dataPageDataJs2['default'].list[idx],
 	            html = '';
 	
 	        for (var i = 0; i < data.elements.length; i++) {
 	            var it = data.elements[i],
-	                style = this.flatStyle(it.style),
-	                childStyle = this.flatStyle(it.childStyle);
+	                style = _bizUtilJs2['default'].flatStyle(it.style),
+	                childStyle = _bizUtilJs2['default'].flatStyle(it.childStyle);
 	
-	            html += '<div class="editable" id="' + it.id + '" style="' + style + '">\n                        <div class="inner" style="' + childStyle + '">\n                            ' + it.value + '\n                        </div>\n                    </div>';
+	            html += '<div class="editable" id="' + it.id + '" style="' + style + '">\n                        <div class="inner" style="' + childStyle + '">\n                            ' + it.innerHtml + '\n                        </div>\n                    </div>';
 	        }
 	
-	        // console.log('render', idx, data);
-	
 	        $('.page').eq(0).find('.cont').html(html);
-	        callback && callback(clone);
 	    },
 	
+	    renderElem: function renderElem() {
+	        var it = _dataStageDataJs2['default'].curElem,
+	            $target = $('#' + it.id),
+	            style = _bizUtilJs2['default'].flatStyle(it.style),
+	            childStyle = _bizUtilJs2['default'].flatStyle(it.childStyle);
+	
+	        $target.attr('style', style);
+	        $target.html('<div class="inner" style="' + childStyle + '">\n                        ' + it.innerHtml + '\n                    </div>');
+	    },
+	
+	    pushHistory: function pushHistory() {
+	        var index = _dataStageDataJs2['default'].index,
+	            data = _dataPageDataJs2['default'].list[index],
+	            clone = _lodash2['default'].cloneDeep(data);
+	        _stageHistoryJs2['default'].addStep(clone);
+	    },
+	
+	    // 渲染数量减少为当前元素，历史记录为当前页面
 	    renderStep: function renderStep() {
-	        this.renderPage(function (data) {
-	            // 渲染当前页面， 返回素体HTML
-	            // 添加HTML到cache作为缓存，（暂定20步）
-	            //     添加回溯步骤，统一由本渲染方法来控制
-	            // 添加素体HTML后，执行UI初始化拖拽动作
-	            _stageHistoryJs2['default'].addStep(data);
-	            if (_modelStageDataJs2['default'].curElem) {
-	                $('#' + _modelStageDataJs2['default'].curElem.id).trigger('click');
-	            }
-	        });
+	        this.renderElem();
+	        // this.renderPage();
+	        this.pushHistory();
+	        if (_dataStageDataJs2['default'].curElem) {
+	            $('#' + _dataStageDataJs2['default'].curElem.id).trigger('click');
+	        }
 	    }
 	
 	};
@@ -12886,26 +12978,26 @@
 	module.exports = core;
 
 /***/ },
-/* 10 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
 	var core = {
 	    addStep: function addStep(step) {
-	        _modelStageDataJs2['default'].cache = _modelStageDataJs2['default'].cache.slice(0, _modelStageDataJs2['default'].cursor + 1);
-	        if (_modelStageDataJs2['default'].cache.length >= _modelStageDataJs2['default'].cacheMax) {
-	            _modelStageDataJs2['default'].cache.shift();
+	        _dataStageDataJs2['default'].cache = _dataStageDataJs2['default'].cache.slice(0, _dataStageDataJs2['default'].cursor + 1);
+	        if (_dataStageDataJs2['default'].cache.length >= _dataStageDataJs2['default'].cacheMax) {
+	            _dataStageDataJs2['default'].cache.shift();
 	        }
-	        _modelStageDataJs2['default'].cache.push(step);
-	        _modelStageDataJs2['default'].cursor = _modelStageDataJs2['default'].cache.length - 1;
-	        console.log(_modelStageDataJs2['default'].cache, _modelStageDataJs2['default'].cursor);
+	        _dataStageDataJs2['default'].cache.push(step);
+	        _dataStageDataJs2['default'].cursor = _dataStageDataJs2['default'].cache.length - 1;
+	        console.log(_dataStageDataJs2['default'].cache, _dataStageDataJs2['default'].cursor);
 	    },
 	    /**
 	     * 游标
@@ -12914,19 +13006,19 @@
 	     */
 	    _updateCursor: function _updateCursor(flag) {
 	        if (flag > 0) {
-	            if (_modelStageDataJs2['default'].cursor < _modelStageDataJs2['default'].cache.length - 1) {
-	                _modelStageDataJs2['default'].cursor++;
+	            if (_dataStageDataJs2['default'].cursor < _dataStageDataJs2['default'].cache.length - 1) {
+	                _dataStageDataJs2['default'].cursor++;
 	            }
 	        } else {
-	            if (_modelStageDataJs2['default'].cursor > 0) {
-	                _modelStageDataJs2['default'].cursor--;
+	            if (_dataStageDataJs2['default'].cursor > 0) {
+	                _dataStageDataJs2['default'].cursor--;
 	            }
 	        }
 	    },
 	
 	    _stepCallback: function _stepCallback(flag, callback) {
 	        this._updateCursor(flag);
-	        var step = _modelStageDataJs2['default'].cache[_modelStageDataJs2['default'].cursor];
+	        var step = _dataStageDataJs2['default'].cache[_dataStageDataJs2['default'].cursor];
 	        callback && callback(step);
 	    },
 	
@@ -12939,8 +13031,8 @@
 	    },
 	
 	    clearLog: function clearLog() {
-	        _modelStageDataJs2['default'].cache = [];
-	        _modelStageDataJs2['default'].cursor = -1;
+	        _dataStageDataJs2['default'].cache = [];
+	        _dataStageDataJs2['default'].cursor = -1;
 	    }
 	
 	};
@@ -12948,14 +13040,14 @@
 	module.exports = core;
 
 /***/ },
-/* 11 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(4);
+	var _lodash = __webpack_require__(6);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
@@ -12963,48 +13055,35 @@
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _modelPageDataJs = __webpack_require__(33);
+	var _dataPageDataJs = __webpack_require__(9);
 	
-	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	// import elements from '../model/elements';
-	// import page from '../page/';
-	
-	var _pageRender = __webpack_require__(9);
+	var _pageRender = __webpack_require__(11);
 	
 	var _pageRender2 = _interopRequireDefault(_pageRender);
 	
-	var _inputs = __webpack_require__(12);
+	var _property = __webpack_require__(14);
 	
-	var _inputs2 = _interopRequireDefault(_inputs);
+	var _property2 = _interopRequireDefault(_property);
 	
-	var _hotkeyJs = __webpack_require__(20);
+	var _hotkeyJs = __webpack_require__(32);
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _menuJs = __webpack_require__(22);
+	var _menuJs = __webpack_require__(34);
 	
 	var _menuJs2 = _interopRequireDefault(_menuJs);
 	
-	var _historyJs = __webpack_require__(10);
-	
-	var _historyJs2 = _interopRequireDefault(_historyJs);
-	
-	// import input from './input.js';
-	
-	var _toolbarJs = __webpack_require__(23);
+	var _toolbarJs = __webpack_require__(35);
 	
 	var _toolbarJs2 = _interopRequireDefault(_toolbarJs);
 	
-	// import operation from './operation.js';
-	
-	window.theData = _modelStageDataJs2['default'];
-	var SCREEN_WIDTH = 360,
-	    SCREEN_HEIGHT = 540;
+	window.theData = _dataStageDataJs2['default'];
 	
 	var core = {
 	    init: function init() {
@@ -13012,11 +13091,10 @@
 	        _hotkeyJs2['default'].init();
 	        _menuJs2['default'].init();
 	        _toolbarJs2['default'].init();
-	        _pageRender2['default'].renderStep();
 	
 	        this.bindEvent();
 	
-	        _modelStageDataJs2['default'].countID = _modelPageDataJs2['default'].global.count + 1;
+	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].global.count + 1;
 	    },
 	
 	    bindEvent: function bindEvent() {
@@ -13049,19 +13127,19 @@
 	                    self.addCurElems(id);
 	                } else {
 	                    // 单选情况：选中单个
-	                    _modelStageDataJs2['default'].curElems = [];
-	                    _modelStageDataJs2['default'].curElems.push(id);
+	                    _dataStageDataJs2['default'].curElems = [];
+	                    _dataStageDataJs2['default'].curElems.push(id);
 	
-	                    _modelStageDataJs2['default'].$curElem = $temp;
-	                    _modelStageDataJs2['default'].curElem = self.getById(id);
+	                    _dataStageDataJs2['default'].$curElem = $temp;
+	                    _dataStageDataJs2['default'].curElem = self.getById(id);
 	                    self.clearCurUi();
 	                }
 	            } else {
-	                _modelStageDataJs2['default'].curElems = [];
+	                _dataStageDataJs2['default'].curElems = [];
 	                self.clearCurUi();
 	            }
 	
-	            console.log(_modelStageDataJs2['default'].curElems);
+	            console.log(_dataStageDataJs2['default'].curElems);
 	
 	            if ($temp) {
 	                $temp.addClass('cur');
@@ -13079,14 +13157,14 @@
 	    },
 	
 	    addCurElems: function addCurElems(id) {
-	        var flag = _lodash2['default'].includes(_modelStageDataJs2['default'].curElems, id);
+	        var flag = _lodash2['default'].includes(_dataStageDataJs2['default'].curElems, id);
 	        if (!flag) {
-	            _modelStageDataJs2['default'].curElems.push(id);
+	            _dataStageDataJs2['default'].curElems.push(id);
 	        }
 	    },
 	
 	    multiCallback: function multiCallback() {
-	        _modelStageDataJs2['default'].curElems.each(function (index, elem) {
+	        _dataStageDataJs2['default'].curElems.each(function (index, elem) {
 	            var id = elem;
 	        });
 	        //
@@ -13101,7 +13179,7 @@
 	            start: function start() {},
 	            drag: function drag(event, ui) {},
 	            stop: function stop(event, ui) {
-	                _lodash2['default'].assign(_modelStageDataJs2['default'].curElem.style, {
+	                _lodash2['default'].assign(_dataStageDataJs2['default'].curElem.style, {
 	                    left: ui.position.left + 'px',
 	                    top: ui.position.top + 'px'
 	                });
@@ -13119,7 +13197,7 @@
 	                // core._initCssSize(ui.size.width, ui.size.height);
 	            },
 	            stop: function stop(event, ui) {
-	                _lodash2['default'].assign(_modelStageDataJs2['default'].curElem.style, {
+	                _lodash2['default'].assign(_dataStageDataJs2['default'].curElem.style, {
 	                    left: ui.position.left + 'px',
 	                    top: ui.position.top + 'px',
 	                    width: ui.size.width + 'px',
@@ -13148,20 +13226,22 @@
 	        });
 	    },
 	
-	    syncUi: function syncUi() {},
-	
 	    syncProperty: function syncProperty() {
-	        var target = _modelStageDataJs2['default'].curElem;
-	        if (!target) return;
-	        _inputs2['default'].sync(target.style);
-	        _inputs2['default'].sync(target.childStyle);
+	        var target = _dataStageDataJs2['default'].curElem;
+	        if (!target) {
+	            return;
+	        }
+	        _property2['default'].sync(target.style);
+	        _property2['default'].sync(target.childStyle);
+	        _property2['default'].sync(target.extra);
+	        _property2['default'].sync(target.innerHtml);
 	    },
 	
 	    getById: function getById(id) {
 	        var target = null,
 	            it;
-	        for (var i = 0; i < _modelPageDataJs2['default'].list.length; i++) {
-	            it = _modelPageDataJs2['default'].list[i].elements;
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            it = _dataPageDataJs2['default'].list[i].elements;
 	            // console.log(it);
 	            target = _lodash2['default'].find(it, { 'id': id });
 	            if (target) {
@@ -13169,44 +13249,6 @@
 	            }
 	        }
 	        return target;
-	    },
-	
-	    getPosition: function getPosition() {
-	        var it = _modelStageDataJs2['default'].$curElem;
-	
-	        var l = it.css('left'),
-	            t = it.css('top'),
-	            w = it.css('width'),
-	            h = it.css('height');
-	        return {
-	            left: parseInt(l),
-	            top: parseInt(t),
-	            width: parseInt(w),
-	            height: parseInt(h)
-	        };
-	    },
-	
-	    setBottom: function setBottom() {
-	        var pos = this.getPosition();
-	        var l = SCREEN_WIDTH - pos.width,
-	            t = SCREEN_HEIGHT - pos.height;
-	        //temp test
-	        _modelStageDataJs2['default'].$curElem.css({
-	            left: l,
-	            top: t
-	        });
-	    },
-	
-	    autoAdjust: function autoAdjust() {
-	        var pos = this.getPosition();
-	
-	        var w = _bizUtilJs2['default'].tofixed10(pos.width),
-	            h = _bizUtilJs2['default'].tofixed10(pos.height),
-	            l = _bizUtilJs2['default'].tofixed10(pos.left),
-	            t = _bizUtilJs2['default'].tofixed10(pos.top);
-	        console.log(w, h, l, t);
-	
-	        // render page
 	    }
 	
 	};
@@ -13214,37 +13256,43 @@
 	module.exports = core;
 
 /***/ },
-/* 12 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(4);
+	var _lodash = __webpack_require__(6);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _taskJs = __webpack_require__(13);
+	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var files = ['text', 'transform', 'background', 'animation', 'zindex', 'size', 'position'];
+	var files = [
+	// property
+	'link', 'audio', 'video', 'analyze',
+	// css
+	'text', 'transform', 'borderadius', 'background', 'animation', 'zindex', 'size', 'position'];
 	
 	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(26)("./" + files[i] + '.js');
+	    __webpack_require__(16)("./" + files[i] + '.js');
 	}
 	
 	var core = {
 	    // 同步样式数据
-	    sync: function sync(style) {
-	        _lodash2['default'].forEach(style, function (value, key) {
+	    sync: function sync(obj) {
+	        _lodash2['default'].forEach(obj, function (value, key) {
 	            core.syncValue(key, value);
 	        });
 	    },
 	    //
 	    syncValue: function syncValue(key, value) {
-	        if (!_taskJs2['default'].events[key]) return;
+	        if (!_taskJs2['default'].events[key]) {
+	            return;
+	        }
 	        _taskJs2['default'].events[key](value);
 	    }
 	};
@@ -13252,14 +13300,14 @@
 	module.exports = core;
 
 /***/ },
-/* 13 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(4);
+	var _lodash = __webpack_require__(6);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
@@ -13274,125 +13322,41 @@
 	};
 
 /***/ },
-/* 14 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(13);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    FontSize\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">\n                                    <li><a href="javascript:;">1</a></li>\n                                    <li><a href="javascript:;">2</a></li>\n                                    <li><a href="javascript:;">2.4</a></li>\n                                    <li><a href="javascript:;">3</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-horizontal">\n                                <button type="button" class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </button>\n                            </div>\n                            <div class="btn-group" role="group" data-role="align-vertical">\n                                <button type="button" class="btn btn-default" data-value="top">\n                                    <span class="glyphicon glyphicon-object-align-top"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="middle">\n                                    <span class="glyphicon glyphicon-object-align-vertical"></span>\n                                </button>\n                                <button type="button" class="btn btn-default" data-value="bottom">\n                                    <span class="glyphicon glyphicon-object-align-bottom"></span>\n                                </button>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $horizontal = _taskJs2['default'].$el.find('[data-role="align-horizontal"]');
-	var $vertical = _taskJs2['default'].$el.find('[data-role="align-vertical"]');
-	
-	_taskJs2['default'].register('text-align', function (value) {
-	    // console.log(value);
-	    $horizontal.find('[data-value="' + value + '"]').removeClass('btn-default');
-	});
-	
-	_taskJs2['default'].register('vertical-align', function (value) {
-	    // console.log(value);
-	    $vertical.find('[data-value="' + value + '"]').removeClass('btn-default');
-	});
-	
-	_taskJs2['default'].register('color', function (value) {
-	    console.log('%ccolor:', 'color: #f00', value);
-	});
-
-/***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(13);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	var _pageRenderJs = __webpack_require__(9);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        transform\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $target = _taskJs2['default'].$el.find('[data-role="transform"]');
-	
-	/**
-	 * register a value callback function
-	 * get a value of some property, how to handle with the value,
-	 * it'll be called by sync function that sync up the data
-	 */
-	_taskJs2['default'].register('transform', function (value) {
-	    value = value.match(/\-?\d+/)[0];
-	    $target.val(value);
-	    console.log(_modelStageDataJs2['default']);
-	});
-	
-	/*
-	    example: 
-	    bind event to change the property
-	    then call render.renderStep to log the step, that includes
-	    add a step into history storage, and then render the template 
-	    with the changed data
-	 */
-	$target.on('change.input', function () {
-	
-	    Data.curElem.childStyle.transform = 'rotate(' + this.value + 'deg)';
-	
-	    _pageRenderJs2['default'].renderStep();
-	});
-
-/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(13);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $width = _taskJs2['default'].$el.find('[data-role="width"]');
-	var $height = _taskJs2['default'].$el.find('[data-role="height"]');
-	
-	_taskJs2['default'].register('width', function (value) {
-	    value = parseInt(value, 10);
-	    $width.val(value);
-	});
-	
-	_taskJs2['default'].register('height', function (value) {
-	    value = parseInt(value, 10);
-	    $height.val(value);
-	});
+	var map = {
+		"./analyze.js": 17,
+		"./animation.js": 18,
+		"./audio.js": 20,
+		"./background.js": 21,
+		"./borderadius.js": 22,
+		"./index.js": 14,
+		"./innerHtml.js": 44,
+		"./link.js": 23,
+		"./operation.js": 24,
+		"./position.js": 25,
+		"./size.js": 26,
+		"./task.js": 15,
+		"./text.js": 27,
+		"./transform.js": 28,
+		"./ueditor.js": 29,
+		"./video.js": 30,
+		"./zindex.js": 31
+	};
+	function webpackContext(req) {
+		return __webpack_require__(webpackContextResolve(req));
+	};
+	function webpackContextResolve(req) {
+		return map[req] || (function() { throw new Error("Cannot find module '" + req + "'.") }());
+	};
+	webpackContext.keys = function webpackContextKeys() {
+		return Object.keys(map);
+	};
+	webpackContext.resolve = webpackContextResolve;
+	module.exports = webpackContext;
+	webpackContext.id = 16;
+
 
 /***/ },
 /* 17 */
@@ -13402,29 +13366,23 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(13);
+	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        analyze\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="analyze">\n                    </div>\n                </div>\n            </div>';
 	
 	_taskJs2['default'].$el.append(html);
 	
-	var $left = _taskJs2['default'].$el.find('[data-role="left"]');
-	var $top = _taskJs2['default'].$el.find('[data-role="top"]');
-	// this.$left = $('[data-role="left"]');
-	_taskJs2['default'].register('left', function (value) {
-	    value = parseInt(value, 10);
-	    $left.val(value);
-	});
+	var $analyze = _taskJs2['default'].$el.find('[data-role="analyze"]');
 	
-	_taskJs2['default'].register('top', function (value) {
-	    value = parseInt(value, 10);
-	    $top.val(value);
+	_taskJs2['default'].register('analyze', function (value) {
+	    // console.log('%c analyze here', 'color: #f00', value);
+	    $analyze.val(value);
 	});
 
 /***/ },
@@ -13435,56 +13393,25 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(13);
+	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-color">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$el.append(html);
-	
-	var $image = _taskJs2['default'].$el.find('[data-role="bg-image"]');
-	var $color = _taskJs2['default'].$el.find('[data-role="bg-color"]');
-	_taskJs2['default'].register('background-image', function (value) {
-	    value = value.match(/\((.*)\)/);
-	    if (value) {
-	        value = value[1];
-	    }
-	    console.log('%cbackground-image:', 'color: #f00', value);
-	    $image.val(value);
-	});
-	_taskJs2['default'].register('background-color', function (value) {
-	
-	    console.log('%cbackground-color:', 'color: #f00', value);
-	    $color.val(value);
-	});
-
-/***/ },
-/* 19 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _taskJs = __webpack_require__(13);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	var _bizAnimasJs = __webpack_require__(24);
+	var _bizAnimasJs = __webpack_require__(19);
 	
 	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" data-role="animation-duration"></input>\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" data-role="animation-delay"></input>\n                    </div>\n                </div>\n            </div>';
-	html += '<div class="edit-group">\n                <div class="row">';
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-duration"></input>\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-delay"></input>\n                    </div>\n                </div>\n            </div>';
+	
+	html += '<div class="edit-group">\n                <div class="row animation-name">';
 	for (var key in _bizAnimasJs2['default']) {
 	    if (_bizAnimasJs2['default'].hasOwnProperty(key)) {
 	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                    <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n                </div>';
@@ -13494,364 +13421,60 @@
 	
 	_taskJs2['default'].$el.append(html);
 	
-	var $duration = _taskJs2['default'].$el.find('[data-role="animation-duration"]'),
-	    $delay = _taskJs2['default'].$el.find('[data-role="animation-delay"]');
-	_taskJs2['default'].register('animation', function (value) {
-	    value = value.split(' ');
+	// name
+	var $name = _taskJs2['default'].$el.find('.animation-name');
+	_taskJs2['default'].register('animation-name', function (value) {
+	
 	    // wobble       1s         ease       2s
 	    // name      duration    time-func   delay
-	    var name = value[0],
-	        duration = parseFloat(value[1]),
-	        delay = parseFloat(value[3]);
+	    var name = value;
+	    $name.find('.anima').removeClass('active');
+	    $name.find('.anima-' + name).addClass('active');
 	
-	    $duration.val(duration);
-	    $delay.val(delay);
+	    // console.log('%canimation:', 'color: #f00', name);
+	});
 	
-	    console.log('%canimation:', 'color: #f00', name, duration, delay);
+	$name.on('click', '.anima', function () {
+	    var name = $(this).data('value');
+	    _dataStageDataJs2['default'].curElem.style['animation-name'] = name;
+	    _pageRenderJs2['default'].renderStep();
+	});
+	$name.on('mouseenter mouseleave', '.anima', function (event) {
+	    var $this = $(this),
+	        $target = $this.find('div');
+	    if (event.type === 'mouseenter') {
+	        $target.addClass('animated');
+	    } else {
+	        $target.removeClass('animated');
+	    }
+	});
+	
+	// duration
+	var $duration = _taskJs2['default'].$el.find('[data-role="animation-duration"]');
+	_taskJs2['default'].register('animation-duration', function (value) {
+	    value = parseFloat(value);
+	    $duration.val(value);
+	});
+	
+	$duration.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style['animation-duration'] = this.value + 's';
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	// delay
+	var $delay = _taskJs2['default'].$el.find('[data-role="animation-delay"]');
+	_taskJs2['default'].register('animation-delay', function (value) {
+	    value = parseFloat(value);
+	    $delay.val(value);
+	});
+	
+	$delay.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style['animation-delay'] = this.value + 's';
+	    _pageRenderJs2['default'].renderStep();
 	});
 
 /***/ },
-/* 20 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(4);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _bizKeyJs = __webpack_require__(21);
-	
-	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
-	
-	var _modelPageDataJs = __webpack_require__(33);
-	
-	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
-	
-	var _modelStageDataJs = __webpack_require__(34);
-	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
-	
-	var _historyJs = __webpack_require__(10);
-	
-	var _historyJs2 = _interopRequireDefault(_historyJs);
-	
-	var _pageRender = __webpack_require__(9);
-	
-	var _pageRender2 = _interopRequireDefault(_pageRender);
-	
-	var core = {
-	
-	    init: function init() {
-	        document.onkeydown = this.keyboardEvent;
-	    },
-	
-	    keyboardEvent: function keyboardEvent(event) {
-	        var e = event || window.event;
-	
-	        // 复制
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].C) {
-	            console.log('copy');
-	        }
-	
-	        // 粘贴
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].V) {
-	            console.log('paste');
-	        }
-	
-	        // 剪贴
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].X) {
-	            console.log('cut');
-	        }
-	
-	        // 保存
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].S) {
-	            console.log('save');
-	        }
-	
-	        //自由变换
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].T) {
-	            console.log('transform');
-	        }
-	
-	        //选取所有
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].A) {
-	            console.log('select all');
-	        }
-	
-	        //撤销
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Z) {
-	            console.log('undo');
-	            _historyJs2['default'].undo(function (data) {
-	
-	                _modelPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	            });
-	        }
-	
-	        //重做
-	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Y) {
-	            console.log('redo');
-	            _historyJs2['default'].redo(function (data) {
-	                _modelPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	            });
-	        }
-	
-	        if (e.keyCode === _bizKeyJs2['default'].Up) {
-	            console.log('up arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Right) {
-	            console.log('right arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Down) {
-	            console.log('down arrow');
-	        }
-	        if (e.keyCode === _bizKeyJs2['default'].Left) {
-	            console.log('left arrow');
-	        }
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 21 */
-/***/ function(module, exports) {
-
-	// 键盘
-	"use strict";
-	
-	module.exports = {
-	    BackSpace: 8,
-	    Tab: 9,
-	    Enter: 13,
-	    Shift: 16,
-	    Ctrl: 17,
-	    Alt: 18,
-	    Pause: 19,
-	    Escape: 27,
-	    Space: 32,
-	    Next: 34,
-	    End: 35,
-	    Home: 36,
-	    Left: 37,
-	    Up: 38,
-	    Right: 39,
-	    Down: 40,
-	    Insert: 45,
-	    Delete: 46,
-	    A: 65,
-	    B: 66,
-	    C: 67,
-	    D: 68,
-	    E: 69,
-	    F: 70,
-	    G: 71,
-	    H: 72,
-	    I: 73,
-	    J: 74,
-	    K: 75,
-	    L: 76,
-	    M: 77,
-	    N: 78,
-	    O: 79,
-	    P: 80,
-	    Q: 81,
-	    R: 82,
-	    S: 83,
-	    T: 84,
-	    U: 85,
-	    V: 86,
-	    W: 87,
-	    X: 88,
-	    Y: 89,
-	    Z: 90
-	};
-
-/***/ },
-/* 22 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(8);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var core = {
-	
-	    init: function init() {
-	        this.createMenu();
-	        this.bindMenu();
-	    },
-	    /**
-	     * 创建右键
-	     * @return {[type]} [description]
-	     */
-	    createMenu: function createMenu() {
-	        var html = '<div class="menu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="edit">\n                                <span class="glyphicon glyphicon-pencil"></span>\n                                编辑\n                            </li>\n                            <li data-role="copy">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                                <span class="tip">Ctrl+C</span>\n                            </li>\n                            <li data-role="paste">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                                <span class="tip">Ctrl+V</span>\n                            </li>\n                            <li data-role="moveup">\n                                <span class="glyphicon glyphicon-chevron-up"></span>\n                                上移一层\n                            </li>\n                            <li data-role="movedown">\n                                <span class="glyphicon glyphicon-chevron-down"></span>\n                                下移一层\n                            </li>\n                            <li data-role="delete">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
-	        this.$elem = $(html);
-	        $('body').append(this.$elem);
-	    },
-	
-	    showContextmenu: function showContextmenu(event) {
-	        var left, top;
-	        left = event.pageX - 20;
-	        top = event.pageY - 10;
-	
-	        // handle when reach bottom
-	        var target_height = this.$elem.height();
-	        var offset = target_height + this.$elem.offset().top;
-	        var window_height = $(window).height();
-	
-	        if (offset >= window_height) {
-	            top = window_height - target_height - 20;
-	        }
-	
-	        this.$elem.show().css({
-	            position: 'absolute',
-	            left: left,
-	            top: top
-	        });
-	    },
-	    bindMenu: function bindMenu() {
-	        var self = this;
-	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
-	
-	            // var $this = $(event.target);
-	            // $this.trigger('click');
-	
-	            self.showContextmenu(event);
-	            // 取消默认contextmenu
-	            return false;
-	        });
-	
-	        self.$elem.find('[data-role="copy"]').on('click', function () {
-	            console.log('copy');
-	        });
-	        self.$elem.find('[data-role="paste"]').on('click', function () {
-	            console.log('copy');
-	        });
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 23 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(8);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _modelPageDataJs = __webpack_require__(33);
-	
-	var _modelPageDataJs2 = _interopRequireDefault(_modelPageDataJs);
-	
-	var $toolBar = $('#toolBar');
-	
-	var tabs = [{
-	    id: 'toolElem',
-	    cn: '元素'
-	}, {
-	    id: 'toolTmpl',
-	    cn: '模板'
-	}, {
-	    id: 'toolLogo',
-	    cn: 'logo'
-	}, {
-	    id: 'toolApis',
-	    cn: '接口'
-	}, {
-	    id: 'toolSrcs',
-	    cn: '素材'
-	}];
-	var core = {
-	
-	    init: function init() {
-	        this._create();
-	        this._createTabcont();
-	        this._bind();
-	    },
-	    /**
-	     * 创建右键
-	     * @return {[type]} [description]
-	     */
-	    _create: function _create() {
-	        var html = '<div class="tool-bar">\n                        <ul>';
-	
-	        for (var i = 0; i < tabs.length; i++) {
-	            html += '<li data-id="' + tabs[i].id + '">' + tabs[i].cn + '</li>';
-	        }
-	
-	        html += '</ul>\n                    </div>';
-	
-	        this.$elem = $(html);
-	        $toolBar.append(this.$elem);
-	    },
-	    _createTabcont: function _createTabcont() {
-	        var html = '<div class="tool-bar-cont">';
-	
-	        for (var i = 0; i < tabs.length; i++) {
-	            html += '<div class="tool-bar-cont-li" id="' + tabs[i].id + '">\n                    this is #' + tabs[i].id + '\n                </div>';
-	        }
-	        html += '</div>';
-	
-	        this.$cont = $(html);
-	        $toolBar.append(this.$cont);
-	    },
-	
-	    _insertData: function _insertData() {},
-	
-	    _bind: function _bind() {
-	        var self = this;
-	
-	        _bizUtilJs2['default'].$doc.on('click', '.tool-bar li', function () {
-	            var $this = $(this),
-	                index = $this.index(),
-	                id = $this.attr('data-id');
-	            self.$elem.find('li').removeClass('active');
-	            $this.addClass('active');
-	            self.$cont.children().hide();
-	            self.$cont.show().find('#' + id).show();
-	
-	            console.log(id, index);
-	        });
-	
-	        _bizUtilJs2['default'].$doc.on('click', function (event) {
-	            var $this = $(event.target),
-	                isIn = $this.closest('#toolBar').length > 0;
-	            if (!isIn) {
-	                self.$cont.hide();
-	                self.$elem.find('li').removeClass('active');
-	            }
-	            // console.log(event.target);
-	            // console.log(isIn);
-	        });
-	
-	        // clone 一个元素，id变化
-	        // var elem = _.cloneDeep(elements.defaultElem);
-	        // stageData.countID ++;
-	        // elem.id = 'm_' + stageData.countID;
-	        // pageData.list[Data.index].elements.push(elem);
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 24 */
+/* 19 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -14034,6 +13657,246 @@
 	module.exports = animas;
 
 /***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        audio\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $audio = _taskJs2['default'].$el.find('[data-role="audio"]');
+	
+	_taskJs2['default'].register('audio', function (value) {
+	    // console.log('%c audio here', 'color: #f00', value);
+	    $audio.val(value);
+	});
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="mini-color">\n                            <input type="text" class="form-control" data-role="bg-color">\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $image = _taskJs2['default'].$el.find('[data-role="bg-image"]');
+	
+	_taskJs2['default'].register('background-image', function (value) {
+	    value = value.match(/\((.*)\)/);
+	    if (value) {
+	        value = value[1];
+	    }
+	    // console.log('%cbackground-image:', 'color: #f00', value);
+	    $image.val(value);
+	});
+	
+	$image.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.childStyle['background-image'] = 'url(' + this.value + ')';
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	// background-color
+	var $bgColor = _taskJs2['default'].$el.find('[data-role="bg-color"]');
+	
+	$bgColor.minicolors({
+	    control: 'hue',
+	    theme: 'bootstrap',
+	    opacity: true,
+	    change: function change(hex, opacity) {
+	        // console.log(hex, opacity);
+	        var rgba = $bgColor.minicolors('rgbaString');
+	        _dataStageDataJs2['default'].curElem.childStyle['background-color'] = rgba;
+	        _pageRenderJs2['default'].renderStep();
+	    }
+	});
+	
+	_taskJs2['default'].register('background-color', function (value) {
+	    value = _bizUtilJs2['default'].rgb2hex(value);
+	    $bgColor.minicolors('value', value.hex);
+	    $bgColor.minicolors('opacity', value.opacity);
+	});
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        border-radius\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="border-radius">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $radius = _taskJs2['default'].$el.find('[data-role="border-radius"]');
+	
+	_taskJs2['default'].register('border-radius', function (value) {
+	    // console.log('%c border-radius here', 'color: #f00', value);
+	    value = parseInt(value, 10);
+	    $radius.val(value);
+	});
+	
+	$radius.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.childStyle['border-radius'] = this.value + 'px';
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 23 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        link\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $link = _taskJs2['default'].$el.find('[data-role="link"]');
+	
+	_taskJs2['default'].register('link', function (value) {
+	    // console.log('%c link here', 'color: #f00', value);
+	    $link.val(value);
+	});
+	
+	$link.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.extra.link = this.value;
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 24 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	/**
+	 *
+	 * 多元素 水平居中， 居左， 居右
+	 * 多元素 垂直居中， 居左， 居右
+	 *
+	 * 单元素 自动调整
+	 * 多元素 自动调整
+	 *
+	 * 单元素 拷贝 剪切 粘贴
+	 *
+	 */
+	var core = {
+	
+	    alignHorizontal: function alignHorizontal() {},
+	
+	    alignVertical: function alignVertical() {},
+	
+	    alignCallback: function alignCallback() {},
+	
+	    align: function align(direction) {
+	        switch (direction) {
+	            case 'up':
+	                break;
+	            case 'right':
+	                break;
+	            case 'down':
+	                break;
+	            case 'left':
+	                break;
+	        }
+	    },
+	
+	    setBottom: function setBottom() {
+	        var pos = this.getPosition();
+	        var l = SCREEN_WIDTH - pos.width,
+	            t = SCREEN_HEIGHT - pos.height;
+	        //temp test
+	        stageData.$curElem.css({
+	            left: l,
+	            top: t
+	        });
+	    },
+	
+	    autoAdjust: function autoAdjust() {
+	        var pos = this.getPosition();
+	
+	        var w = _bizUtilJs2['default'].tofixed10(pos.width),
+	            h = _bizUtilJs2['default'].tofixed10(pos.height),
+	            l = _bizUtilJs2['default'].tofixed10(pos.left),
+	            t = _bizUtilJs2['default'].tofixed10(pos.top);
+	        console.log(w, h, l, t);
+	
+	        // render page
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
 /* 25 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14041,13 +13904,282 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(13);
+	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _modelStageDataJs = __webpack_require__(34);
+	var _dataStageDataJs = __webpack_require__(10);
 	
-	var _modelStageDataJs2 = _interopRequireDefault(_modelStageDataJs);
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	// left
+	var $left = _taskJs2['default'].$el.find('[data-role="left"]');
+	
+	_taskJs2['default'].register('left', function (value) {
+	    value = parseInt(value, 10);
+	    $left.val(value);
+	});
+	
+	$left.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style.left = this.value + 'px';
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	// top
+	var $top = _taskJs2['default'].$el.find('[data-role="top"]');
+	
+	_taskJs2['default'].register('top', function (value) {
+	    value = parseInt(value, 10);
+	    $top.val(value);
+	});
+	
+	$top.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style.top = this.value + 'px';
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 26 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	//width
+	var $width = _taskJs2['default'].$el.find('[data-role="width"]');
+	
+	_taskJs2['default'].register('width', function (value) {
+	    value = parseInt(value, 10);
+	    $width.val(value);
+	});
+	
+	$width.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style.width = this.value + 'px';
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	// height
+	var $height = _taskJs2['default'].$el.find('[data-role="height"]');
+	
+	_taskJs2['default'].register('height', function (value) {
+	    value = parseInt(value, 10);
+	    $height.val(value);
+	});
+	
+	$height.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style.height = this.value + 'px';
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 27 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    FontSize\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">\n                                    <li><a href="javascript:;">1</a></li>\n                                    <li><a href="javascript:;">2</a></li>\n                                    <li><a href="javascript:;">2.4</a></li>\n                                    <li><a href="javascript:;">3</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group align-horizontal" role="group">\n                                <a class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </a>\n                            </div>\n                            <div class="btn-group align-vertical" role="group">\n                                <a class="btn btn-default" data-value="top">\n                                    居上\n                                </a>\n                                <a class="btn btn-default" data-value="middle">\n                                    居中\n                                </a>\n                                <a class="btn btn-default" data-value="bottom">\n                                    居下\n                                </a>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	// horizontal align text
+	var $horizontal = _taskJs2['default'].$el.find('.align-horizontal');
+	
+	_taskJs2['default'].register('text-align', function (value) {
+	    // console.log(value);
+	    $horizontal.children().removeClass('btn-active');
+	    $horizontal.find('[data-value="' + value + '"]').addClass('btn-active');
+	});
+	
+	$horizontal.on('click', 'a', function () {
+	    var value = $(this).data('value');
+	
+	    _dataStageDataJs2['default'].curElem.childStyle['text-align'] = value;
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	// vertical align text
+	var $vertical = _taskJs2['default'].$el.find('.align-vertical');
+	
+	_taskJs2['default'].register('vertical-align', function (value) {
+	    // console.log(value);
+	    $vertical.children().removeClass('btn-active');
+	    $vertical.find('[data-value="' + value + '"]').addClass('btn-active');
+	});
+	
+	$vertical.on('click', 'a', function () {
+	    var value = $(this).data('value');
+	    _dataStageDataJs2['default'].curElem.childStyle['vertical-align'] = value;
+	    _pageRenderJs2['default'].renderStep();
+	});
+	
+	_taskJs2['default'].register('color', function (value) {
+	    // console.log('%ccolor:', 'color: #f00', value);
+	});
+
+/***/ },
+/* 28 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        transform\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $target = _taskJs2['default'].$el.find('[data-role="transform"]');
+	
+	/**
+	 * register a value callback function
+	 * get a value of some property, how to handle with the value,
+	 * it'll be called by sync function that sync up the data
+	 */
+	_taskJs2['default'].register('transform', function (value) {
+	    value = value.match(/\-?\d+/)[0];
+	    $target.val(value);
+	});
+	
+	/*
+	 * example:
+	 * bind event to change the property
+	 * then call render.renderStep to log the step, that includes
+	 * add a step into history storage, and then render the template
+	 * with the changed data
+	 */
+	$target.on('change.input', function () {
+	
+	    _dataStageDataJs2['default'].curElem.childStyle.transform = 'rotate(' + this.value + 'deg)';
+	
+	    _pageRenderJs2['default'].renderStep();
+	});
+
+/***/ },
+/* 29 */
+/***/ function(module, exports) {
+
+	
+	// CKEDITOR.disableAutoInline = true;
+	// 实例化编辑器
+	'use strict';
+	
+	var ueditor = UE.getEditor('baiduEditor', {
+	    toolbars: [['source', 'fullscreen', '|', 'undo', 'redo', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'lineheight', 'forecolor', 'backcolor', 'fontsize', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', 'link', 'unlink']],
+	    wordCount: false,
+	    // 关闭elementPath
+	    elementPathEnabled: false,
+	    // isShow: false,
+	    // 默认的编辑区域高度
+	    initialFrameWidth: 720,
+	    initialFrameHeight: 400,
+	    autoHeightEnabled: false,
+	    autotypeset: {
+	        // 去掉冗余的class
+	        removeClass: false
+	    },
+	    //取消Div标签转换成P标签
+	    allowDivTransToP: false
+	});
+	
+	module.exports = ueditor;
+
+/***/ },
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        video\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	var $video = _taskJs2['default'].$el.find('[data-role="video"]');
+	
+	_taskJs2['default'].register('video', function (value) {
+	    // console.log('%c video here', 'color: #f00', value);
+	    $video.val(value);
+	});
+
+/***/ },
+/* 31 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
 	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        z-index\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>';
 	
@@ -14056,28 +14188,628 @@
 	var $zindex = _taskJs2['default'].$el.find('[data-role="z-index"]');
 	
 	_taskJs2['default'].register('z-index', function (value) {
-	    console.log('%cz-index', 'color: #f00', value);
+	    // console.log('%cz-index', 'color: #f00', value);
 	    $zindex.val(value);
+	});
+	
+	$zindex.on('change.property', function () {
+	    _dataStageDataJs2['default'].curElem.style['z-index'] = this.value;
+	    _pageRenderJs2['default'].renderStep();
 	});
 
 /***/ },
-/* 26 */
+/* 32 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizKeyJs = __webpack_require__(33);
+	
+	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRender = __webpack_require__(11);
+	
+	var _pageRender2 = _interopRequireDefault(_pageRender);
+	
+	var _historyJs = __webpack_require__(12);
+	
+	var _historyJs2 = _interopRequireDefault(_historyJs);
+	
+	var core = {
+	
+	    init: function init() {
+	        document.onkeydown = this.keyboardEvent;
+	    },
+	    /**
+	     *  mac 平台， windows 平台的快捷键
+	     * 
+	     */
+	    keyboardEvent: function keyboardEvent(event) {
+	        var e = event || window.event;
+	
+	        // 复制
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].C) {
+	            console.log('copy');
+	        }
+	
+	        // 粘贴
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].V) {
+	            console.log('paste');
+	        }
+	
+	        // 剪贴
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].X) {
+	            console.log('cut');
+	        }
+	
+	        // 保存
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].S) {
+	            console.log('save');
+	        }
+	
+	        //自由变换
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].T) {
+	            console.log('transform');
+	        }
+	
+	        //选取所有
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].A) {
+	            console.log('select all');
+	        }
+	
+	        //撤销
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Z) {
+	            console.log('undo');
+	            _historyJs2['default'].undo(function (data) {
+	
+	                _dataPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
+	                _pageRender2['default'].renderPage();
+	            });
+	        }
+	
+	        //重做
+	        if (e.ctrlKey && e.keyCode === _bizKeyJs2['default'].Y) {
+	            console.log('redo');
+	            _historyJs2['default'].redo(function (data) {
+	                _dataPageDataJs2['default'].list[0] = _lodash2['default'].cloneDeep(data);
+	                _pageRender2['default'].renderPage();
+	            });
+	        }
+	
+	        if (e.keyCode === _bizKeyJs2['default'].Up) {
+	            console.log('up arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Right) {
+	            console.log('right arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Down) {
+	            console.log('down arrow');
+	        }
+	        if (e.keyCode === _bizKeyJs2['default'].Left) {
+	            console.log('left arrow');
+	        }
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 33 */
+/***/ function(module, exports) {
+
+	// 键盘
+	"use strict";
+	
+	module.exports = {
+	    BackSpace: 8,
+	    Tab: 9,
+	    Enter: 13,
+	    Shift: 16,
+	    Ctrl: 17,
+	    Alt: 18,
+	    Pause: 19,
+	    Escape: 27,
+	    Space: 32,
+	    Next: 34,
+	    End: 35,
+	    Home: 36,
+	    Left: 37,
+	    Up: 38,
+	    Right: 39,
+	    Down: 40,
+	    Insert: 45,
+	    Delete: 46,
+	    A: 65,
+	    B: 66,
+	    C: 67,
+	    D: 68,
+	    E: 69,
+	    F: 70,
+	    G: 71,
+	    H: 72,
+	    I: 73,
+	    J: 74,
+	    K: 75,
+	    L: 76,
+	    M: 77,
+	    N: 78,
+	    O: 79,
+	    P: 80,
+	    Q: 81,
+	    R: 82,
+	    S: 83,
+	    T: 84,
+	    U: 85,
+	    V: 86,
+	    W: 87,
+	    X: 88,
+	    Y: 89,
+	    Z: 90
+	};
+
+/***/ },
+/* 34 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _pageWatchlistJs = __webpack_require__(61);
+	
+	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	
+	var core = {
+	
+	    init: function init() {
+	        this.createMenu();
+	        this.bindMenu();
+	    },
+	    /**
+	     * 创建右键
+	     * @return {[type]} [description]
+	     */
+	    createMenu: function createMenu() {
+	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
+	        this.$elem = $(html);
+	        $('body').append(this.$elem);
+	    },
+	
+	    showContextmenu: function showContextmenu(event) {
+	        var left, top;
+	        left = event.pageX - 20;
+	        top = event.pageY - 10;
+	
+	        // handle when reach bottom
+	        var target_height = this.$elem.height();
+	        var offset = target_height + this.$elem.offset().top;
+	        var window_height = $(window).height();
+	
+	        if (offset >= window_height) {
+	            top = window_height - target_height - 20;
+	        }
+	
+	        this.$elem.show().css({
+	            position: 'absolute',
+	            left: left,
+	            top: top
+	        });
+	    },
+	    bindMenu: function bindMenu() {
+	        var self = this;
+	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
+	
+	            // var $this = $(event.target);
+	            // $this.trigger('click');
+	
+	            self.showContextmenu(event);
+	            // 取消默认contextmenu
+	            return false;
+	        });
+	
+	        _bizUtilJs2['default'].$doc.on('click', function (event) {
+	            var $this = $(event.target),
+	                isIn = $this.closest('#contextMenu').length > 0;
+	            if (!isIn) {
+	                self.$elem.hide();
+	            }
+	        });
+	
+	        self.$elem.find('[data-role="copy-elem"]').on('click', function () {
+	            self.copyElem();
+	            self.callbackRender();
+	        });
+	        self.$elem.find('[data-role="paste-elem"]').on('click', function () {
+	            self.pasteElem();
+	            self.callbackRender();
+	        });
+	        self.$elem.find('[data-role="remove-elem"]').on('click', function () {
+	            self.removeElem();
+	            self.callbackRender();
+	        });
+	    },
+	    callbackRender: function callbackRender() {
+	        _pageRenderJs2['default'].renderPage();
+	        _pageWatchlistJs2['default'].render();
+	        this.$elem.hide();
+	    },
+	    removeElem: function removeElem() {
+	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
+	            index = _lodash2['default'].findIndex(current.elements, { id: _dataStageDataJs2['default'].curElem.id });
+	        current.elements.splice(index, 1);
+	    },
+	
+	    copyElem: function copyElem() {
+	        _dataStageDataJs2['default'].clone = _dataStageDataJs2['default'].curElem;
+	    },
+	
+	    pasteElem: function pasteElem() {
+	        var clone = _lodash2['default'].cloneDeep(_dataStageDataJs2['default'].clone);
+	        _dataStageDataJs2['default'].countID++;
+	        clone.id = 'm_' + _dataStageDataJs2['default'].countID;
+	
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(clone);
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 35 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _templateDataJs = __webpack_require__(52);
+	
+	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _pageWatchlistJs = __webpack_require__(61);
+	
+	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	
+	var $toolBar = $('#toolBar');
+	
+	var core = {
+	
+	    init: function init() {
+	        this._create();
+	        this._bind();
+	
+	        this._createTabcont();
+	        this._insertData();
+	    },
+	    /**
+	     * 创建右键
+	     * @return {[type]} [description]
+	     */
+	    _create: function _create() {
+	        var html = '<div class="tool-bar">\n                        <ul>';
+	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
+	            html += '<li data-id="' + value.id + '">' + value.cn + '</li>';
+	        });
+	
+	        html += '</ul>\n                    </div>';
+	
+	        this.$elem = $(html);
+	        $toolBar.append(this.$elem);
+	    },
+	
+	    _createTabcont: function _createTabcont() {
+	        var html = '<div class="tool-bar-cont">';
+	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
+	            html += '<div class="tool-bar-cont-li cf" id="' + value.id + '"></div>';
+	        });
+	        html += '</div>';
+	
+	        this.$tabCont = $(html);
+	        $toolBar.append(this.$tabCont);
+	    },
+	
+	    _insertData: function _insertData() {
+	        var self = this;
+	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
+	            var id = value.id,
+	                html = self._getExtraDom(key);
+	            // 默认循环魔板列表中的数据
+	            _lodash2['default'].forEach(value.list, function (c_value, c_key) {
+	                html += '\n                            <div class="tool-elem">\n                                <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                    <div class="tool-pic">\n                                        <img src="' + c_value.pic + '">\n                                    </div>\n                                </div>\n                            </div>\n                        ';
+	            });
+	
+	            self.$tabCont.find('#' + id).append(html);
+	            // 执行操作不适用循环的那些Tab
+	            self._bindExtra(value, key);
+	        });
+	    },
+	
+	    _bindExtra: function _bindExtra(value, key) {
+	        switch (key) {
+	            case 'resource':
+	                console.log('get ajax request');
+	                /**
+	                 * here need a api
+	                 * 要做一个接口，查找每月或一个query的素材数据
+	                 * 绑定一个加载更多的事件
+	                 */
+	                this.$tabCont.find('#' + value.id).append('get resources from lastest month latest year');
+	                break;
+	            default:
+	                break;
+	        }
+	    },
+	
+	    _getExtraDom: function _getExtraDom(key) {
+	        var html = '';
+	        switch (key) {
+	            case 'resource':
+	                html += '\n                            <div class="row">\n                                <div class="col-md-8">\n                                    <input type="file" class="form-control">\n                                </div>\n                                <div class="col-md-4">\n                                    <button class="btn btn-default">upload</button>\n                                </div>\n                            </div>\n                            <div class="row" id="fileupload">\n                                \'here is room for asdf \'\n                            </div>\n                        ';
+	                break;
+	            default:
+	                break;
+	        }
+	        return html;
+	    },
+	
+	    _bind: function _bind() {
+	        var self = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.tool-bar li', function () {
+	            var $this = $(this),
+	                index = $this.index(),
+	                id = $this.attr('data-id');
+	            self.$elem.find('li').removeClass('active');
+	            $this.addClass('active');
+	            self.$tabCont.children().hide();
+	            self.$tabCont.show().find('#' + id).show();
+	
+	            console.log(id, index);
+	        });
+	
+	        _bizUtilJs2['default'].$doc.on('click', function (event) {
+	            var $this = $(event.target),
+	                isIn = $this.closest('#toolBar').length > 0;
+	            if (!isIn) {
+	                self.hideTab();
+	            }
+	        });
+	
+	        //点击模板
+	        _bizUtilJs2['default'].$doc.on('click', '.tool-src', function (event) {
+	            var $this = $(this),
+	                cate = $this.attr('data-category'),
+	                id = $this.attr('data-id');
+	            console.log(id);
+	            switch (cate) {
+	                case 'element':
+	                    self.addElem(cate, id);
+	                    break;
+	                case 'template':
+	                    var confirm = window.confirm('确定要覆盖当前页面吗？');
+	                    if (confirm) {
+	                        self.replacePage(cate, id);
+	                    }
+	                    break;
+	                case 'resource':
+	                    break;
+	                case 'api':
+	                    break;
+	                default:
+	                    break;
+	            }
+	
+	            self.hideTab();
+	            _pageWatchlistJs2['default'].render();
+	            _pageRenderJs2['default'].renderPage();
+	            _pageRenderJs2['default'].pushHistory();
+	        });
+	    },
+	
+	    hideTab: function hideTab() {
+	        this.$tabCont.hide();
+	        this.$elem.find('li').removeClass('active');
+	    },
+	
+	    // 新增元素，clone then plus id
+	    addElem: function addElem(cate, id) {
+	        var elem = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
+	        console.log(elem);
+	        _dataStageDataJs2['default'].countID++;
+	        elem.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(elem);
+	    },
+	
+	    // 填充模板页面
+	    replacePage: function replacePage(cate, id) {
+	        var clone = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
+	        console.log(clone);
+	        // add id for every element in copy
+	        _lodash2['default'].forEach(clone.elements, function (value, key) {
+	            _dataStageDataJs2['default'].countID++;
+	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        });
+	
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index] = clone;
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 36 */,
+/* 37 */,
+/* 38 */,
+/* 39 */,
+/* 40 */,
+/* 41 */,
+/* 42 */,
+/* 43 */,
+/* 44 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div id="baiduEditor"></div>\n                    </div>\n                </div>\n            </div>';
+	
+	_taskJs2['default'].$el.append(html);
+	
+	// horizontal align text
+	var ueditor = UE.getEditor('baiduEditor', {
+	    toolbars: [['source', 'fullscreen', '|', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'strikethrough', 'fontsize', 'link', 'unlink']],
+	    wordCount: false,
+	    //关闭elementPath
+	    elementPathEnabled: false,
+	    // isShow: false,
+	    //默认的编辑区域高度
+	    initialFrameWidth: 420,
+	    initialFrameHeight: 100,
+	    autoHeightEnabled: false,
+	    autotypeset: {
+	        //去掉冗余的class
+	        removeClass: false
+	    },
+	    //取消Div标签转换成P标签
+	    allowDivTransToP: false
+	});
+	
+	_taskJs2['default'].register('innerHtml', function (value) {
+	    console.log(value);
+	});
+
+/***/ },
+/* 45 */,
+/* 46 */,
+/* 47 */,
+/* 48 */,
+/* 49 */,
+/* 50 */,
+/* 51 */,
+/* 52 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _listJs = __webpack_require__(53);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var files = ['elements', 'templates', 'resources', 'apis'];
+	
+	for (var i = 0; i < files.length; i++) {
+	    __webpack_require__(54)("./" + files[i] + '.js');
+	}
+	
+	module.exports = _listJs2['default'].data;
+
+/***/ },
+/* 53 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var data = {};
+	var register = function register(id, value) {
+	    var obj = {};
+	    obj[id] = value;
+	    _lodash2['default'].assign(data, obj);
+	    return data[id];
+	};
+	
+	module.exports = {
+	    data: data,
+	    register: register
+	};
+
+/***/ },
+/* 54 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./analyze.js": 27,
-		"./animation.js": 19,
-		"./audio.js": 28,
-		"./background.js": 18,
-		"./index.js": 12,
-		"./link.js": 29,
-		"./position.js": 17,
-		"./size.js": 16,
-		"./task.js": 13,
-		"./text.js": 14,
-		"./transform.js": 15,
-		"./video.js": 30,
-		"./zindex.js": 25
+		"./apis.js": 55,
+		"./baseElem.js": 56,
+		"./data.js": 52,
+		"./elements.js": 57,
+		"./list.js": 53,
+		"./resources.js": 58,
+		"./templates.js": 59
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -14090,264 +14822,497 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 26;
+	webpackContext.id = 54;
 
 
 /***/ },
-/* 27 */
-/***/ function(module, exports) {
+/* 55 */
+/***/ function(module, exports, __webpack_require__) {
 
-	"use strict";
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _baseElemJs = __webpack_require__(56);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(53);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var api = _listJs2['default'].register('api', {
+	    id: 'toolApi',
+	    cn: '接口',
+	    list: {}
+	});
 
 /***/ },
-/* 28 */
-27,
-/* 29 */
-27,
-/* 30 */
-27,
-/* 31 */
+/* 56 */
 /***/ function(module, exports) {
 
 	'use strict';
 	
-	// 生成二维码
-	// var qrcode = window.CUR_DATA.qrcode;
-	var $helper = $('#helper');
-	var mQrcode = 'http://www.baidu.com/';
-	var core = {
-	    init: function init() {
-	        this.create();
-	        this.initCode();
+	module.exports = {
+	    id: 'm_0',
+	    type: 'default',
+	    innerHtml: '',
+	    extra: {
+	        link: '',
+	        audio: '',
+	        video: '',
+	        analyze: ''
 	    },
-	    create: function create() {
-	        var html = '<div class="qrcode-helper">\n                        <span class="glyphicon glyphicon-qrcode"></span>\n                        <div class="qrcode" id="qrcode"></div>\n                    </div>';
-	        $helper.append(html);
+	    childStyle: {
+	        'background-image': 'none',
+	        'background-color': '#fff',
+	        'color': '#fff',
+	        'font-size': '15px',
+	        'text-align': 'center',
+	        'vertical-align': 'middle',
+	        'border-radius': '0',
+	        'transform': 'rotate(0deg)'
 	    },
-	    initCode: function initCode() {
-	        $('#qrcode').qrcode({
-	            text: mQrcode,
-	            width: 200,
-	            height: 200
-	        });
+	    style: {
+	        'width': '100px',
+	        'height': '100px',
+	        'left': '10px',
+	        'top': '10px',
+	        'z-index': 0,
+	        'animation-name': 'none',
+	        'animation-duration': '1s',
+	        'animation-delay': '0s',
+	        'opacity': 1
 	    }
 	};
-	module.exports = core;
 
 /***/ },
-/* 32 */
-/***/ function(module, exports) {
+/* 57 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var core = {
-	    init: function init() {
-	        var app = window.navigator.appVersion.toLowerCase(),
-	            version = app.match(/chrome\/([\d.]+)/),
-	            isChrome = /chrome/i.test(app);
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	        version && (version = parseInt(version[1].slice(0, 2)));
+	var _lodash = __webpack_require__(6);
 	
-	        version <= 36 && alert('厂长建议你使用新版Chrome~');
-	        !isChrome && alert('请使用chrome来体验这款神器~');
-	    }
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _baseElemJs = __webpack_require__(56);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(53);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var element = _listJs2['default'].register('element', {
+	    id: 'toolElem',
+	    cn: '元素'
+	});
+	
+	var list = element.list = {};
+	
+	list.base = {
+	    author: 'roeis',
+	    name: '元素1',
+	    pic: 'http://www.hujiang.com/2010/images/default2015/logo.png',
+	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
 	};
 	
-	module.exports = core;
+	list.btn = {
+	    author: 'roeis',
+	    name: '元素2',
+	    pic: 'http://i2.w.hjfile.cn/news/201504/201504092444697730.jpg',
+	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
+	};
+	_lodash2['default'].assign(list.btn.src.style, {
+	    width: '200px',
+	    height: '50px',
+	    left: '80px',
+	    top: '300px'
+	});
+	
+	list.video = {
+	    author: 'roeis',
+	    name: '元素3',
+	    pic: 'http://i2.w.hjfile.cn/news/201504/201504092444697730.jpg',
+	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
+	};
+	_lodash2['default'].assign(list.video.src.style, {
+	    width: '300px',
+	    height: '200px',
+	    left: '30px',
+	    top: '100px'
+	});
+	_lodash2['default'].assign(list.video.src.extra, {
+	    video: 'http://www.w3school.com.cn/i/movie.ogg'
+	});
 
 /***/ },
-/* 33 */
-/***/ function(module, exports) {
+/* 58 */
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	/**
-	 list           : 元数据， 直接操作舞台上的属性
-	 listHtml       : 生成数据，用于前台页面
-	 config         : 配置，模板的属性
-	 global         : 全局属性
-	 */
-	var data = {
-	    list: [{
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _baseElemJs = __webpack_require__(56);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(53);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var resource = _listJs2['default'].register('resource', {
+	    id: 'toolResource',
+	    cn: '素材',
+	    list: {}
+	});
+
+/***/ },
+/* 59 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _baseElemJs = __webpack_require__(56);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(53);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var template = _listJs2['default'].register('template', {
+	    id: 'toolTmpl',
+	    cn: '模板'
+	});
+	
+	var list = template.list = {};
+	
+	list.template1 = {
+	    author: 'roeis',
+	    name: '模板名称',
+	    pic: 'http://www.hujiang.com/2010/images/default2015/logo.png',
+	    src: {
 	        elements: [{
-	            id: 'm_0',
+	            id: 'm_2',
 	            type: 'btn',
-	            value: '',
+	            innerHtml: '',
 	            childStyle: {
-	                'transform': 'rotate(45deg)',
-	                'text-align': 'center',
-	                'vertical-align': 'center',
-	                'font-size': '15px',
-	                'background-image': 'url(https://www.npmjs.com/static/images/wombat-avatar-small.png)',
-	                'background-color': '#fff',
-	                'border-radius': '30px'
-	            },
-	            style: {
-	                'left': 0,
-	                'top': 0,
-	                'width': '50px',
-	                'height': '50px',
-	                'animation': 'wobble 1s ease 1s forwards'
-	            }
-	        }, {
-	            id: 'm_1',
-	            type: 'btn',
-	            value: '<p>testtsst sfds</p>',
-	            childStyle: {
-	                'transform': 'rotate(30deg)',
+	                'transform': 'rotate(0deg)',
 	                'text-align': 'center',
 	                'vertical-align': 'middle',
 	                'font-size': '15px',
 	                'color': '#f50',
-	                'border-radius': '10px',
+	                'border-radius': '0px',
 	                'background-color': '#fff',
-	                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+	                'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)'
 	            },
 	            style: {
 	                'left': 0,
 	                'top': 0,
-	                'width': '100px',
-	                'height': '100px',
+	                'width': '360px',
+	                'height': '280px',
 	                'z-index': 0,
-	                'animation': 'wobble 1s ease 2s forwards'
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s',
+	                'opacity': 1
 	            }
 	        }, {
-	            id: 'm_2',
-	            type: 'btn',
-	            value: '<p>testtsst sfds</p>',
-	            childStyle: {
-	                'transform': 'rotate(80deg)',
-	                'text-align': 'left',
-	                'vertical-align': 'top',
-	                'font-size': '15px',
-	                'border-radius': '10px',
-	                'background-color': '#fff',
-	                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
-	            },
-	            style: {
-	                'left': '200px',
-	                'top': '300px',
-	                'width': '100px',
-	                'height': '100px',
-	                'animation': 'wobble 1s ease 2s forwards'
-	            }
-	        }],
-	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
-	            'backgounnd-color': '#fff'
-	        }
-	    }, {
-	        elements: [{
 	            id: 'm_3',
 	            type: 'btn',
-	            value: '<div class="inner"></div>',
+	            innerHtml: '<div class="inner"></div>',
 	            childStyle: {
-	                'transform': 'rotate(45deg)',
+	                'transform': 'rotate(0deg)',
 	                'text-align': 'center',
+	                'vertical-align': 'middle',
 	                'font-size': '15px',
-	                'color': '#fff',
-	                'background-color': '#fff'
+	                'color': '#f50',
+	                'border-radius': '0px',
+	                'background-color': '#fff',
+	                'background-image': 'none'
 	            },
 	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                animation: 'wobble 1s ease 1s forwards'
+	                'left': '40px',
+	                'top': '400px',
+	                'width': '50px',
+	                'height': '50px',
+	                'animation-name': 'wobble',
+	                'animation-duration': '1s',
+	                'animation-delay': '1s'
 	            }
 	        }],
 	        style: {
 	            'background': 'url("http://jsdf.com/sdf.jpg")',
 	            'backgounnd-color': '#fff'
 	        }
-	    }, {
-	        elements: [{
-	            id: 'm_4',
-	            type: 'btn',
-	            value: '<div class="inner"></div>',
-	            childStyle: {
-	                'transform': 'rotate(45deg)',
-	                'text-align': 'center',
-	                'font-size': '15px',
-	                'color': '#fff',
-	                'background-color': '#fff'
-	            },
-	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                animation: 'wobble 1s ease 1s forwards'
-	            }
-	        }],
-	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
-	            'backgounnd-color': '#fff'
+	    }
+	};
+
+/***/ },
+/* 60 */,
+/* 61 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var core = {
+	    $el: $('#watchList'),
+	    render: function render() {
+	        var data = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements,
+	            html = '<div class="elem-list">\n                        <div class="title">\n                            当前视图\n                        </div>\n                        <ul>';
+	        for (var i = 0; i < data.length; i++) {
+	            html += '<li data-id="' + data[i].id + '">\n                            ' + data[i].id + '\n                        </li>';
 	        }
-	    }, {
-	        elements: [{
-	            id: 'm_5',
-	            type: 'btn',
-	            value: '<div class="inner"></div>',
-	            childStyle: {
-	                'transform': 'rotate(45deg)',
-	                'text-align': 'center',
-	                'font-size': '15px',
-	                'color': '#fff',
-	                'background-color': '#fff'
-	            },
-	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                animation: 'wobble 1s ease 1s forwards'
-	            }
-	        }],
-	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
-	            'backgounnd-color': '#fff'
-	        }
-	    }],
-	    // generate by render function
-	    listHtml: [],
-	    config: {
-	        isLoop: false,
-	        direction: 'vertical'
+	        html += '</ul>\n                </div>';
+	        this.$el.html(html);
 	    },
-	    global: {
-	        music: '',
-	        style: '',
-	        count: 6,
-	        template: 1
+	
+	    bind: function bind() {
+	        var self = this;
+	        this.$el.on('click', 'li', function () {
+	            var $this = $(this),
+	                id = $this.attr('data-id');
+	            $('#' + id).trigger('click');
+	            self.$el.find('li').removeClass('active');
+	            $this.addClass('active');
+	        });
+	    },
+	
+	    init: function init() {
+	        this.render();
+	        this.bind();
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 62 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(8);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _handleJs = __webpack_require__(63);
+	
+	var _handleJs2 = _interopRequireDefault(_handleJs);
+	
+	var _renderJs = __webpack_require__(11);
+	
+	var _renderJs2 = _interopRequireDefault(_renderJs);
+	
+	var _watchlistJs = __webpack_require__(61);
+	
+	var _watchlistJs2 = _interopRequireDefault(_watchlistJs);
+	
+	var $page = $('#page');
+	
+	var core = {
+	    // 创建页面管理
+	    createManager: function createManager() {
+	        $page.append('<div class="page-ul"></div>');
+	
+	        this.renderManager();
+	
+	        this.bindManager();
+	    },
+	
+	    createOperation: function createOperation() {
+	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="template" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
+	        $page.append(html);
+	    },
+	
+	    bindManager: function bindManager() {
+	        var self = this;
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', function () {
+	            _handleJs2['default'].copyPage();
+	            self.renderOne();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', function () {
+	            _handleJs2['default'].removePage();
+	            self.renderOne();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
+	            _handleJs2['default'].addPage();
+	            self.renderOne();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="template"]', function () {
+	            console.log('%csync template with cloud', 'color: #f00;');
+	        });
+	    },
+	
+	    renderManager: function renderManager() {
+	        var html = '';
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            html += '<div class="page-li">' + (i + 1) + '</div>';
+	        }
+	        html += '</div>';
+	        $page.find('.page-ul').html(html);
+	        $page.find('.page-ul').children().eq(_dataStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
+	    },
+	
+	    bindPage: function bindPage() {
+	        var old_index,
+	            new_index,
+	            self = this;
+	
+	        // 页面排序
+	        $page.find('.page-ul').sortable({
+	            containment: 'parent',
+	            items: '.page-li',
+	            placeholder: 'ui-tip',
+	            start: function start(event, ui) {
+	                old_index = $(ui.item).index();
+	            },
+	            stop: function stop(event, ui) {
+	                new_index = $(ui.item).index();
+	
+	                if (old_index !== new_index) {
+	                    _handleJs2['default'].swapPage(old_index, new_index);
+	                    self.renderOne();
+	                }
+	            }
+	        });
+	
+	        $page.on('click', '.page-li', function () {
+	            var index = $(this).index();
+	            _dataStageDataJs2['default'].index = index;
+	
+	            $page.find('.page-ul').children().eq(_dataStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
+	
+	            _renderJs2['default'].renderPage();
+	            _watchlistJs2['default'].render();
+	        });
+	    },
+	
+	    renderOne: function renderOne() {
+	        this.renderManager();
+	        _watchlistJs2['default'].render();
+	        _renderJs2['default'].renderPage();
+	    },
+	
+	    init: function init() {
+	        this.createManager();
+	        this.createOperation();
+	        this.bindPage();
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 63 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _dataPageDataJs = __webpack_require__(9);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var core = {
+	    //得到当前显示页面内容，保存到数组,
+	    //增加空白分页
+	    addPage: function addPage() {
+	
+	        _dataPageDataJs2['default'].list.push({
+	            elements: [],
+	            style: ''
+	        });
+	
+	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
+	    },
+	
+	    copyPage: function copyPage() {
+	
+	        // clone the current page data
+	        // plus the global countID on the id of each element
+	        var copy = _lodash2['default'].cloneDeep(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index]);
+	        _lodash2['default'].forEach(copy.elements, function (value, key) {
+	            _dataStageDataJs2['default'].countID++;
+	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        });
+	
+	        _dataPageDataJs2['default'].list.push(copy);
+	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
+	    },
+	
+	    //删除当前分页
+	    removePage: function removePage() {
+	
+	        _dataPageDataJs2['default'].list.splice(_dataStageDataJs2['default'].index, 1);
+	        //note: pageData.length has minused one
+	        var length = _dataPageDataJs2['default'].list.length;
+	        _dataStageDataJs2['default'].index = _dataStageDataJs2['default'].index === length ? length - 1 : _dataStageDataJs2['default'].index;
+	    },
+	
+	    //交换页面顺序
+	    swapPage: function swapPage(oldIndex, newIndex) {
+	
+	        var temp = _dataPageDataJs2['default'].list[oldIndex];
+	
+	        _dataPageDataJs2['default'].list.splice(oldIndex, 1);
+	        _dataPageDataJs2['default'].list.splice(newIndex, 0, temp);
+	
+	        _dataStageDataJs2['default'].index = newIndex;
 	    }
 	
 	};
 	
-	module.exports = data;
-
-/***/ },
-/* 34 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	module.exports = {
-	
-	    cache: [],
-	    cacheMax: 20,
-	    cursor: -1,
-	
-	    $curElem: null,
-	    $copyElem: null,
-	
-	    curElem: null,
-	    curElems: [],
-	
-	    countID: 0,
-	    // page index
-	    index: 0
-	};
+	module.exports = core;
 
 /***/ }
-/******/ ])));
+/******/ ]);
 //# sourceMappingURL=app.js.map

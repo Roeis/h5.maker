@@ -9,14 +9,28 @@ ul {
   list-style: none;
 }
 
+.cf:before,
+.cf:after {
+  display: table;
+  content: '';
+}
+
+.cf:after {
+  clear: both;
+}
+
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
 
-/* Track */
 ::-webkit-scrollbar-thumb {
   background-color: #728291;
+}
+
+::-webkit-scrollbar-corner {
+  width: 0;
+  height: 0;
 }
 
 .app {
@@ -30,6 +44,7 @@ ul {
 .back-stage {
   height: 100%;
   position: relative;
+  overflow: hidden;
 }
 
 .stage {
@@ -42,6 +57,7 @@ ul {
   position: absolute;
   left: 50%;
   top: 50%;
+  z-index: 0;
   margin-left: -180px;
   margin-top: -270px;
   background-color: #ddd;
@@ -118,14 +134,14 @@ ul {
   position: absolute;
   left: 50%;
   top: 0;
-  margin-left: -180px;
+  margin-left: -160px;
   background-color: #ddd;
 }
 .tool-bar li {
   position: relative;
-  height: 50px;
-  width: 75px;
-  line-height: 50px;
+  height: 40px;
+  width: 80px;
+  line-height: 40px;
   text-align: center;
   float: left;
 }
@@ -153,7 +169,7 @@ ul {
   width: 90%;
   height: 90%;
   z-index: 9;
-  top: 50px;
+  top: 40px;
   left: 5%;
 }
 .tool-bar-cont .tool-bar-cont-li {
@@ -163,6 +179,32 @@ ul {
   background-color: rgba(255, 255, 255, 0.9);
   border-radius: 10px;
   box-shadow: 0px 20px 20px 5px rgba(0, 0, 0, 0.1);
+  padding: 50px 30px;
+  overflow-y: scroll;
+}
+.tool-bar-cont .tool-elem {
+  width: 25%;
+  height: 120px;
+  float: left;
+  margin-bottom: 20px;
+}
+.tool-bar-cont .tool-elem .tool-src {
+  width: 80%;
+  height: 100%;
+  margin: 0 auto;
+  display: table;
+  border: 1px solid #ddd;
+  cursor: pointer;
+}
+.tool-bar-cont .tool-elem .tool-src .tool-pic {
+  display: table-cell;
+  vertical-align: middle;
+}
+.tool-bar-cont .tool-elem .tool-src:hover {
+  background-color: #eee;
+}
+.tool-bar-cont .tool-elem .tool-src img {
+  width: 100%;
 }
 
 .ppd {
@@ -171,7 +213,7 @@ ul {
 }
 .ppd .header {
   background-color: #2a64cd;
-  padding: 10px;
+  height: 50px;
   width: 100%;
   color: #FFF;
 }
@@ -180,10 +222,14 @@ ul {
   padding: 50px 0;
   margin: -50px 0;
 }
+.ppd .footer {
+  height: 50px;
+  background-color: #ddd;
+}
 
 .edit-panel {
   height: 100%;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 
 .edit-group {
@@ -213,6 +259,11 @@ ul {
   color: #3b75de;
 }
 
+.btn-active {
+  color: #fff;
+  background-color: #2a64cd;
+}
+
 .page-ul {
   position: absolute;
   right: 0;
@@ -221,7 +272,7 @@ ul {
   height: 100%;
   background-color: #ccc;
   padding: 10px;
-  overflow: scroll;
+  overflow-y: scroll;
 }
 .page-ul .page-li {
   background-color: #bbb;
@@ -260,12 +311,12 @@ ul {
   background-color: #ddd;
   border-radius: 2px;
 }
-.elem-list .elem-li {
+.elem-list li {
   padding: 0px 10px;
   text-align: center;
   cursor: pointer;
 }
-.elem-list .elem-li:hover {
+.elem-list li:hover {
   background-color: rgba(0, 0, 0, 0.1);
 }
 

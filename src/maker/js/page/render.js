@@ -1,7 +1,7 @@
 'use strict';
 import _            from 'lodash';
-import pageData     from '../model/pageData.js';
-import stageData    from '../model/stageData.js';
+import pageData     from '../data/pageData.js';
+import stageData    from '../data/stageData.js';
 import util         from '../biz/util.js';
 import history      from '../stage/history.js';
 
@@ -46,61 +46,55 @@ var core = {
 
     },
 
-    percentValue: function(value, standard){
-        return (value / standard * 100).toFixed(0) + '%';
-    },
-    // use when renderng output html
-    _adjustPosition: function(id){
-        // var pageData = _.find()
-        // var l = this.percentValue(left, SCREEN_WIDTH),
-        //     t = this.percentValue(top, SCREEN_HEIGHT),
-        //     w = this.percentValue(width, SCREEN_WIDTH),
-        //     h = this.percentValue(height, SCREEN_HEIGHT);
-
-    },
-
-    //渲染
-    flatStyle: function(obj){
-        return JSON.stringify(obj).replace(/\\\"|\{|\}/g, '').replace(/\"/g, '').replace(/\,/g, ';').concat(';');
-    },
-
     // 渲染单页，当前
-    renderPage: function(callback){
+    renderPage: function(){
 
         var idx = stageData.index,
             data = pageData.list[idx],
-            clone = _.cloneDeep(data),
             html = '';
 
         for(var i = 0; i < data.elements.length; i++){
             var it = data.elements[i],
-                style = this.flatStyle(it.style),
-                childStyle = this.flatStyle(it.childStyle);
+                style = util.flatStyle(it.style),
+                childStyle = util.flatStyle(it.childStyle);
 
             html += `<div class="editable" id="${it.id}" style="${style}">
                         <div class="inner" style="${childStyle}">
-                            ${it.value}
+                            ${it.innerHtml}
                         </div>
                     </div>`;
         }
 
-        // console.log('render', idx, data);
-
         $('.page').eq(0).find('.cont').html(html);
-        callback && callback(clone);
     },
 
+    renderElem: function(){
+        var it = stageData.curElem,
+            $target = $('#' + it.id),
+            style = util.flatStyle(it.style),
+            childStyle = util.flatStyle(it.childStyle);
+
+        $target.attr('style', style);
+        $target.html(`<div class="inner" style="${childStyle}">
+                        ${it.innerHtml}
+                    </div>`);
+    },
+
+    pushHistory: function(){
+        var index = stageData.index,
+            data = pageData.list[index],
+            clone = _.cloneDeep(data);
+        history.addStep(clone);
+    },
+    
+    // 渲染数量减少为当前元素，历史记录为当前页面
     renderStep: function(){
-        this.renderPage(function(data){
-            // 渲染当前页面， 返回素体HTML
-            // 添加HTML到cache作为缓存，（暂定20步）
-            //     添加回溯步骤，统一由本渲染方法来控制
-            // 添加素体HTML后，执行UI初始化拖拽动作
-            history.addStep(data);
-            if(stageData.curElem){
-                $('#' + stageData.curElem.id).trigger('click');
-            }
-        });
+        this.renderElem();
+        // this.renderPage();
+        this.pushHistory();
+        if(stageData.curElem){
+            $('#' + stageData.curElem.id).trigger('click');
+        }
     },
 
 };

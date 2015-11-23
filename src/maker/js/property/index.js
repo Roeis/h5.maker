@@ -5,8 +5,15 @@ import task         from './task.js';
 
 
 var files = [
+    // property
+    'link',
+    'audio',
+    'video',
+    'analyze',
+    // css
     'text',
     'transform',
+    'borderadius',
     'background',
     'animation',
     'zindex',
@@ -20,14 +27,16 @@ for(var i = 0; i < files.length; i++){
 
 var core = {
     // 同步样式数据
-    sync: function(style){
-        _.forEach(style, function(value, key){
+    sync: function(obj){
+        _.forEach(obj, function(value, key){
             core.syncValue(key, value);
         });
     },
     // 
     syncValue: function(key, value){
-        if(!task.events[key]) return;
+        if(!task.events[key]){
+            return;
+        }
         task.events[key](value);
     },
 };

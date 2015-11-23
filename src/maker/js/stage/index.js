@@ -2,24 +2,16 @@
 
 import _            from 'lodash';
 import util         from '../biz/util.js';
-import pageData     from '../model/pageData.js';
-import stageData    from '../model/stageData.js';
-// import elements from '../model/elements';
-// import page from '../page/';
-import render from '../page/render';
-import input from '../inputs';
+import pageData     from '../data/pageData.js';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render';
+import property     from '../property';
 
-import hotkey from './hotkey.js';
-import menu from './menu.js';
-import history from './history.js';
-// import input from './input.js';
-import toolbar from './toolbar.js';
-// import operation from './operation.js';
+import hotkey       from './hotkey.js';
+import menu         from './menu.js';
+import toolbar      from './toolbar.js';
 
 window.theData = stageData;
-var SCREEN_WIDTH = 360,
-    SCREEN_HEIGHT = 540;
-
 
 var core = {
     init: function() {
@@ -27,12 +19,11 @@ var core = {
         hotkey.init();
         menu.init();
         toolbar.init();
-        render.renderStep();
 
         this.bindEvent();
 
         stageData.countID = pageData.global.count + 1;
-        
+
     },
 
     bindEvent: function() {
@@ -55,7 +46,6 @@ var core = {
                 $temp = null, id,
                 e = event || window.event;
 
-            
             // 选中元素时
             if(isEditable || isCurrent){
                 $temp = isCurrent ? $this : $parent;
@@ -116,7 +106,7 @@ var core = {
             grid: [2, 2],
             zIndex: 9,
             start: function() {
-                
+
             },
             drag: function(event, ui) {
             },
@@ -168,15 +158,15 @@ var core = {
         });
     },
 
-    syncUi: function(){
-
-    },
-
     syncProperty: function(){
         var target = stageData.curElem;
-        if(!target) return;
-        input.sync(target.style);
-        input.sync(target.childStyle);
+        if(!target) {
+            return;
+        }
+        property.sync(target.style);
+        property.sync(target.childStyle);
+        property.sync(target.extra);
+        property.sync(target.innerHtml);
     },
 
     getById: function(id){
@@ -191,44 +181,6 @@ var core = {
         }
         return target;
     },
-
-    getPosition: function(){
-        var it = stageData.$curElem;
-
-        var l = it.css('left'),
-            t = it.css('top'),
-            w = it.css('width'),
-            h = it.css('height');
-        return {
-            left: parseInt(l),
-            top: parseInt(t),
-            width: parseInt(w),
-            height: parseInt(h)
-        };
-    },
-
-    setBottom: function(){
-        var pos = this.getPosition();
-        var l = SCREEN_WIDTH - pos.width,
-            t = SCREEN_HEIGHT - pos.height;
-        //temp test
-        stageData.$curElem.css({
-            left: l,
-            top: t
-        });
-    },
-
-    autoAdjust: function(){
-        var pos = this.getPosition();
-
-        var w = util.tofixed10(pos.width),
-            h = util.tofixed10(pos.height),
-            l = util.tofixed10(pos.left),
-            t = util.tofixed10(pos.top);
-        console.log(w, h, l ,t);
-
-        // render page
-    }
 
 };
 

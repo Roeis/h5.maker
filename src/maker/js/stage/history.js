@@ -1,5 +1,5 @@
 'use strict';
-import stageData from '../model/stageData.js';
+import stageData from '../data/stageData.js';
 
 var core = {
     addStep(step){

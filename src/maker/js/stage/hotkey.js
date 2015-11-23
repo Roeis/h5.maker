@@ -1,17 +1,20 @@
 'use strict';
 import _            from 'lodash';
 import key          from '../biz/key.js';
-import pageData     from '../model/pageData.js';
-import stageData    from '../model/stageData.js';
-import history      from './history.js';
+import pageData     from '../data/pageData.js';
+import stageData    from '../data/stageData.js';
 import render       from '../page/render';
+import history      from './history.js';
 
 var core = {
     
     init: function() {
         document.onkeydown = this.keyboardEvent;
     },
-
+    /**
+     *  mac 平台， windows 平台的快捷键
+     * 
+     */
     keyboardEvent: function(event) {
         var e = event || window.event;
         

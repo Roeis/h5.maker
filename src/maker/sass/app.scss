@@ -11,16 +11,38 @@ ul{
     margin: 0;
     list-style: none;
 }
+.cf:before,
+.cf:after{
+    display: table;
+    content: '';
+}
+.cf:after{
+    clear: both;
+}
 ::-webkit-scrollbar {
   width: 4px;
   height: 4px;
 }
-
-/* Track */
 ::-webkit-scrollbar-thumb {
   // border-radius: 2px;
   background-color: #728291;
 }
+::-webkit-scrollbar-corner {
+    width: 0;
+    height: 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .app{
     height: 100%;
     > .row{
@@ -32,6 +54,7 @@ ul{
 .back-stage{
     height: 100%;
     position: relative;
+    overflow: hidden;
 }
 .stage{
     background-color: #eee;
@@ -61,6 +84,7 @@ ul{
     position: absolute;
     left: 50%;
     top: 50%;
+    z-index: 0;
     margin-left: -180px;
     margin-top: -270px;
     background-color: #ddd;
@@ -165,17 +189,17 @@ ul{
 
 // 工具栏
 .tool-bar{
-    $w: 50px;
+    $w: 40px;
     $c: #ddd;
     position: absolute;
     left: 50%;
     top: 0;
-    margin-left: -180px;
+    margin-left: -160px;
     background-color: $c;
     li{
         position: relative;
         height: $w;
-        width: $w * 1.5;
+        width: $w * 2;
         line-height: $w;
         text-align: center;
         float: left;
@@ -205,7 +229,7 @@ ul{
     width: 90%;
     height: 90%;
     z-index: 9;
-    top: 50px;
+    top: 40px;
     left: 5%;
     .tool-bar-cont-li{
         position: relative;
@@ -214,6 +238,33 @@ ul{
         background-color: rgba(255, 255, 255, .9);
         border-radius: 10px;
         box-shadow: 0px 20px 20px 5px rgba(0,0,0,.1);
+        padding: 50px 30px;
+        overflow-y: scroll;
+    }
+    .tool-elem{
+        width: 25%;
+        height: 120px;
+        float: left;
+        margin-bottom: 20px;
+
+        .tool-src{
+            width: 80%;
+            height: 100%;
+            margin: 0 auto;
+            display: table;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            .tool-pic{
+                display: table-cell;
+                vertical-align: middle;
+            }
+            &:hover{
+                background-color: #eee;
+            }
+            img{
+                width: 100%;
+            }
+        }
     }
 }
 
@@ -229,27 +280,29 @@ ul{
 
 // 属性 | property ppd
 .ppd{
+    $h : 50px;
     margin: 0 -15px;
     height: 100%;
     .header{
         background-color: $brand;
-        padding: 10px;
+        height: $h;
         width: 100%;
         color: #FFF;
     }
     .body{
         height: 100%;
-        padding: 50px 0;
-        margin: -50px 0;
+        padding: $h 0;
+        margin: -$h 0;
     }
     .footer{
-
+        height: $h;
+        background-color: #ddd;
     }
 }
 
 .edit-panel{
     height: 100%;
-    overflow: scroll;
+    overflow-y: scroll;
 }
 .edit-group{
     background-color: #fff;
@@ -277,6 +330,10 @@ ul{
         color: #3b75de;
     }
 }
+.btn-active{
+    color: #fff;
+    background-color: $brand;
+}
 
 
 
@@ -295,7 +352,7 @@ ul{
     height: 100%;
     background-color: #ccc;
     padding: 10px;
-    overflow: scroll;
+    overflow-y: scroll;
     .page-li{
         background-color: #bbb;
         color: #fff;
@@ -343,7 +400,7 @@ ul{
     margin-top: -270px;
     background-color: #ddd;
     border-radius: 2px;
-    .elem-li{
+    li{
         padding: 0px 10px;
         text-align: center;
         cursor: pointer;

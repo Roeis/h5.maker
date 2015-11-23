@@ -5,12 +5,12 @@ module.exports = {
     cursor: -1,
 
     $curElem: null,
-    $copyElem: null,
 
+    clone: null,
     curElem: null,
     curElems: [],
 
     countID: 0,
-    // page index
+
     index: 0
 };
