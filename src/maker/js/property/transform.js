@@ -6,7 +6,7 @@ import render   from '../page/render.js';
 var html = `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        transform
+                        rotate
                     </div>
                     <div class="col-md-8">
                         <input class="form-control" data-role="transform" type="number">
@@ -14,9 +14,9 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
-var $target = task.$el.find('[data-role="transform"]');
+var $target = task.$style.find('[data-role="transform"]');
 
 /**
  * register a value callback function
@@ -37,7 +37,7 @@ task.register('transform', function(value){
  */
 $target.on('change.input', function(){
 
-    stageData.curElem.childStyle.transform = 'rotate('+ this.value +'deg)';
+    stageData.curElem.child.style.transform = 'rotate('+ this.value +'deg)';
 
     render.renderStep();
 });

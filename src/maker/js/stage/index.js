@@ -10,33 +10,31 @@ import property     from '../property';
 import hotkey       from './hotkey.js';
 import menu         from './menu.js';
 import toolbar      from './toolbar.js';
+import operation    from './operation.js';
 
 window.theData = stageData;
 
 var core = {
-    init: function() {
+    init() {
 
         hotkey.init();
         menu.init();
         toolbar.init();
+        operation.init();
 
         this.bindEvent();
 
-        stageData.countID = pageData.global.count + 1;
-
     },
 
-    bindEvent: function() {
-        var self = this;
-
+    bindEvent() {
         util.$doc.on('dblclick', '.device', (event) => {
             console.log('alert editor');
         });
-        self.handleSingleClick();
+        this.handleSingleClick();
     },
 
-    handleSingleClick: function(){
-        var self = this;
+    handleSingleClick(){
+        let self = this;
         util.$doc.on('click', '.device', (event) => {
 
             var $this = $(event.target),
@@ -67,12 +65,12 @@ var core = {
                 self.clearCurUi();
             }
 
-            console.log(stageData.curElems);
-
             if($temp){
                 $temp.addClass('cur');
                 self.intoEditable($temp);
                 self.syncProperty();
+                self.syncRole();
+                console.log(stageData.curElem.type);
             }
 
             menu.$elem.hide();
@@ -84,38 +82,28 @@ var core = {
         this.destroyEditable();
     },
 
-    addCurElems: function(id){
-        var flag = _.includes(stageData.curElems, id);
+    addCurElems(id){
+        let flag = _.includes(stageData.curElems, id);
         if(!flag){
             stageData.curElems.push(id);
         }
 
     },
 
-    multiCallback: function(){
-        stageData.curElems.each(function(index, elem){
-            var id = elem;
-        });
-        //
-    },
-
-    intoEditable: function($obj){
-        var self = this;
+    intoEditable($obj){
         $obj.draggable({
             containment: 'parent',
             grid: [2, 2],
             zIndex: 9,
             start: function() {
-
             },
             drag: function(event, ui) {
             },
             stop: function(event, ui) {
-                _.assign(stageData.curElem.style, {
+                _.extend(stageData.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px'
                 });
-                self.syncProperty();
                 render.renderStep();
             }
         });
@@ -125,28 +113,25 @@ var core = {
             containment: 'parent',
             handles: 'n, e, s, w, ne, se, sw, nw',
             resize: function(event, ui) {
-
-                // core._initCssSize(ui.size.width, ui.size.height);
             },
             stop: function(event, ui) {
-                _.assign(stageData.curElem.style, {
+                _.extend(stageData.curElem.style, {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px',
                     width: ui.size.width + 'px',
                     height: ui.size.height + 'px'
                 });
-                self.syncProperty();
                 render.renderStep();
             }
         });
     },
 
-    destroyEditable: function(){
+    destroyEditable(){
         // NM 当前页面的editable
-        var $editables = $('.editable');
+        let $editables = $('.editable');
 
         $editables.each(function() {
-            var $this = $(this);
+            let $this = $(this);
 
             if( $this.draggable('instance') !== undefined ){
                 $this.draggable('destroy');
@@ -158,19 +143,40 @@ var core = {
         });
     },
 
-    syncProperty: function(){
-        var target = stageData.curElem;
-        if(!target) {
-            return;
+    syncRole(){
+        let curElem = stageData.curElem;
+        switch(curElem.type){
+            case 'audio':
+                console.log(curElem.extra[curElem.type]);
+                break;
+            case 'video':
+
+                break;
+            case 'link':
+                console.log(curElem.extra[curElem.type]);
+                break;
+            case 'default':
+                console.log('do nothing');
+                break;
+            case 'jump':
+                break;
+            case 'extra':
+                break;
+            default:
+                break;
         }
-        property.sync(target.style);
-        property.sync(target.childStyle);
-        property.sync(target.extra);
-        property.sync(target.innerHtml);
     },
 
-    getById: function(id){
-        var target = null, it;
+    syncProperty(){
+        let target = stageData.curElem;
+        property.sync(target.style);
+        property.sync(target.child);
+        property.sync(target.child.style);
+        property.sync(target.extra);
+    },
+
+    getById(id){
+        let target = null, it;
         for(let i = 0; i < pageData.list.length; i++){
             it = pageData.list[i].elements;
             // console.log(it);

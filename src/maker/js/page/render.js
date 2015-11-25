@@ -6,34 +6,59 @@ import util         from '../biz/util.js';
 import history      from '../stage/history.js';
 
 var core = {
-    // 渲染正式DOM结构，区别于操作DOM
-    render: function() {
+    /**
+     * in editor env, it render in inline-style,
+     * in realease env, DOM and Style will be seperated,
+     * Style will be put into a style tag in head
+     * elements map style with their id
+     */
+
+    // 渲染前台页面正式DOM结构，区别于编辑器渲染
+    renderDomRealease() {
         let html = '',
-            template = '<div class="elem" id="<%= id %>"><%= value %></div>',
-            curData = pageData.list[this.index];
+            curData = pageData.list[stageData.index];
         for(let i = 0; i < curData.elements.length; i++){
             let it = curData.elements[i];
-            html += _.template(template)(it);
+            html += `<div class="editable" id="${it.id}">
+                            <div class="inner">
+                                ${it.child.innerHtml}
+                            </div>
+                        </div>`;
         }
-        console.log(html);
+        return html;
     },
 
-    // 样式字符串化，id, style, 生成后添加到head
-    stringifyStyle: function(obj) {
-        // 过滤样式规则， 以及补全
-        let styleObj = obj.style;
-        if(styleObj.animation){
-            styleObj['-webkit-animation'] = styleObj.animation;
+    // 渲染前台页面正式CSS结构，以<style>标签插入到前台页面head中
+    generateStyle(style) {
+        // 过滤样式规则&补全
+        let needPrefix  = [
+            'animation-name',
+            'animation-duration',
+            'animation-delay',
+            'transform'
+        ];
+
+        for (let i = 0; i < needPrefix.length; i++){
+            if(style[needPrefix[1]]){
+                style['-webkit-' + needPrefix[1]] = style[needPrefix[1]];
+            }
         }
-        let style = JSON.stringify(styleObj);
-        style = '#' + obj.id + style;
-        // transform \" -> none, " -> none, , -> ;
-        style = style.replace(/\\\"/g, '').replace(/\"/g, '').replace(/\,/g, ';');
-        return style;
+
+        return util.flatStyle(style);
     },
 
-    // 渲染正式CSS结构，从DOM中分离到head中style标签
-    renderStyle: function() {
+    // DEPRECATED
+    _insertStyle(styleSheet, styleID) {
+
+        let style = document.createElement('style');
+        let doc = document.head;
+        style.id = styleID;
+        doc.appendChild(style);
+
+        style.appendChild(document.createTextNode(styleSheet));
+    },
+    // DEPRECATED
+    _renderStyle() {
         let stylesheet = '';
         for(let i = 0; i < pageData.list.length; i++){
             for(let j = 0; j < pageData.list[i].elements.length; j++){
@@ -42,25 +67,25 @@ var core = {
                 stylesheet += style;
             }
         }
-        util.insertStyle(stylesheet, 'maker');
+        this.insertStyle(stylesheet, 'maker');
 
     },
 
     // 渲染单页，当前
-    renderPage: function(){
+    renderPage(){
 
-        var idx = stageData.index,
+        let idx = stageData.index,
             data = pageData.list[idx],
             html = '';
 
-        for(var i = 0; i < data.elements.length; i++){
-            var it = data.elements[i],
+        for(let i = 0; i < data.elements.length; i++){
+            let it = data.elements[i],
                 style = util.flatStyle(it.style),
-                childStyle = util.flatStyle(it.childStyle);
+                childStyle = util.flatStyle(it.child.style);
 
             html += `<div class="editable" id="${it.id}" style="${style}">
                         <div class="inner" style="${childStyle}">
-                            ${it.innerHtml}
+                            ${it.child.innerHtml}
                         </div>
                     </div>`;
         }
@@ -68,30 +93,23 @@ var core = {
         $('.page').eq(0).find('.cont').html(html);
     },
 
-    renderElem: function(){
-        var it = stageData.curElem,
+    renderElem(){
+        let it = stageData.curElem,
             $target = $('#' + it.id),
             style = util.flatStyle(it.style),
-            childStyle = util.flatStyle(it.childStyle);
+            childStyle = util.flatStyle(it.child.style);
 
         $target.attr('style', style);
         $target.html(`<div class="inner" style="${childStyle}">
-                        ${it.innerHtml}
+                        ${it.child.innerHtml}
                     </div>`);
     },
 
-    pushHistory: function(){
-        var index = stageData.index,
-            data = pageData.list[index],
-            clone = _.cloneDeep(data);
-        history.addStep(clone);
-    },
-    
     // 渲染数量减少为当前元素，历史记录为当前页面
-    renderStep: function(){
+    renderStep(){
         this.renderElem();
         // this.renderPage();
-        this.pushHistory();
+        history.pushStep();
         if(stageData.curElem){
             $('#' + stageData.curElem.id).trigger('click');
         }

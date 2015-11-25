@@ -1,9 +1,9 @@
 'use strict';
 /**
- list           : 元数据， 直接操作舞台上的属性
- listHtml       : 生成数据，用于前台页面
- config         : 配置，模板的属性
- global         : 全局属性
+ * list           : 元数据， 直接操作舞台上的属性
+ * listHtml       : 生成数据，用于前台页面
+ * config         : 配置，模板的属性
+ * global         : 全局属性
  */
 var data = {
     list: [
@@ -11,27 +11,32 @@ var data = {
             elements: [
                     {
                         id: 'm_0',
-                        type: 'btn',
-                        innerHtml: '',
+                        type: 'default',
                         extra: {
                             link: 'template link',
                             audio: '',
                             video: '',
-                            analyze: ''
+                            analyze: '',
+                            jump: ''
                         },
-                        childStyle: {
-                            'transform': 'rotate(0deg)',
-                            'text-align': 'center',
-                            'vertical-align': 'center',
-                            'font-size': '15px',
-                            'background-image': 'none',
-                            'background-color': '#f50',
-                            'border-radius': '0px'
+                        child: {
+                            innerHtml: '<div class="test"></div>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'center',
+                                'vertical-align': 'center',
+                                'font-size': '15px',
+                                'color': '#333',
+                                'background-image': 'none',
+                                'background-color': '#f50',
+                                'border-radius': '0px',
+                                'padding': 0
+                            }
                         },
                         style: {
-                            'left': 0,
+                            'left': '10px',
                             'top': '200px',
-                            'width': '360px',
+                            'width': '320px',
                             'height': '100px',
                             'z-index': 0,
                             'animation-name': 'none',
@@ -42,28 +47,31 @@ var data = {
                     },
                     {
                         id: 'm_1',
-                        type: 'btn',
-                        innerHtml: '<p>testtsst sfds</p>',
+                        type: 'link',
                         extra: {
                             link: 'template link',
                             audio: 'audio link',
                             video: 'video link',
                             analyze: 'analyze link'
                         },
-                        childStyle: {
-                            'transform': 'rotate(0deg)',
-                            'text-align': 'center',
-                            'vertical-align': 'middle',
-                            'font-size': '15px',
-                            'color': '#f50',
-                            'border-radius': '0px',
-                            'background-color': '#fff',
-                            'background-image': 'none'
+                        child: {
+                            innerHtml: '<p>testtsst sfds</p>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'center',
+                                'vertical-align': 'middle',
+                                'font-size': '15px',
+                                'color': '#f50',
+                                'border-radius': '0px',
+                                'background-color': '#fff',
+                                'background-image': 'none',
+                                'padding': 0
+                            }
                         },
                         style: {
-                            'left': 0,
+                            'left': '20px',
                             'top': 0,
-                            'width': '360px',
+                            'width': '320px',
                             'height': '100px',
                             'z-index': 0,
                             'animation-name': 'none',
@@ -74,22 +82,32 @@ var data = {
                     },
                     {
                         id: 'm_2',
-                        type: 'btn',
-                        innerHtml: '<p>testtsst sfds</p>',
-                        childStyle: {
-                            'transform': 'rotate(80deg)',
-                            'text-align': 'left',
-                            'vertical-align': 'top',
-                            'font-size': '15px',
-                            'border-radius': '10px',
-                            'background-color': '#fff',
-                            'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+                        type: 'audio',
+                        extra: {
+                            link: 'template link',
+                            audio: 'audio link',
+                            video: 'video link',
+                            analyze: 'analyze link'
+                        },
+                        child: {
+                            innerHtml: '<p>testtsst sfds</p>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'left',
+                                'vertical-align': 'top',
+                                'font-size': '15px',
+                                'color': '#333',
+                                'border-radius': '10px',
+                                'background-color': '#fff',
+                                'padding': 0,
+                                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+                            }
                         },
                         style: {
-                            'left': '200px',
-                            'top': '250px',
-                            'width': '100px',
-                            'height': '100px',
+                            'left': '30px',
+                            'top': '400px',
+                            'width': '200px',
+                            'height': '50px',
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
@@ -108,13 +126,16 @@ var data = {
                     {
                         id: 'm_3',
                         type: 'btn',
-                        innerHtml: '<div class="inner"></div>',
-                        childStyle: {
-                            'transform': 'rotate(45deg)',
-                            'text-align': 'center',
-                            'font-size': '15px',
-                            'color': '#fff',
-                            'background-color': '#fff',
+                        child: {
+                            innerHtml: '<div class="inner"></div>',
+                            style: {
+                                'transform': 'rotate(45deg)',
+                                'text-align': 'center',
+                                'font-size': '15px',
+                                'color': '#fff',
+                                'padding': 0,
+                                'background-color': '#fff',
+                            }
                         },
                         style: {
                             left: 0,
@@ -137,13 +158,16 @@ var data = {
                     {
                         id: 'm_4',
                         type: 'btn',
-                        innerHtml: '<div class="inner"></div>',
-                        childStyle: {
-                            'transform': 'rotate(45deg)',
-                            'text-align': 'center',
-                            'font-size': '15px',
-                            'color': '#fff',
-                            'background-color': '#fff',
+                        child: {
+                            innerHtml: 'tests',
+                            style: {
+                                'transform': 'rotate(45deg)',
+                                'text-align': 'center',
+                                'font-size': '15px',
+                                'color': '#fff',
+                                'padding': 0,
+                                'background-color': '#fff',
+                            }
                         },
                         style: {
                             left: 0,
@@ -172,7 +196,8 @@ var data = {
         music: '',
         style: '',
         count: 6,
-        template: 1
+        template: 1,
+        style: ''
     }
 
 };

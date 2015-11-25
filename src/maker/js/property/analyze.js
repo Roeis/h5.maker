@@ -8,12 +8,12 @@ var html = `<div class="edit-group">
                         analyze
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="analyze">
+                        <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">
                     </div>
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
 var $analyze = task.$el.find('[data-role="analyze"]');
 

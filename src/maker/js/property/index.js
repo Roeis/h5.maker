@@ -2,7 +2,9 @@
 
 import _            from 'lodash';
 import task         from './task.js';
+import util         from '../biz/util.js';
 
+task.init();
 
 var files = [
     // property
@@ -10,30 +12,37 @@ var files = [
     'audio',
     'video',
     'analyze',
+    // child element
+    'innerHtml',
     // css
     'text',
+    'color',
+    'background',
     'transform',
     'borderadius',
-    'background',
-    'animation',
+    'padding',
     'zindex',
     'size',
     'position',
+    //
+    'animation',
 ];
 
-for(var i = 0; i < files.length; i++){
+for(let i = 0; i < files.length; i++){
     require('./'+files[i]+ '.js');
 }
 
 var core = {
     // 同步样式数据
-    sync: function(obj){
+    sync(obj){
         _.forEach(obj, function(value, key){
-            core.syncValue(key, value);
+            if(!util.isObject(value)) {
+                core.syncValue(key, value);
+            }
         });
     },
-    // 
-    syncValue: function(key, value){
+    //
+    syncValue(key, value){
         if(!task.events[key]){
             return;
         }

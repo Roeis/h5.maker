@@ -5,19 +5,19 @@ import stageData from '../data/stageData.js';
 var html = `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        video
+                        jump
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="video">
+                        <input placeholder="enter page number u wanna jump" class="form-control" data-role="jump">
                     </div>
                 </div>
             </div>`;
 
 task.$style.append(html);
 
-var $video = task.$style.find('[data-role="video"]');
+var $jump = task.$el.find('[data-role="jump"]');
 
-task.register('video', function(value){
-    // console.log('%c video here', 'color: #f00', value);
-    $video.val(value);
+task.register('jump', function(value){
+    // console.log('%c jump here', 'color: #f00', value);
+    $jump.val(value);
 });

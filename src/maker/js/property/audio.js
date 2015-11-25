@@ -13,7 +13,7 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
 var $audio = task.$el.find('[data-role="audio"]');
 

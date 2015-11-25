@@ -56,12 +56,13 @@ var core = {
             top: top
         });
     },
+
     bindMenu() {
         var self = this;
         util.$doc.on('contextmenu', '.device', function(event) {
 
-            // var $this = $(event.target);
-            // $this.trigger('click');
+            var $this = $(event.target);
+            $this.trigger('click');
 
             self.showContextmenu(event);
             // 取消默认contextmenu
@@ -89,11 +90,13 @@ var core = {
             self.callbackRender();
         });
     },
+
     callbackRender(){
         render.renderPage();
         watchlist.render();
         this.$elem.hide();
     },
+
     removeElem(){
         let current = pageData.list[stageData.index],
             index = _.findIndex(current.elements, {id: stageData.curElem.id});

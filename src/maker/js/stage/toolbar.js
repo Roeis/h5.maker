@@ -6,10 +6,10 @@ import stageData    from '../data/stageData.js';
 import template     from '../template/data.js';
 import render       from '../page/render.js';
 import watchlist    from '../page/watchlist.js';
-
-var $toolBar = $('#toolBar');
+import history      from '../stage/history.js';
 
 var core = {
+    $toolBar : $('#toolBar'),
 
     init() {
         this._create();
@@ -33,7 +33,7 @@ var core = {
                     </div>`;
 
         this.$elem = $(html);
-        $toolBar.append(this.$elem);
+        this.$toolBar.append(this.$elem);
     },
 
     _createTabcont() {
@@ -44,7 +44,7 @@ var core = {
             html += `</div>`;
 
         this.$tabCont = $(html);
-        $toolBar.append(this.$tabCont);
+        this.$toolBar.append(this.$tabCont);
     },
 
     _insertData(){
@@ -82,7 +82,7 @@ var core = {
                  */
                 this.$tabCont.find('#' + value.id).append('get resources from lastest month latest year');
                 break;
-            default: 
+            default:
                 break;
         }
     },
@@ -105,7 +105,7 @@ var core = {
                             </div>
                         `;
                 break;
-            default: 
+            default:
                 break;
         }
         return html;
@@ -154,14 +154,14 @@ var core = {
                     break;
                 case 'api':
                     break;
-                default: 
+                default:
                     break;
             }
-            
+
             self.hideTab();
             watchlist.render();
             render.renderPage();
-            render.pushHistory();
+            history.pushStep();
         });
     },
 

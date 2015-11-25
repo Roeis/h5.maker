@@ -6,34 +6,21 @@ import render       from '../page/render.js';
 var html = `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-12">
-                        <div id="baiduEditor"></div>
+                        <textarea class="innerHtml"></textarea>
                     </div>
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
-// horizontal align text
-var ueditor = UE.getEditor('baiduEditor', {
-    toolbars: [
-        ['source', 'fullscreen', '|', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'strikethrough', 'fontsize', 'link', 'unlink'],
-    ],
-    wordCount: false,
-    //关闭elementPath
-    elementPathEnabled: false,
-    // isShow: false,
-    //默认的编辑区域高度
-    initialFrameWidth: 420,
-    initialFrameHeight: 100,
-    autoHeightEnabled: false,
-    autotypeset: {
-        //去掉冗余的class
-        removeClass: false,
-    },
-    //取消Div标签转换成P标签
-    allowDivTransToP: false
-});
+var $textarea = task.$style.find('textarea');
 
 task.register('innerHtml', function(value){
     console.log(value);
+    $textarea.val(value);
+});
+
+$textarea.on('change.property', function(){
+    stageData.curElem.child.innerHtml = this.value;
+    render.renderStep();
 });

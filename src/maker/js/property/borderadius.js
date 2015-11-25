@@ -14,9 +14,9 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
-var $radius = task.$el.find('[data-role="border-radius"]');
+var $radius = task.$style.find('[data-role="border-radius"]');
 
 task.register('border-radius', function(value){
     // console.log('%c border-radius here', 'color: #f00', value);
@@ -25,6 +25,7 @@ task.register('border-radius', function(value){
 });
 
 $radius.on('change.property', function(){
-    stageData.curElem.childStyle['border-radius'] = this.value + 'px';
+    stageData.curElem.child.style['border-radius'] = this.value + 'px';
+    console.log('test change');
     render.renderStep();
 });

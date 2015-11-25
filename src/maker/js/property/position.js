@@ -20,10 +20,10 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
 // left
-var $left = task.$el.find('[data-role="left"]');
+var $left = task.$style.find('[data-role="left"]');
 
 task.register('left', function(value){
     value = parseInt(value, 10);
@@ -36,7 +36,7 @@ $left.on('change.property', function(){
 });
 
 // top
-var $top = task.$el.find('[data-role="top"]');
+var $top = task.$style.find('[data-role="top"]');
 
 task.register('top', function(value){
     value = parseInt(value, 10);

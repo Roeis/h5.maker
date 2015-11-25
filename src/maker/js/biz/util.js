@@ -5,60 +5,108 @@ module.exports = {
     SCREEN_WIDTH : 360,
     SCREEN_HEIGHT : 540,
 
-    insertStyle: function(styleSheet, styleID) {
-
-        let style = document.createElement('style');
-        let doc = document.head;
-        style.id = styleID;
-        doc.appendChild(style);
-
-        style.appendChild(document.createTextNode(styleSheet));
-    },
-
-    tofixed10: function(value){
-        var delta = value % 10,
+    tofixed10(value){
+        let delta = value % 10,
             base = value / 10;
         return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
     },
-    rgb2hex : function(rgb) {
 
-        if (rgb.indexOf('#') > -1) {
-            return {
-                hex: rgb,
-                opacity: 1
-            };
-        } else {
-            var rgba = rgb.split('(')[1].split(')')[0].split(','),
-                hex = [
-                    parseInt(rgba[0]).toString(16),
-                    parseInt(rgba[1]).toString(16),
-                    parseInt(rgba[2]).toString(16)
-                ],
-                opacity = rgba.length === 4 ? rgba[3] : 1;
-
-            $.each(hex, function(idx, val) {
-                if (val.length === 1){
-                    hex[idx] = '0' + val;
-                }
-            });
-            return {
-                hex: '#' + hex.join(''),
-                opacity: opacity
-            };
+    rgba(color){
+        let rgba = [];
+        for(let key in color){
+            if(color.hasOwnProperty(key)){
+                rgba.push(color[key]);
+            }
         }
+        return 'rgba(' + rgba.join(',') + ')';
     },
 
-    percentValue: function(value, standard){
+
+    percentValue(value, standard){
         return (value / standard * 100).toFixed(0) + '%';
     },
 
     //渲染
-    flatStyle: function(obj){
+    flatStyle(obj){
 
-        var str = _.map(obj, function(value, key){
+        let str = _.map(obj, function(value, key){
             return key + ':' + value + ';';
         }).join('');
         // console.log(str)
         return str;
     },
+
+    /**
+     * 获取querystring
+     * @param  {String} name
+     * @return {String}
+     */
+    getQueryString: function(name) {
+        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i'),
+            r = window.location.search.substr(1).match(reg);
+
+        if (r !== null) return window.unescape(r[2]);
+        return null;
+    },
+
+    /**
+     * encode 内容
+     * @param  {string} str
+     */
+    htmlEncode: function(str) {
+        var div = document.createElement('div'),
+            text = document.createTextNode(str);
+        div.appendChild(text);
+        return div.innerHTML;
+    },
+    /**
+     * decode 内容
+     * @param  {string} str
+     */
+    htmlDecode: function(str) {
+        var div = document.createElement('div');
+        div.innerHTML = str;
+        return div.innerText;
+    },
+
+    /**
+     * 获取元素的类型
+     * @param  {any} o 目标对象
+     * @return {string}   'string', 'object', 'number' etc;
+     */
+    getType: function(obj) {
+        return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
+    },
+
+    isNumber: function(obj){
+        return this.getType(obj) === 'number';
+    },
+    isObject: function(obj){
+        return this.getType(obj) === 'object';
+    },
+    isFunction: function(obj){
+        return this.getType(obj) === 'function';
+    },
+    isArray: function(obj){
+        return this.getType(obj) === 'array';
+    },
+    isString: function(obj){
+        return this.getType(obj) === 'string';
+    },
+
+    /**
+     * 动态加载样式
+     * @param  {String} url 样式URL
+     * @return
+     */
+    requireCss: function(url){
+        var node = document.createElement('link'),
+            head = document.getElementsByTagName('head');
+
+        node.type = 'text/css';
+        node.rel = 'stylesheet';
+        node.href = url;
+        head = head.length ? head[0] : document.documentElement;
+        head.appendChild(node);
+    }
 };

@@ -31,17 +31,17 @@ var html = `<div class="edit-group">
     for (var key in animas){
         if (animas.hasOwnProperty(key)) {
             html += `<div class="anima anima-${key}" data-opacity="${animas[key].opacity}" data-value="${key}">
-                    <div class="${key}">${animas[key].cn}</div>
-                </div>`;
+                        <div class="${key}">${animas[key].cn}</div>
+                    </div>`;
         }
     }
     html += `</div>
             </div>`;
 
-task.$el.append(html);
+task.$anima.append(html);
 
 // name
-var $name = task.$el.find('.animation-name');
+var $name = task.$anima.find('.animation-name');
 task.register('animation-name', function(value){
 
     // wobble       1s         ease       2s
@@ -69,7 +69,7 @@ $name.on('mouseenter mouseleave', '.anima', function(event){
 });
 
 // duration
-var $duration = task.$el.find('[data-role="animation-duration"]');
+var $duration = task.$anima.find('[data-role="animation-duration"]');
 task.register('animation-duration', function(value){
     value = parseFloat(value);
     $duration.val(value);
@@ -81,7 +81,7 @@ $duration.on('change.property', function(){
 });
 
 // delay
-var $delay = task.$el.find('[data-role="animation-delay"]');
+var $delay = task.$anima.find('[data-role="animation-delay"]');
 task.register('animation-delay', function(value){
     value = parseFloat(value);
     $delay.val(value);

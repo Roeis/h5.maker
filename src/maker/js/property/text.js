@@ -1,4 +1,6 @@
 'use strict';
+import React        from 'react';
+import ReactDom     from 'react-dom';
 import task         from './task.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
@@ -13,10 +15,12 @@ var html = `<div class="edit-group">
                                     <span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu" aria-labelledby="dropdownFont">
-                                    <li><a href="javascript:;">1</a></li>
-                                    <li><a href="javascript:;">2</a></li>
-                                    <li><a href="javascript:;">2.4</a></li>
-                                    <li><a href="javascript:;">3</a></li>
+                                    <li><a href="javascript:;">12</a></li>
+                                    <li><a href="javascript:;">14</a></li>
+                                    <li><a href="javascript:;">16</a></li>
+                                    <li><a href="javascript:;">18</a></li>
+                                    <li><a href="javascript:;">24</a></li>
+                                    <li><a href="javascript:;">36</a></li>
                                 </ul>
                             </div>
                             <div class="btn-group align-horizontal" role="group">
@@ -46,10 +50,10 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
 // horizontal align text
-var $horizontal = task.$el.find('.align-horizontal');
+var $horizontal = task.$style.find('.align-horizontal');
 
 task.register('text-align', function(value){
     // console.log(value);
@@ -60,12 +64,12 @@ task.register('text-align', function(value){
 $horizontal.on('click', 'a', function(){
     var value = $(this).data('value');
 
-    stageData.curElem.childStyle['text-align'] = value;
+    stageData.curElem.child.style['text-align'] = value;
     render.renderStep();
 });
 
 // vertical align text
-var $vertical = task.$el.find('.align-vertical');
+var $vertical = task.$style.find('.align-vertical');
 
 task.register('vertical-align', function(value){
     // console.log(value);
@@ -75,11 +79,6 @@ task.register('vertical-align', function(value){
 
 $vertical.on('click', 'a', function(){
     var value = $(this).data('value');
-    stageData.curElem.childStyle['vertical-align'] = value;
+    stageData.curElem.child.style['vertical-align'] = value;
     render.renderStep();
-});
-
-
-task.register('color', function(value){
-    // console.log('%ccolor:', 'color: #f00', value);
 });

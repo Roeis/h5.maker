@@ -10,7 +10,8 @@
   "license": "MIT",
   "dependencies": {
     "gulp": "^3.9.0",
-    "lodash": "^3.10.1"
+    "lodash": "^3.10.1",
+    "underscore": "^1.8.3"
   },
   "devDependencies": {
     "babel": "^6.0.15",
@@ -34,6 +35,9 @@
     "gulp-uglify": "^1.4.2",
     "gulp-useref": "^3.0.0",
     "gulp-util": "^3.0.7",
+    "react": "^0.14.3",
+    "react-color": "^1.2.1",
+    "react-dom": "^0.14.3",
     "webpack": "^1.12.3"
   }
 }

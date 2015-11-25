@@ -9,14 +9,14 @@ var html = `<div class="edit-group">
                         z-index
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="z-index">
+                        <input type="number" min="0" class="form-control" data-role="z-index">
                     </div>
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
-var $zindex = task.$el.find('[data-role="z-index"]');
+var $zindex = task.$style.find('[data-role="z-index"]');
 
 task.register('z-index', function(value){
     // console.log('%cz-index', 'color: #f00', value);

@@ -16,12 +16,12 @@ list.template1 = {
     name: '模板名称',
     pic: 'http://www.hujiang.com/2010/images/default2015/logo.png',
     src: {
-        elements: [
-            {
-                id: 'm_2',
-                type: 'btn',
-                innerHtml: '',
-                childStyle: {
+        'elements': [{
+            'id': 'm_8',
+            'type': 'btn',
+            'child': {
+                'innerHtml': '',
+                'style': {
                     'transform': 'rotate(0deg)',
                     'text-align': 'center',
                     'vertical-align': 'middle',
@@ -30,24 +30,25 @@ list.template1 = {
                     'border-radius': '0px',
                     'background-color': '#fff',
                     'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)'
-                },
-                style: {
-                    'left': 0,
-                    'top': 0,
-                    'width': '360px',
-                    'height': '280px',
-                    'z-index': 0,
-                    'animation-name': 'none',
-                    'animation-duration': '1s',
-                    'animation-delay': '1s',
-                    'opacity': 1
                 }
             },
-            {
-                id: 'm_3',
-                type: 'btn',
-                innerHtml: '<div class="inner"></div>',
-                childStyle: {
+            'style': {
+                'animation-delay': '1s',
+                'animation-duration': '1s',
+                'animation-name': 'none',
+                'height': '280px',
+                'left': '0px',
+                'opacity': 1,
+                'top': '0px',
+                'width': '360px',
+                'z-index': 0
+            }
+        }, {
+            'id': 'm_9',
+            'type': 'btn',
+            'child': {
+                'innerHtml': 'who is this character in animation \'One Piece\'',
+                'style': {
                     'transform': 'rotate(0deg)',
                     'text-align': 'center',
                     'vertical-align': 'middle',
@@ -56,21 +57,76 @@ list.template1 = {
                     'border-radius': '0px',
                     'background-color': '#fff',
                     'background-image': 'none'
-                },
-                style: {
-                    'left': '40px',
-                    'top': '400px',
-                    'width': '50px',
-                    'height': '50px',
-                    'animation-name': 'wobble',
-                    'animation-duration': '1s',
-                    'animation-delay': '1s'
                 }
+            },
+            'style': {
+                'animation-delay': '1s',
+                'animation-duration': '1s',
+                'animation-name': 'none',
+                'height': '100px',
+                'left': '0px',
+                'top': '280px',
+                'width': '360px'
             }
-        ],
-        style: {
-            'background': 'url("http://jsdf.com/sdf.jpg")',
+        }, {
+            'id': 'm_10',
+            'type': 'btn',
+            'child': {
+                'innerHtml': 'Hot Question',
+                'style': {
+                    'background-color': 'rgba(249,93,0,1)',
+                    'background-image': 'none',
+                    'border-radius': '50px',
+                    'color': '#fff',
+                    'font-size': '15px',
+                    'text-align': 'center',
+                    'transform': 'rotate(30deg)',
+                    'vertical-align': 'middle'
+                }
+            },
+            'style': {
+                'animation-delay': '0s',
+                'animation-duration': '1s',
+                'animation-name': 'wobble',
+                'height': '70px',
+                'left': '290px',
+                'opacity': 1,
+                'top': '240px',
+                'width': '70px',
+                'z-index': 0
+            }
+        }, {
+            'id': 'm_11',
+            'type': 'btn',
+            'child': {
+                'innerHtml': 'Click here',
+                'style': {
+                    'background-color': 'rgba(214,39,16,1)',
+                    'background-image': 'none',
+                    'border-radius': '50px',
+                    'color': '#fff',
+                    'font-size': '15px',
+                    'text-align': 'center',
+                    'transform': 'rotate(0deg)',
+                    'vertical-align': 'middle'
+                }
+            },
+            'style': {
+                'animation-delay': '0s',
+                'animation-duration': '1s',
+                'animation-name': 'none',
+                'height': '60px',
+                'left': '50px',
+                'opacity': 1,
+                'top': '430px',
+                'width': '260px',
+                'z-index': 0
+            }
+        }],
+        'style': {
+            'background': 'url(http://jsdf.com/sdf.jpg)',
             'backgounnd-color': '#fff'
         }
     }
+
 };

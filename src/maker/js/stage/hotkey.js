@@ -7,77 +7,88 @@ import render       from '../page/render';
 import history      from './history.js';
 
 var core = {
-    
-    init: function() {
+
+    init() {
         document.onkeydown = this.keyboardEvent;
     },
     /**
      *  mac 平台， windows 平台的快捷键
-     * 
+     *
      */
-    keyboardEvent: function(event) {
-        var e = event || window.event;
-        
+    keyboardEvent(event) {
+        let e = event || window.event;
+
+        let curElem = stageData.curElem,
+            top, left;
+        if(curElem){
+            top = parseInt(curElem.style.top, 10),
+            left = parseInt(curElem.style.left, 10);
+        }
+
+        let CTRL    = e.ctrlKey,
+            SHIFT   = e.shiftKey,
+            ALT     = e.altKey,
+            Z       = e.keyCode === key.Z,
+            Y       = e.keyCode === key.Y,
+            UP      = e.keyCode === key.Up,
+            DOWN    = e.keyCode === key.Down,
+            LEFT    = e.keyCode === key.Left,
+            RIGHT   = e.keyCode === key.Right;
+
         // 复制
-        if(e.ctrlKey && e.keyCode === key.C){
+        if(CTRL && e.keyCode === key.C){
             console.log('copy');
         }
 
         // 粘贴
-        if(e.ctrlKey && e.keyCode === key.V){
+        if(CTRL && e.keyCode === key.V){
             console.log('paste');
         }
 
-        // 剪贴
-        if(e.ctrlKey && e.keyCode === key.X){
-            console.log('cut');
-        }
-
         // 保存
-        if(e.ctrlKey && e.keyCode === key.S){
+        if(CTRL && e.keyCode === key.S){
             console.log('save');
         }
 
-        //自由变换
-        if(e.ctrlKey && e.keyCode === key.T){
-            console.log('transform');
-        }
-
-        //选取所有
-        if(e.ctrlKey && e.keyCode === key.A){
-            console.log('select all');
-        }
-
         //撤销
-        if(e.ctrlKey && e.keyCode === key.Z){
-            console.log('undo');
+        if(CTRL && Z){
             history.undo(function(data){
-
-                pageData.list[0] = _.cloneDeep(data);
+                pageData.list[stageData.index] = _.cloneDeep(data);
                 render.renderPage();
             });
         }
 
         //重做
-        if(e.ctrlKey && e.keyCode === key.Y){
-            console.log('redo');
+        if(CTRL && Y){
             history.redo(function(data){
-                pageData.list[0] = _.cloneDeep(data);
+                pageData.list[stageData.index] = _.cloneDeep(data);
                 render.renderPage();
             });
         }
 
-        if(e.keyCode === key.Up){
-            console.log('up arrow');
+
+        if(UP || DOWN){
+            let t = top;
+            t = CTRL && UP ? t - 1 : t;
+            t = CTRL && DOWN ? t + 1 : t;
+            t = SHIFT && UP ? t - 9 : t;
+            t = SHIFT && DOWN ? t + 9 : t;
+            if(t !== top){
+                stageData.curElem.style.top = t + 'px';
+                render.renderStep();
+            }
         }
-        if(e.keyCode === key.Right){
-            console.log('right arrow');
-        }
-        if(e.keyCode === key.Down){
-            console.log('down arrow');
-        }
-        if(e.keyCode === key.Left){
-            console.log('left arrow');
+
+        if(LEFT || RIGHT){
+            let l = left;
+            l = CTRL && LEFT ? l - 1 : l;
+            l = CTRL && RIGHT ? l + 1 : l;
+            l = SHIFT && LEFT ? l - 9 : l;
+            l = SHIFT && RIGHT ? l + 9 : l;
+            if(l !== left){
+                stageData.curElem.style.left = l + 'px';
+                render.renderStep();
+            }
         }
     }
 };

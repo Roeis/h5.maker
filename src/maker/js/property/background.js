@@ -2,7 +2,10 @@
 import task         from './task.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
-import util         from '../biz/util.js';
+import React        from 'react';
+import ReactDom     from 'react-dom';
+
+import {Picker, controller}     from '../component/bgcolor.picker.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
@@ -20,15 +23,30 @@ var html = `<div class="edit-group">
                         background color
                     </div>
                     <div class="col-md-8">
-                        <div class="mini-color">
-                            <input type="text" class="form-control" data-role="bg-color">
-                        </div>
+                        <div class="colorpicker" id="bgPicker"></div>
                     </div>
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
+
+// react color picker
+ReactDom.render(
+    <Picker />,
+    document.getElementById('bgPicker')
+);
+
+// background-color
+// var $bgColor = task.$el.find('[data-role="bg-color"]');
+
+task.register('background-color', function(value){
+    controller.set(value);
+    // $bgColor.val(value);
+});
+
+
+// background-image
 var $image = task.$el.find('[data-role="bg-image"]');
 
 task.register('background-image', function(value){
@@ -41,27 +59,6 @@ task.register('background-image', function(value){
 });
 
 $image.on('change.property', function(){
-    stageData.curElem.childStyle['background-image'] = 'url(' + this.value + ')';
+    stageData.curElem.child.style['background-image'] = 'url(' + this.value + ')';
     render.renderStep();
-});
-
-// background-color
-var $bgColor = task.$el.find('[data-role="bg-color"]');
-
-$bgColor.minicolors({
-    control: 'hue',
-    theme: 'bootstrap',
-    opacity: true,
-    change: function(hex, opacity) {
-        // console.log(hex, opacity);
-        var rgba = $bgColor.minicolors('rgbaString');
-        stageData.curElem.childStyle['background-color'] = rgba;
-        render.renderStep();
-    }
-});
-
-task.register('background-color', function(value){
-    value = util.rgb2hex(value);
-    $bgColor.minicolors('value', value.hex);
-    $bgColor.minicolors('opacity', value.opacity);
 });

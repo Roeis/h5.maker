@@ -21,10 +21,8 @@ var core = {
                 </div>`;
         this.$el.html(html);
     },
-
-
-
-    bind(){
+    
+    bind() {
         var self = this;
         this.$el.on('click', 'li', function(){
                 var $this = $(this),

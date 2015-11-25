@@ -11,6 +11,9 @@ ul{
     margin: 0;
     list-style: none;
 }
+p{
+    margin: 0;
+}
 .cf:before,
 .cf:after{
     display: table;
@@ -143,7 +146,11 @@ ul{
     }
 }
 
-
+.history{
+    position: absolute;
+    left: 20px;
+    bottom: 20px;
+}
 
 
 
@@ -243,7 +250,6 @@ ul{
     }
     .tool-elem{
         width: 25%;
-        height: 120px;
         float: left;
         margin-bottom: 20px;
 
@@ -291,24 +297,59 @@ ul{
     }
     .body{
         height: 100%;
-        padding: $h 0;
-        margin: -$h 0;
-    }
-    .footer{
-        height: $h;
-        background-color: #ddd;
+        padding: $h 0 0;
+        margin: -$h 0 0;
+        position: relative;
     }
 }
 
-.edit-panel{
-    height: 100%;
-    overflow-y: scroll;
-}
 .edit-group{
     background-color: #fff;
     padding: 10px;
     .row{
         margin: 0;
+    }
+    textarea{
+        width: 100%;
+        height: 150px;
+        -webkit-appearance: none;
+        resize: none;
+        border: 1px solid #ddd;
+        padding: 10px;
+    }
+}
+.edit-panel-tab{
+    position: absolute;
+    width: 100%;
+    height: 40px;
+    z-index: 2;
+    background-color: #eee;
+    .edit-panel-li{
+        width: 50%;
+        float: left;
+        text-align: center;
+        line-height: 40px;
+        color: #ccc;
+    }
+    .active{
+        background-color: #fff;
+        color: #333;
+    }
+}
+.edit-panel-cont{
+    $w: 40px;
+    height: 100%;
+    position: relative;
+    .edit-panel{
+        position: absolute;
+        // display: none;
+        left: 0;
+        top: $w;
+        height: 100%;
+        width: 100%;
+        padding-top: $w;
+        margin-top: -$w;
+        overflow-y: scroll;
     }
 }
 .anima {
@@ -324,6 +365,7 @@ ul{
     line-height: 18px;
     padding: 10px;
     color: #999;
+    overflow: hidden;
     &:hover,
     &.active{
         box-shadow: 0 0 0 2px #3b75de;
@@ -360,6 +402,7 @@ ul{
         padding: 10px;
         text-align: center;
         border-radius: 2px;
+        cursor: pointer;
         &:hover{
             background-color: #bbb - #111;
         }
@@ -378,6 +421,13 @@ ul{
     left: 50%;
     top: 50%;
     margin-top: 280px;
+    margin-left: -180px;
+}
+.quick-key{
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    margin-top: 320px;
     margin-left: -180px;
 }
 

@@ -14,9 +14,9 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
-var $link = task.$el.find('[data-role="link"]');
+var $link = task.$style.find('[data-role="link"]');
 
 task.register('link', function(value){
     // console.log('%c link here', 'color: #f00', value);

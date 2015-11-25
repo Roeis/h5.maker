@@ -4,9 +4,9 @@ import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
 
 var core = {
-    //得到当前显示页面内容，保存到数组, 
+    //得到当前显示页面内容，保存到数组,
     //增加空白分页
-    addPage: function() {
+    addPage() {
 
         pageData.list.push({
             elements: [],
@@ -17,7 +17,7 @@ var core = {
 
     },
 
-    copyPage: function() {
+    copyPage() {
 
         // clone the current page data
         // plus the global countID on the id of each element
@@ -32,7 +32,7 @@ var core = {
     },
 
     //删除当前分页
-    removePage: function() {
+    removePage() {
 
         pageData.list.splice(stageData.index, 1);
         //note: pageData.length has minused one
@@ -41,7 +41,7 @@ var core = {
     },
 
     //交换页面顺序
-    swapPage: function(oldIndex, newIndex) {
+    swapPage(oldIndex, newIndex) {
 
         var temp = pageData.list[oldIndex];
 
@@ -50,6 +50,10 @@ var core = {
 
         stageData.index = newIndex;
     },
+
+    getCurPage(){
+        return pageData.list[stageData.index];
+    }
 
 };
 

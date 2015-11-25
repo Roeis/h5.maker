@@ -24,10 +24,10 @@ var html = `<div class="edit-group">
                 </div>
             </div>`;
 
-task.$el.append(html);
+task.$style.append(html);
 
 //width
-var $width = task.$el.find('[data-role="width"]');
+var $width = task.$style.find('[data-role="width"]');
 
 task.register('width', function(value){
     value = parseInt(value, 10);
@@ -40,7 +40,7 @@ $width.on('change.property', function(){
 });
 
 // height
-var $height = task.$el.find('[data-role="height"]');
+var $height = task.$style.find('[data-role="height"]');
 
 task.register('height', function(value){
     value = parseInt(value, 10);
@@ -51,5 +51,3 @@ $height.on('change.property', function(){
     stageData.curElem.style.height = this.value + 'px';
     render.renderStep();
 });
-
-
