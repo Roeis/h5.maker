@@ -1,23 +1,32 @@
 'use strict';
-import task from './task.js';
-import stageData from '../data/stageData.js';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
-                <div class="row">
-                    <div class="col-md-4">
-                        analyze
-                    </div>
-                    <div class="col-md-8">
-                        <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">
-                    </div>
+var task = new Task({
+    html: `<div class="edit-group">
+            <div class="row">
+                <div class="col-md-4">
+                    analyze
                 </div>
-            </div>`;
+                <div class="col-md-8">
+                    <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">
+                </div>
+            </div>
+        </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$analyze = this.$el.find('[data-role="analyze"]');
+    },
+    bind(){
 
-task.$style.append(html);
-
-var $analyze = task.$el.find('[data-role="analyze"]');
-
-task.register('analyze', function(value){
-    // console.log('%c analyze here', 'color: #f00', value);
-    $analyze.val(value);
+    },
+    register(){
+        let self = this;
+        tasks.register('analyze', function(value){
+            self.$el.show();
+            self.$analyze.val(value);
+        });
+    }
 });

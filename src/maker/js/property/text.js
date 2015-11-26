@@ -1,26 +1,28 @@
 'use strict';
 import React        from 'react';
 import ReactDom     from 'react-dom';
-import task         from './task.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="btn-group" role="group">
                             <div class="btn-group" role="group">
                                 <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">
-                                    FontSize
+                                    <span class="elem-font-size"></span>
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">
-                                    <li><a href="javascript:;">12</a></li>
-                                    <li><a href="javascript:;">14</a></li>
-                                    <li><a href="javascript:;">16</a></li>
-                                    <li><a href="javascript:;">18</a></li>
-                                    <li><a href="javascript:;">24</a></li>
-                                    <li><a href="javascript:;">36</a></li>
+                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="dropdownFont">
+                                    <li data-value="12"><a>12px</a></li>
+                                    <li data-value="14"><a>14px</a></li>
+                                    <li data-value="16"><a>16px</a></li>
+                                    <li data-value="18"><a>18px</a></li>
+                                    <li data-value="24"><a>24px</a></li>
+                                    <li data-value="36"><a>36px</a></li>
                                 </ul>
                             </div>
                             <div class="btn-group align-horizontal" role="group">
@@ -48,37 +50,54 @@ var html = `<div class="edit-group">
                         </div>
                     </div>
                 </div>
-            </div>`;
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        // horizontal align text
+        this.$hori = this.$el.find('.align-horizontal');
+        // vertical align text
+        this.$vert = this.$el.find('.align-vertical');
+        this.$fontsize = this.$el.find('.elem-font-size');
+        this.$fontsizes = this.$el.find('.elem-font-sizes');
+    },
+    bind(){
 
-task.$style.append(html);
+        this.$vert.on('click', 'a', function(){
+            let value = $(this).data('value');
+            stageData.curElem.child.style['vertical-align'] = value;
+            render.renderStep();
+        });
 
-// horizontal align text
-var $horizontal = task.$style.find('.align-horizontal');
+        this.$hori.on('click', 'a', function(){
+            let value = $(this).data('value');
+            stageData.curElem.child.style['text-align'] = value;
+            render.renderStep();
+        });
 
-task.register('text-align', function(value){
-    // console.log(value);
-    $horizontal.children().removeClass('btn-active');
-    $horizontal.find(`[data-value="${value}"]`).addClass('btn-active');
-});
+        this.$fontsizes.on('click', 'li', function(){
+            let value = $(this).data('value');
+            
+            stageData.curElem.child.style['font-size'] = value + 'px';
+            render.renderStep();
+        });
+    },
+    register(){
 
-$horizontal.on('click', 'a', function(){
-    var value = $(this).data('value');
+        tasks.register('font-size', (value) => {
+            this.$fontsize.html(value);
+            console.log(value);
+        });
 
-    stageData.curElem.child.style['text-align'] = value;
-    render.renderStep();
-});
+        tasks.register('text-align', (value) => {
+            this.$el.show();
+            this.$hori.children().removeClass('btn-active').end()
+                .find(`[data-value="${value}"]`).addClass('btn-active');
+        });
 
-// vertical align text
-var $vertical = task.$style.find('.align-vertical');
-
-task.register('vertical-align', function(value){
-    // console.log(value);
-    $vertical.children().removeClass('btn-active');
-    $vertical.find(`[data-value="${value}"]`).addClass('btn-active');
-});
-
-$vertical.on('click', 'a', function(){
-    var value = $(this).data('value');
-    stageData.curElem.child.style['vertical-align'] = value;
-    render.renderStep();
+        tasks.register('vertical-align', (value) => {
+            this.$el.show();
+            this.$vert.children().removeClass('btn-active').end()
+                .find(`[data-value="${value}"]`).addClass('btn-active');
+        });
+    }
 });

@@ -1,9 +1,11 @@
 'use strict';
-import task         from './task.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         z-index
@@ -12,18 +14,21 @@ var html = `<div class="edit-group">
                         <input type="number" min="0" class="form-control" data-role="z-index">
                     </div>
                 </div>
-            </div>`;
-
-task.$style.append(html);
-
-var $zindex = task.$style.find('[data-role="z-index"]');
-
-task.register('z-index', function(value){
-    // console.log('%cz-index', 'color: #f00', value);
-    $zindex.val(value);
-});
-
-$zindex.on('change.property', function(){
-    stageData.curElem.style['z-index'] = this.value;
-    render.renderStep();
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$zindex = this.$el.find('[data-role="z-index"]');
+    },
+    bind(){
+        this.$zindex.on('change.property', function(){
+            stageData.curElem.style['z-index'] = this.value;
+            render.renderStep();
+        });
+    },
+    register(){
+        tasks.register('z-index', (value) => {
+            this.$el.show();
+            this.$zindex.val(value);
+        });
+    }
 });

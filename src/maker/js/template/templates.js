@@ -18,7 +18,8 @@ list.template1 = {
     src: {
         'elements': [{
             'id': 'm_8',
-            'type': 'btn',
+            'type': 'default',
+            'extra': {},
             'child': {
                 'innerHtml': '',
                 'style': {
@@ -45,7 +46,8 @@ list.template1 = {
             }
         }, {
             'id': 'm_9',
-            'type': 'btn',
+            'type': 'default',
+            'extra': {},
             'child': {
                 'innerHtml': 'who is this character in animation \'One Piece\'',
                 'style': {
@@ -70,7 +72,8 @@ list.template1 = {
             }
         }, {
             'id': 'm_10',
-            'type': 'btn',
+            'type': 'default',
+            'extra': {},
             'child': {
                 'innerHtml': 'Hot Question',
                 'style': {
@@ -97,7 +100,8 @@ list.template1 = {
             }
         }, {
             'id': 'm_11',
-            'type': 'btn',
+            'type': 'default',
+            'extra': {},
             'child': {
                 'innerHtml': 'Click here',
                 'style': {

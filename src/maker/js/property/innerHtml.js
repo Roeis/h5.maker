@@ -1,26 +1,32 @@
 'use strict';
-import task         from './task.js';
+
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-12">
                         <textarea class="innerHtml"></textarea>
                     </div>
                 </div>
-            </div>`;
-
-task.$style.append(html);
-
-var $textarea = task.$style.find('textarea');
-
-task.register('innerHtml', function(value){
-    console.log(value);
-    $textarea.val(value);
-});
-
-$textarea.on('change.property', function(){
-    stageData.curElem.child.innerHtml = this.value;
-    render.renderStep();
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$text = this.$el.find('.innerHtml');
+    },
+    bind(){
+        this.$text.on('change.property', function(){
+            stageData.curElem.child.innerHtml = this.value;
+            render.renderStep();
+        });
+    },
+    register(){
+        tasks.register('innerHtml', (value) => {
+            this.$el.show();
+            this.$text.val(value);
+        });
+    }
 });

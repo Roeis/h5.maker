@@ -1,20 +1,21 @@
 'use strict';
 
 import _            from 'lodash';
-import task         from './task.js';
 import util         from '../biz/util.js';
+import tasks        from './tasks.js';
 
-task.init();
+tasks.init();
 
 var files = [
-    // property
+    // character
+    'type',
     'link',
     'audio',
     'video',
     'analyze',
-    // child element
+    'jump',
+    // style
     'innerHtml',
-    // css
     'text',
     'color',
     'background',
@@ -24,7 +25,6 @@ var files = [
     'zindex',
     'size',
     'position',
-    //
     'animation',
 ];
 
@@ -41,13 +41,20 @@ var core = {
             }
         });
     },
+
     //
     syncValue(key, value){
-        if(!task.events[key]){
+        if(!tasks.events[key]){
             return;
         }
-        task.events[key](value);
+        tasks.events[key](value);
     },
+
+    unSyncAll(){
+
+        console.log(tasks);
+        $('.edit-group').hide();
+    }
 };
 
 module.exports = core;

@@ -1,8 +1,11 @@
 'use strict';
-import task from './task.js';
-import stageData from '../data/stageData.js';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         audio
@@ -11,13 +14,19 @@ var html = `<div class="edit-group">
                         <input class="form-control" data-role="audio">
                     </div>
                 </div>
-            </div>`;
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$audio = this.$el.find('[data-role="audio"]');
+    },
+    bind(){
 
-task.$style.append(html);
-
-var $audio = task.$el.find('[data-role="audio"]');
-
-task.register('audio', function(value){
-    // console.log('%c audio here', 'color: #f00', value);
-    $audio.val(value);
+    },
+    register(){
+        let self = this;
+        tasks.register('audio', function(value){
+            self.$el.show();
+            self.$audio.val(value);
+        });
+    }
 });

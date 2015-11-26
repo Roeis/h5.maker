@@ -70,7 +70,6 @@ var core = {
                 self.intoEditable($temp);
                 self.syncProperty();
                 self.syncRole();
-                console.log(stageData.curElem.type);
             }
 
             menu.$elem.hide();
@@ -145,22 +144,22 @@ var core = {
 
     syncRole(){
         let curElem = stageData.curElem;
+        // style, child.innerHtml, child.style, extra
+        // syncValue('link', curElem.extra.link);
         switch(curElem.type){
             case 'audio':
                 console.log(curElem.extra[curElem.type]);
+                property.syncValue('audio', curElem.extra.audio);
                 break;
             case 'video':
-
+                property.syncValue('video', curElem.extra.video);
                 break;
             case 'link':
-                console.log(curElem.extra[curElem.type]);
-                break;
-            case 'default':
-                console.log('do nothing');
+                property.syncValue('link', curElem.extra.link);
+                property.syncValue('analyze', curElem.extra.analyze);
                 break;
             case 'jump':
-                break;
-            case 'extra':
+                property.syncValue('jump', curElem.extra.jump);
                 break;
             default:
                 break;
@@ -168,11 +167,12 @@ var core = {
     },
 
     syncProperty(){
-        let target = stageData.curElem;
-        property.sync(target.style);
-        property.sync(target.child);
-        property.sync(target.child.style);
-        property.sync(target.extra);
+        let curElem = stageData.curElem;
+        property.unSyncAll();
+        property.sync(curElem.style);
+        property.sync(curElem.child.style);
+        property.syncValue('innerHtml', curElem.child.innerHtml);
+        property.syncValue('type', curElem.type);
     },
 
     getById(id){

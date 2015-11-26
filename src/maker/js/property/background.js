@@ -1,13 +1,15 @@
 'use strict';
-import task         from './task.js';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
 import React        from 'react';
 import ReactDom     from 'react-dom';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
 import {Picker, controller}     from '../component/bgcolor.picker.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         background image
@@ -26,39 +28,35 @@ var html = `<div class="edit-group">
                         <div class="colorpicker" id="bgPicker"></div>
                     </div>
                 </div>
-            </div>`;
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        // background-image
+        this.$image = this.$el.find('[data-role="bg-image"]');
+        // react color picker
+        ReactDom.render(
+            <Picker />,
+            document.getElementById('bgPicker')
+        );
+    },
+    bind(){
 
-task.$style.append(html);
+        this.$image.on('change.property', function(){
+            stageData.curElem.child.style['background-image'] = 'url(' + this.value + ')';
+            render.renderStep();
+        });
+    },
+    register(){
+        let self = this;
+        tasks.register('background-color', function(value){
+            controller.set(value);
+        });
 
-
-// react color picker
-ReactDom.render(
-    <Picker />,
-    document.getElementById('bgPicker')
-);
-
-// background-color
-// var $bgColor = task.$el.find('[data-role="bg-color"]');
-
-task.register('background-color', function(value){
-    controller.set(value);
-    // $bgColor.val(value);
-});
-
-
-// background-image
-var $image = task.$el.find('[data-role="bg-image"]');
-
-task.register('background-image', function(value){
-    value = value.match(/\((.*)\)/);
-    if(value){
-        value = value[1];
+        tasks.register('background-image', function(value){
+            self.$el.show();
+            value = value.match(/\((.*)\)/);
+            if(value) value = value[1];
+            self.$image.val(value);
+        });
     }
-    // console.log('%cbackground-image:', 'color: #f00', value);
-    $image.val(value);
-});
-
-$image.on('change.property', function(){
-    stageData.curElem.child.style['background-image'] = 'url(' + this.value + ')';
-    render.renderStep();
-});
+})

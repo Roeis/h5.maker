@@ -11,12 +11,12 @@ var data = {
             elements: [
                     {
                         id: 'm_0',
-                        type: 'default',
+                        type: 'audio',
                         extra: {
-                            link: 'template link',
-                            audio: '',
+                            link: 'template link 1',
+                            audio: 'audio link 1',
                             video: '',
-                            analyze: '',
+                            analyze: 'analyze 1',
                             jump: ''
                         },
                         child: {
@@ -49,10 +49,10 @@ var data = {
                         id: 'm_1',
                         type: 'link',
                         extra: {
-                            link: 'template link',
+                            link: 'template link 2',
                             audio: 'audio link',
                             video: 'video link',
-                            analyze: 'analyze link'
+                            analyze: 'analyze link 2'
                         },
                         child: {
                             innerHtml: '<p>testtsst sfds</p>',
@@ -82,12 +82,12 @@ var data = {
                     },
                     {
                         id: 'm_2',
-                        type: 'audio',
+                        type: 'default',
                         extra: {
-                            link: 'template link',
+                            link: 'template link 3',
                             audio: 'audio link',
                             video: 'video link',
-                            analyze: 'analyze link'
+                            analyze: 'analyze link 23'
                         },
                         child: {
                             innerHtml: '<p>testtsst sfds</p>',

@@ -1,9 +1,9 @@
 'use strict';
-import task         from './task.js';
 import stageData    from '../data/stageData.js';
-import animas       from '../biz/animas.js';
 import render       from '../page/render.js';
-
+import animas       from '../biz/animas.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
@@ -11,7 +11,7 @@ var html = `<div class="edit-group">
                         duration
                     </div>
                     <div class="col-md-8">
-                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-duration"></input>
+                        <input type="number" class="form-control animation-duration" min="0" step="0.1" />
                     </div>
                 </div>
             </div>
@@ -21,73 +21,80 @@ var html = `<div class="edit-group">
                         delay
                     </div>
                     <div class="col-md-8">
-                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-delay"></input>
+                        <input type="number" class="form-control animation-delay" min="0" step="0.1" />
                     </div>
                 </div>
             </div>`;
 
     html += `<div class="edit-group">
                 <div class="row animation-name">`;
-    for (var key in animas){
-        if (animas.hasOwnProperty(key)) {
-            html += `<div class="anima anima-${key}" data-opacity="${animas[key].opacity}" data-value="${key}">
-                        <div class="${key}">${animas[key].cn}</div>
-                    </div>`;
+        for (var key in animas){
+            if (animas.hasOwnProperty(key)) {
+                html += `<div class="anima anima-${key}" data-opacity="${animas[key].opacity}" data-value="${key}">
+                            <div class="${key}">${animas[key].cn}</div>
+                        </div>`;
+            }
         }
-    }
-    html += `</div>
+        html += `</div>
             </div>`;
 
-task.$anima.append(html);
+var task = new Task({
+    html: html,
+    parent: '#animaPanel',
+    init(){
+        this.$duration = this.$el.find('.animation-duration');
+        this.$delay = this.$el.find('.animation-delay');
+        this.$name = this.$el.find('.animation-name');
+    },
+    bind(){
+        this.$name
+            .on('click', '.anima', function(){
+                let name = $(this).data('value');
+                stageData.curElem.style['animation-name'] = name;
+                render.renderStep();
+            })
+            .on('mouseenter mouseleave', '.anima', function(event){
+                let $this = $(this),
+                    $target = $this.find('div');
+                if(event.type === 'mouseenter'){
+                    $target.addClass('animated');
+                }else{
+                    $target.removeClass('animated');
+                }
+            });
 
-// name
-var $name = task.$anima.find('.animation-name');
-task.register('animation-name', function(value){
+        this.$delay.on('change.property', function(){
+            stageData.curElem.style['animation-delay'] = this.value + 's';
+            render.renderStep();
+        });
 
-    // wobble       1s         ease       2s
-    // name      duration    time-func   delay
-    var name = value;
-    $name.find('.anima').removeClass('active');
-    $name.find('.anima-'+name).addClass('active');
+        this.$duration.on('change.property', function(){
+            stageData.curElem.style['animation-duration'] = this.value + 's';
+            render.renderStep();
+        });
+    },
+    register(){
 
-    // console.log('%canimation:', 'color: #f00', name);
-});
+        // wobble       1s         ease       2s
+        // name      duration    time-func   delay
 
-$name.on('click', '.anima', function(){
-    var name = $(this).data('value');
-    stageData.curElem.style['animation-name'] = name;
-    render.renderStep();
-});
-$name.on('mouseenter mouseleave', '.anima', function(event){
-    var $this = $(this),
-        $target = $this.find('div');
-    if(event.type === 'mouseenter'){
-        $target.addClass('animated');
-    }else{
-        $target.removeClass('animated');
+        tasks.register('animation-name', (value) => {
+            this.$el.show();
+            this.$name.find('.anima').removeClass('active');
+            this.$name.find('.anima-' + value).addClass('active');
+        });
+
+        tasks.register('animation-duration', (value) => {
+            this.$el.show();
+            value = parseFloat(value);
+            this.$duration.val(value);
+        });
+
+        tasks.register('animation-delay', (value) => {
+            this.$el.show();
+            value = parseFloat(value);
+            this.$delay.val(value);
+        });
     }
-});
 
-// duration
-var $duration = task.$anima.find('[data-role="animation-duration"]');
-task.register('animation-duration', function(value){
-    value = parseFloat(value);
-    $duration.val(value);
-});
-
-$duration.on('change.property', function(){
-    stageData.curElem.style['animation-duration'] = this.value + 's';
-    render.renderStep();
-});
-
-// delay
-var $delay = task.$anima.find('[data-role="animation-delay"]');
-task.register('animation-delay', function(value){
-    value = parseFloat(value);
-    $delay.val(value);
-});
-
-$delay.on('change.property', function(){
-    stageData.curElem.style['animation-delay'] = this.value + 's';
-    render.renderStep();
 });

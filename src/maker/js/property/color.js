@@ -1,13 +1,15 @@
 'use strict';
-import task         from './task.js';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
 import React        from 'react';
 import ReactDom     from 'react-dom';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
 import {Picker, controller}     from '../component/text.picker.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         color
@@ -16,15 +18,20 @@ var html = `<div class="edit-group">
                         <div class="colorpicker" id="textPicker"></div>
                     </div>
                 </div>
-            </div>`;
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        ReactDom.render(
+            <Picker />,
+            document.getElementById('textPicker')
+        );
+    },
+    bind(){
 
-task.$style.append(html);
-
-ReactDom.render(
-    <Picker />,
-    document.getElementById('textPicker')
-);
-
-task.register('color', function(value){
-    controller.set(value);
-})
+    },
+    register(){
+        tasks.register('color', function(value){
+            controller.set(value);
+        });
+    }
+});

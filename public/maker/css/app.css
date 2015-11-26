@@ -271,6 +271,7 @@ p {
 .edit-panel-cont {
   height: 100%;
   position: relative;
+  background-color: #ddd;
 }
 .edit-panel-cont .edit-panel {
   position: absolute;

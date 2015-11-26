@@ -1,8 +1,11 @@
 'use strict';
-import task from './task.js';
-import stageData from '../data/stageData.js';
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
 
-var html = `<div class="edit-group">
+var task = new Task({
+    html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         video
@@ -11,13 +14,19 @@ var html = `<div class="edit-group">
                         <input class="form-control" data-role="video">
                     </div>
                 </div>
-            </div>`;
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$video = this.$el.find('[data-role="video"]');
+    },
+    bind(){
 
-task.$style.append(html);
-
-var $video = task.$style.find('[data-role="video"]');
-
-task.register('video', function(value){
-    // console.log('%c video here', 'color: #f00', value);
-    $video.val(value);
+    },
+    register(){
+        let self = this;
+        tasks.register('video', function(value){
+            self.$el.show();
+            self.$video.val(value);
+        });
+    }
 });

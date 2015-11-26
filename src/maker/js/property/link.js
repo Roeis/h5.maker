@@ -1,29 +1,36 @@
 'use strict';
-import task from './task.js';
-import stageData from '../data/stageData.js';
-import render   from '../page/render.js';
 
-var html = `<div class="edit-group">
+import stageData    from '../data/stageData.js';
+import render       from '../page/render.js';
+import tasks        from './tasks.js';
+import Task         from './task.js';
+
+var link = new Task({
+    html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
                         link
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="link">
+                        <input placeholder="enter your link url" class="form-control" data-role="link">
                     </div>
                 </div>
-            </div>`;
-
-task.$style.append(html);
-
-var $link = task.$style.find('[data-role="link"]');
-
-task.register('link', function(value){
-    // console.log('%c link here', 'color: #f00', value);
-    $link.val(value);
-});
-
-$link.on('change.property', function(){
-    stageData.curElem.extra.link = this.value;
-    render.renderStep();
+            </div>`,
+    parent: '#stylePanel',
+    init(){
+        this.$link = this.$el.find('[data-role="link"]');
+    },
+    bind(){
+        this.$link.on('change.property', function(){
+            // verify this.value
+            stageData.curElem.extra.link = this.value;
+            render.renderStep();
+        });
+    },
+    register: function(){
+        tasks.register('link', (value) => {
+            this.$el.show();
+            this.$link.val(value);
+        });
+    }
 });

@@ -12743,12 +12743,12 @@
 	    list: [{
 	        elements: [{
 	            id: 'm_0',
-	            type: 'default',
+	            type: 'audio',
 	            extra: {
-	                link: 'template link',
-	                audio: '',
+	                link: 'template link 1',
+	                audio: 'audio link 1',
 	                video: '',
-	                analyze: '',
+	                analyze: 'analyze 1',
 	                jump: ''
 	            },
 	            child: {
@@ -12780,10 +12780,10 @@
 	            id: 'm_1',
 	            type: 'link',
 	            extra: {
-	                link: 'template link',
+	                link: 'template link 2',
 	                audio: 'audio link',
 	                video: 'video link',
-	                analyze: 'analyze link'
+	                analyze: 'analyze link 2'
 	            },
 	            child: {
 	                innerHtml: '<p>testtsst sfds</p>',
@@ -12812,12 +12812,12 @@
 	            }
 	        }, {
 	            id: 'm_2',
-	            type: 'audio',
+	            type: 'default',
 	            extra: {
-	                link: 'template link',
+	                link: 'template link 3',
 	                audio: 'audio link',
 	                video: 'video link',
-	                analyze: 'analyze link'
+	                analyze: 'analyze link 23'
 	            },
 	            child: {
 	                innerHtml: '<p>testtsst sfds</p>',
@@ -13266,7 +13266,6 @@
 	                self.intoEditable($temp);
 	                self.syncProperty();
 	                self.syncRole();
-	                console.log(_dataStageDataJs2['default'].curElem.type);
 	            }
 	
 	            _menuJs2['default'].$elem.hide();
@@ -13337,22 +13336,22 @@
 	
 	    syncRole: function syncRole() {
 	        var curElem = _dataStageDataJs2['default'].curElem;
+	        // style, child.innerHtml, child.style, extra
+	        // syncValue('link', curElem.extra.link);
 	        switch (curElem.type) {
 	            case 'audio':
 	                console.log(curElem.extra[curElem.type]);
+	                _property2['default'].syncValue('audio', curElem.extra.audio);
 	                break;
 	            case 'video':
-	
+	                _property2['default'].syncValue('video', curElem.extra.video);
 	                break;
 	            case 'link':
-	                console.log(curElem.extra[curElem.type]);
-	                break;
-	            case 'default':
-	                console.log('do nothing');
+	                _property2['default'].syncValue('link', curElem.extra.link);
+	                _property2['default'].syncValue('analyze', curElem.extra.analyze);
 	                break;
 	            case 'jump':
-	                break;
-	            case 'extra':
+	                _property2['default'].syncValue('jump', curElem.extra.jump);
 	                break;
 	            default:
 	                break;
@@ -13360,11 +13359,12 @@
 	    },
 	
 	    syncProperty: function syncProperty() {
-	        var target = _dataStageDataJs2['default'].curElem;
-	        _property2['default'].sync(target.style);
-	        _property2['default'].sync(target.child);
-	        _property2['default'].sync(target.child.style);
-	        _property2['default'].sync(target.extra);
+	        var curElem = _dataStageDataJs2['default'].curElem;
+	        _property2['default'].unSyncAll();
+	        _property2['default'].sync(curElem.style);
+	        _property2['default'].sync(curElem.child.style);
+	        _property2['default'].syncValue('innerHtml', curElem.child.innerHtml);
+	        _property2['default'].syncValue('type', curElem.type);
 	    },
 	
 	    getById: function getById(id) {
@@ -13397,25 +13397,21 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _bizUtilJs = __webpack_require__(8);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	_taskJs2['default'].init();
+	var _tasksJs = __webpack_require__(277);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].init();
 	
 	var files = [
-	// property
-	'link', 'audio', 'video', 'analyze',
-	// child element
-	'innerHtml',
-	// css
-	'text', 'color', 'background', 'transform', 'borderadius', 'padding', 'zindex', 'size', 'position',
-	//
-	'animation'];
+	// character
+	'type', 'link', 'audio', 'video', 'analyze', 'jump',
+	// style
+	'innerHtml', 'text', 'color', 'background', 'transform', 'borderadius', 'padding', 'zindex', 'size', 'position', 'animation'];
 	
 	for (var i = 0; i < files.length; i++) {
 	    __webpack_require__(16)("./" + files[i] + '.js');
@@ -13430,12 +13426,19 @@
 	            }
 	        });
 	    },
+	
 	    //
 	    syncValue: function syncValue(key, value) {
-	        if (!_taskJs2['default'].events[key]) {
+	        if (!_tasksJs2['default'].events[key]) {
 	            return;
 	        }
-	        _taskJs2['default'].events[key](value);
+	        _tasksJs2['default'].events[key](value);
+	    },
+	
+	    unSyncAll: function unSyncAll() {
+	
+	        console.log(_tasksJs2['default']);
+	        $('.edit-group').hide();
 	    }
 	};
 	
@@ -13443,45 +13446,44 @@
 
 /***/ },
 /* 15 */
-/***/ function(module, exports, __webpack_require__) {
+/***/ function(module, exports) {
 
 	'use strict';
 	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
 	
-	var _lodash = __webpack_require__(6);
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _lodash2 = _interopRequireDefault(_lodash);
+	var Task = (function () {
+	    function Task(opts) {
+	        _classCallCheck(this, Task);
 	
-	module.exports = {
-	    events: {},
-	    register: function register(name, callback) {
-	        var task = {};
-	        task[name] = callback;
-	        _lodash2['default'].extend(this.events, task);
-	    },
-	    $el: $('#editPanel'),
-	    init: function init() {
-	        this.create();
-	        this.bind();
-	    },
-	    create: function create() {
-	        var html = '<div class="edit-panel-tab cf">\n                        <div class="edit-panel-li active">样式</div>\n                        <div class="edit-panel-li">动画</div>\n                    </div>\n                    <div class="edit-panel-cont">\n                        <div class="edit-panel" id="stylePanel" style="display: block;"></div>\n                        <div class="edit-panel" id="animaPanel" style="display: none;"></div>\n                    </div>';
-	        this.$el.html(html);
-	        this.$style = this.$el.find('#stylePanel');
-	        this.$anima = this.$el.find('#animaPanel');
-	        this.$tab = this.$el.find('.edit-panel-tab');
-	        this.$cont = this.$el.find('.edit-panel-cont');
-	    },
-	    bind: function bind() {
-	        var self = this;
-	        this.$tab.on('click', '.edit-panel-li', function () {
-	            var index = $(this).index();
-	            self.$tab.children().eq(index).addClass('active').siblings().removeClass('active');
-	            self.$cont.children().eq(index).show().siblings().hide();
-	        });
+	        this.opts = opts;
+	        this._init();
 	    }
-	};
+	
+	    _createClass(Task, [{
+	        key: '_init',
+	        value: function _init() {
+	            this.$el = $(this.opts.html);
+	            this.$parent = $(this.opts.parent);
+	            this.$parent.append(this.$el);
+	            this.$el.hide();
+	            this.init();
+	        }
+	    }, {
+	        key: 'init',
+	        value: function init() {
+	            this.opts.init.call(this);
+	            this.opts.bind.call(this);
+	            this.opts.register.call(this);
+	        }
+	    }]);
+	
+	    return Task;
+	})();
+	
+	module.exports = Task;
 
 /***/ },
 /* 16 */
@@ -13502,9 +13504,10 @@
 		"./position.js": 25,
 		"./size.js": 26,
 		"./task.js": 15,
+		"./tasks.js": 277,
 		"./text.js": 27,
 		"./transform.js": 28,
-		"./ueditor.js": 29,
+		"./type.js": 278,
 		"./video.js": 30,
 		"./zindex.js": 31
 	};
@@ -13530,23 +13533,36 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        analyze\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">\n                    </div>\n                </div>\n            </div>';
+	var _pageRenderJs = __webpack_require__(11);
 	
-	_taskJs2['default'].$style.append(html);
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var $analyze = _taskJs2['default'].$el.find('[data-role="analyze"]');
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].register('analyze', function (value) {
-	    // console.log('%c analyze here', 'color: #f00', value);
-	    $analyze.val(value);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-4">\n                    analyze\n                </div>\n                <div class="col-md-8">\n                    <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">\n                </div>\n            </div>\n        </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$analyze = this.$el.find('[data-role="analyze"]');
+	    },
+	    bind: function bind() {},
+	    register: function register() {
+	        var self = this;
+	        _tasksJs2['default'].register('analyze', function (value) {
+	            self.$el.show();
+	            self.$analyze.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -13557,84 +13573,94 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _bizAnimasJs = __webpack_require__(19);
-	
-	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
 	
 	var _pageRenderJs = __webpack_require__(11);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-duration"></input>\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control" min="0" step="0.1" data-role="animation-delay"></input>\n                    </div>\n                </div>\n            </div>';
+	var _bizAnimasJs = __webpack_require__(19);
+	
+	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
+	
+	var _tasksJs = __webpack_require__(277);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-duration" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-delay" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>';
 	
 	html += '<div class="edit-group">\n                <div class="row animation-name">';
 	for (var key in _bizAnimasJs2['default']) {
 	    if (_bizAnimasJs2['default'].hasOwnProperty(key)) {
-	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                        <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n                    </div>';
+	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                            <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n                        </div>';
 	    }
 	}
 	html += '</div>\n            </div>';
 	
-	_taskJs2['default'].$anima.append(html);
+	var task = new _taskJs2['default']({
+	    html: html,
+	    parent: '#animaPanel',
+	    init: function init() {
+	        this.$duration = this.$el.find('.animation-duration');
+	        this.$delay = this.$el.find('.animation-delay');
+	        this.$name = this.$el.find('.animation-name');
+	    },
+	    bind: function bind() {
+	        this.$name.on('click', '.anima', function () {
+	            var name = $(this).data('value');
+	            _dataStageDataJs2['default'].curElem.style['animation-name'] = name;
+	            _pageRenderJs2['default'].renderStep();
+	        }).on('mouseenter mouseleave', '.anima', function (event) {
+	            var $this = $(this),
+	                $target = $this.find('div');
+	            if (event.type === 'mouseenter') {
+	                $target.addClass('animated');
+	            } else {
+	                $target.removeClass('animated');
+	            }
+	        });
 	
-	// name
-	var $name = _taskJs2['default'].$anima.find('.animation-name');
-	_taskJs2['default'].register('animation-name', function (value) {
+	        this.$delay.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style['animation-delay'] = this.value + 's';
+	            _pageRenderJs2['default'].renderStep();
+	        });
 	
-	    // wobble       1s         ease       2s
-	    // name      duration    time-func   delay
-	    var name = value;
-	    $name.find('.anima').removeClass('active');
-	    $name.find('.anima-' + name).addClass('active');
+	        this.$duration.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style['animation-duration'] = this.value + 's';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
 	
-	    // console.log('%canimation:', 'color: #f00', name);
-	});
+	        // wobble       1s         ease       2s
+	        // name      duration    time-func   delay
 	
-	$name.on('click', '.anima', function () {
-	    var name = $(this).data('value');
-	    _dataStageDataJs2['default'].curElem.style['animation-name'] = name;
-	    _pageRenderJs2['default'].renderStep();
-	});
-	$name.on('mouseenter mouseleave', '.anima', function (event) {
-	    var $this = $(this),
-	        $target = $this.find('div');
-	    if (event.type === 'mouseenter') {
-	        $target.addClass('animated');
-	    } else {
-	        $target.removeClass('animated');
+	        _tasksJs2['default'].register('animation-name', function (value) {
+	            _this.$el.show();
+	            _this.$name.find('.anima').removeClass('active');
+	            _this.$name.find('.anima-' + value).addClass('active');
+	        });
+	
+	        _tasksJs2['default'].register('animation-duration', function (value) {
+	            _this.$el.show();
+	            value = parseFloat(value);
+	            _this.$duration.val(value);
+	        });
+	
+	        _tasksJs2['default'].register('animation-delay', function (value) {
+	            _this.$el.show();
+	            value = parseFloat(value);
+	            _this.$delay.val(value);
+	        });
 	    }
-	});
 	
-	// duration
-	var $duration = _taskJs2['default'].$anima.find('[data-role="animation-duration"]');
-	_taskJs2['default'].register('animation-duration', function (value) {
-	    value = parseFloat(value);
-	    $duration.val(value);
-	});
-	
-	$duration.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style['animation-duration'] = this.value + 's';
-	    _pageRenderJs2['default'].renderStep();
-	});
-	
-	// delay
-	var $delay = _taskJs2['default'].$anima.find('[data-role="animation-delay"]');
-	_taskJs2['default'].register('animation-delay', function (value) {
-	    value = parseFloat(value);
-	    $delay.val(value);
-	});
-	
-	$delay.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style['animation-delay'] = this.value + 's';
-	    _pageRenderJs2['default'].renderStep();
 	});
 
 /***/ },
@@ -13828,23 +13854,36 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        audio\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>';
+	var _pageRenderJs = __webpack_require__(11);
 	
-	_taskJs2['default'].$style.append(html);
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var $audio = _taskJs2['default'].$el.find('[data-role="audio"]');
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].register('audio', function (value) {
-	    // console.log('%c audio here', 'color: #f00', value);
-	    $audio.val(value);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        audio\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$audio = this.$el.find('[data-role="audio"]');
+	    },
+	    bind: function bind() {},
+	    register: function register() {
+	        var self = this;
+	        _tasksJs2['default'].register('audio', function (value) {
+	            self.$el.show();
+	            self.$audio.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -13855,9 +13894,13 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
+	var _react = __webpack_require__(64);
 	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(221);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
 	var _dataStageDataJs = __webpack_require__(10);
 	
@@ -13867,46 +13910,45 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _react = __webpack_require__(64);
+	var _tasksJs = __webpack_require__(277);
 	
-	var _react2 = _interopRequireDefault(_react);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var _reactDom = __webpack_require__(221);
+	var _taskJs = __webpack_require__(15);
 	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var _componentBgcolorPickerJs = __webpack_require__(270);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="bgPicker"></div>\n                    </div>\n                </div>\n            </div>';
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="bgPicker"></div>\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        // background-image
+	        this.$image = this.$el.find('[data-role="bg-image"]');
+	        // react color picker
+	        _reactDom2['default'].render(_react2['default'].createElement(_componentBgcolorPickerJs.Picker, null), document.getElementById('bgPicker'));
+	    },
+	    bind: function bind() {
 	
-	_taskJs2['default'].$style.append(html);
+	        this.$image.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.child.style['background-image'] = 'url(' + this.value + ')';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var self = this;
+	        _tasksJs2['default'].register('background-color', function (value) {
+	            _componentBgcolorPickerJs.controller.set(value);
+	        });
 	
-	// react color picker
-	_reactDom2['default'].render(_react2['default'].createElement(_componentBgcolorPickerJs.Picker, null), document.getElementById('bgPicker'));
-	
-	// background-color
-	// var $bgColor = task.$el.find('[data-role="bg-color"]');
-	
-	_taskJs2['default'].register('background-color', function (value) {
-	    _componentBgcolorPickerJs.controller.set(value);
-	    // $bgColor.val(value);
-	});
-	
-	// background-image
-	var $image = _taskJs2['default'].$el.find('[data-role="bg-image"]');
-	
-	_taskJs2['default'].register('background-image', function (value) {
-	    value = value.match(/\((.*)\)/);
-	    if (value) {
-	        value = value[1];
+	        _tasksJs2['default'].register('background-image', function (value) {
+	            self.$el.show();
+	            value = value.match(/\((.*)\)/);
+	            if (value) value = value[1];
+	            self.$image.val(value);
+	        });
 	    }
-	    // console.log('%cbackground-image:', 'color: #f00', value);
-	    $image.val(value);
-	});
-	
-	$image.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.child.style['background-image'] = 'url(' + this.value + ')';
-	    _pageRenderJs2['default'].renderStep();
 	});
 
 /***/ },
@@ -13917,10 +13959,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -13929,22 +13967,35 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        border-radius\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="border-radius">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var $radius = _taskJs2['default'].$style.find('[data-role="border-radius"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('border-radius', function (value) {
-	    // console.log('%c border-radius here', 'color: #f00', value);
-	    value = parseInt(value, 10);
-	    $radius.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$radius.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.child.style['border-radius'] = this.value + 'px';
-	    console.log('test change');
-	    _pageRenderJs2['default'].renderStep();
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        border-radius\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="border-radius">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$radius = this.$el.find('[data-role="border-radius"]');
+	    },
+	    bind: function bind() {
+	        this.$radius.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.child.style['border-radius'] = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('border-radius', function (value) {
+	            _this.$el.show();
+	            value = parseInt(value, 10);
+	            _this.$radius.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -13955,10 +14006,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -13967,20 +14014,35 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        link\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var $link = _taskJs2['default'].$style.find('[data-role="link"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('link', function (value) {
-	    // console.log('%c link here', 'color: #f00', value);
-	    $link.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$link.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.extra.link = this.value;
-	    _pageRenderJs2['default'].renderStep();
+	var link = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        link\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="enter your link url" class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$link = this.$el.find('[data-role="link"]');
+	    },
+	    bind: function bind() {
+	        this.$link.on('change.property', function () {
+	            // verify this.value
+	            _dataStageDataJs2['default'].curElem.extra.link = this.value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('link', function (value) {
+	            _this.$el.show();
+	            _this.$link.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -13992,10 +14054,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -14004,34 +14062,45 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	// left
-	var $left = _taskJs2['default'].$style.find('[data-role="left"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('left', function (value) {
-	    value = parseInt(value, 10);
-	    $left.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$left.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style.left = this.value + 'px';
-	    _pageRenderJs2['default'].renderStep();
-	});
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$left = this.$el.find('[data-role="left"]');
+	        this.$top = this.$el.find('[data-role="top"]');
+	    },
+	    bind: function bind() {
+	        this.$left.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style.left = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	        this.$top.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style.top = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
 	
-	// top
-	var $top = _taskJs2['default'].$style.find('[data-role="top"]');
-	
-	_taskJs2['default'].register('top', function (value) {
-	    value = parseInt(value, 10);
-	    $top.val(value);
-	});
-	
-	$top.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style.top = this.value + 'px';
-	    _pageRenderJs2['default'].renderStep();
+	        _tasksJs2['default'].register('left', function (value) {
+	            value = parseInt(value, 10);
+	            _this.$el.show();
+	            _this.$left.val(value);
+	        });
+	        _tasksJs2['default'].register('top', function (value) {
+	            value = parseInt(value, 10);
+	            _this.$el.show();
+	            _this.$top.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -14042,10 +14111,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -14054,34 +14119,46 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	//width
-	var $width = _taskJs2['default'].$style.find('[data-role="width"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('width', function (value) {
-	    value = parseInt(value, 10);
-	    $width.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$width.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style.width = this.value + 'px';
-	    _pageRenderJs2['default'].renderStep();
-	});
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$width = this.$el.find('[data-role="width"]');
+	        this.$height = this.$el.find('[data-role="height"]');
+	    },
+	    bind: function bind() {
+	        this.$width.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style.width = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
 	
-	// height
-	var $height = _taskJs2['default'].$style.find('[data-role="height"]');
+	        this.$height.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style.height = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
 	
-	_taskJs2['default'].register('height', function (value) {
-	    value = parseInt(value, 10);
-	    $height.val(value);
-	});
+	        _tasksJs2['default'].register('width', function (value) {
+	            value = parseInt(value, 10);
+	            _this.$el.show();
+	            _this.$width.val(value);
+	        });
 	
-	$height.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style.height = this.value + 'px';
-	    _pageRenderJs2['default'].renderStep();
+	        _tasksJs2['default'].register('height', function (value) {
+	            value = parseInt(value, 10);
+	            _this.$height.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -14100,10 +14177,6 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -14112,39 +14185,64 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    FontSize\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu" aria-labelledby="dropdownFont">\n                                    <li><a href="javascript:;">12</a></li>\n                                    <li><a href="javascript:;">14</a></li>\n                                    <li><a href="javascript:;">16</a></li>\n                                    <li><a href="javascript:;">18</a></li>\n                                    <li><a href="javascript:;">24</a></li>\n                                    <li><a href="javascript:;">36</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group align-horizontal" role="group">\n                                <a class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </a>\n                            </div>\n                            <div class="btn-group align-vertical" role="group">\n                                <a class="btn btn-default" data-value="top">\n                                    居上\n                                </a>\n                                <a class="btn btn-default" data-value="middle">\n                                    居中\n                                </a>\n                                <a class="btn btn-default" data-value="bottom">\n                                    居下\n                                </a>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	// horizontal align text
-	var $horizontal = _taskJs2['default'].$style.find('.align-horizontal');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('text-align', function (value) {
-	    // console.log(value);
-	    $horizontal.children().removeClass('btn-active');
-	    $horizontal.find('[data-value="' + value + '"]').addClass('btn-active');
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$horizontal.on('click', 'a', function () {
-	    var value = $(this).data('value');
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    <span class="elem-font-size"></span>\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="dropdownFont">\n                                    <li data-value="12"><a>12px</a></li>\n                                    <li data-value="14"><a>14px</a></li>\n                                    <li data-value="16"><a>16px</a></li>\n                                    <li data-value="18"><a>18px</a></li>\n                                    <li data-value="24"><a>24px</a></li>\n                                    <li data-value="36"><a>36px</a></li>\n                                </ul>\n                            </div>\n                            <div class="btn-group align-horizontal" role="group">\n                                <a class="btn btn-default" data-value="left">\n                                    <span class="glyphicon glyphicon-align-left"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="center">\n                                    <span class="glyphicon glyphicon-align-center"></span>\n                                </a>\n                                <a class="btn btn-default" data-value="right">\n                                    <span class="glyphicon glyphicon-align-right"></span>\n                                </a>\n                            </div>\n                            <div class="btn-group align-vertical" role="group">\n                                <a class="btn btn-default" data-value="top">\n                                    居上\n                                </a>\n                                <a class="btn btn-default" data-value="middle">\n                                    居中\n                                </a>\n                                <a class="btn btn-default" data-value="bottom">\n                                    居下\n                                </a>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        // horizontal align text
+	        this.$hori = this.$el.find('.align-horizontal');
+	        // vertical align text
+	        this.$vert = this.$el.find('.align-vertical');
+	        this.$fontsize = this.$el.find('.elem-font-size');
+	        this.$fontsizes = this.$el.find('.elem-font-sizes');
+	    },
+	    bind: function bind() {
 	
-	    _dataStageDataJs2['default'].curElem.child.style['text-align'] = value;
-	    _pageRenderJs2['default'].renderStep();
-	});
+	        this.$vert.on('click', 'a', function () {
+	            var value = $(this).data('value');
+	            _dataStageDataJs2['default'].curElem.child.style['vertical-align'] = value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
 	
-	// vertical align text
-	var $vertical = _taskJs2['default'].$style.find('.align-vertical');
+	        this.$hori.on('click', 'a', function () {
+	            var value = $(this).data('value');
+	            _dataStageDataJs2['default'].curElem.child.style['text-align'] = value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
 	
-	_taskJs2['default'].register('vertical-align', function (value) {
-	    // console.log(value);
-	    $vertical.children().removeClass('btn-active');
-	    $vertical.find('[data-value="' + value + '"]').addClass('btn-active');
-	});
+	        this.$fontsizes.on('click', 'li', function () {
+	            var value = $(this).data('value');
 	
-	$vertical.on('click', 'a', function () {
-	    var value = $(this).data('value');
-	    _dataStageDataJs2['default'].curElem.child.style['vertical-align'] = value;
-	    _pageRenderJs2['default'].renderStep();
+	            _dataStageDataJs2['default'].curElem.child.style['font-size'] = value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('font-size', function (value) {
+	            _this.$fontsize.html(value);
+	            console.log(value);
+	        });
+	
+	        _tasksJs2['default'].register('text-align', function (value) {
+	            _this.$el.show();
+	            _this.$hori.children().removeClass('btn-active').end().find('[data-value="' + value + '"]').addClass('btn-active');
+	        });
+	
+	        _tasksJs2['default'].register('vertical-align', function (value) {
+	            _this.$el.show();
+	            _this.$vert.children().removeClass('btn-active').end().find('[data-value="' + value + '"]').addClass('btn-active');
+	        });
+	    }
 	});
 
 /***/ },
@@ -14155,9 +14253,67 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _tasksJs = __webpack_require__(277);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
 	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        rotate\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$target = this.$el.find('[data-role="transform"]');
+	    },
+	    bind: function bind() {
+	        /*
+	         * example:
+	         * bind event to change the property
+	         * then call render.renderStep to log the step, that includes
+	         * add a step into history storage, and then render the template
+	         * with the changed data
+	         */
+	        this.$target.on('change.input', function () {
+	
+	            _dataStageDataJs2['default'].curElem.child.style.transform = 'rotate(' + this.value + 'deg)';
+	
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        /**
+	         * register a value callback function
+	         * get a value of some property, how to handle with the value,
+	         * it'll be called by sync function that sync up the data
+	         */
+	        _tasksJs2['default'].register('transform', function (value) {
+	            value = value.match(/\-?\d+/)[0];
+	            _this.$el.show();
+	            _this.$target.val(value);
+	        });
+	    }
+	});
+
+/***/ },
+/* 29 */,
+/* 30 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _dataStageDataJs = __webpack_require__(10);
 	
@@ -14167,90 +14323,28 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        rotate\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
-	
-	var $target = _taskJs2['default'].$style.find('[data-role="transform"]');
-	
-	/**
-	 * register a value callback function
-	 * get a value of some property, how to handle with the value,
-	 * it'll be called by sync function that sync up the data
-	 */
-	_taskJs2['default'].register('transform', function (value) {
-	    value = value.match(/\-?\d+/)[0];
-	    $target.val(value);
-	});
-	
-	/*
-	 * example:
-	 * bind event to change the property
-	 * then call render.renderStep to log the step, that includes
-	 * add a step into history storage, and then render the template
-	 * with the changed data
-	 */
-	$target.on('change.input', function () {
-	
-	    _dataStageDataJs2['default'].curElem.child.style.transform = 'rotate(' + this.value + 'deg)';
-	
-	    _pageRenderJs2['default'].renderStep();
-	});
-
-/***/ },
-/* 29 */
-/***/ function(module, exports) {
-
-	
-	// CKEDITOR.disableAutoInline = true;
-	// 实例化编辑器
-	'use strict';
-	
-	var ueditor = UE.getEditor('baiduEditor', {
-	    toolbars: [['source', 'fullscreen', '|', 'undo', 'redo', 'removeformat', 'formatmatch', '|', 'bold', 'italic', 'underline', 'fontborder', 'strikethrough', 'superscript', 'subscript', 'lineheight', 'forecolor', 'backcolor', 'fontsize', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', 'link', 'unlink']],
-	    wordCount: false,
-	    // 关闭elementPath
-	    elementPathEnabled: false,
-	    // isShow: false,
-	    // 默认的编辑区域高度
-	    initialFrameWidth: 720,
-	    initialFrameHeight: 400,
-	    autoHeightEnabled: false,
-	    autotypeset: {
-	        // 去掉冗余的class
-	        removeClass: false
-	    },
-	    //取消Div标签转换成P标签
-	    allowDivTransToP: false
-	});
-	
-	module.exports = ueditor;
-
-/***/ },
-/* 30 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _dataStageDataJs = __webpack_require__(10);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        video\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$style.append(html);
-	
-	var $video = _taskJs2['default'].$style.find('[data-role="video"]');
-	
-	_taskJs2['default'].register('video', function (value) {
-	    // console.log('%c video here', 'color: #f00', value);
-	    $video.val(value);
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        video\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$video = this.$el.find('[data-role="video"]');
+	    },
+	    bind: function bind() {},
+	    register: function register() {
+	        var self = this;
+	        _tasksJs2['default'].register('video', function (value) {
+	            self.$el.show();
+	            self.$video.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -14261,10 +14355,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -14273,20 +14363,34 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        z-index\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var $zindex = _taskJs2['default'].$style.find('[data-role="z-index"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('z-index', function (value) {
-	    // console.log('%cz-index', 'color: #f00', value);
-	    $zindex.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$zindex.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.style['z-index'] = this.value;
-	    _pageRenderJs2['default'].renderStep();
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        z-index\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$zindex = this.$el.find('[data-role="z-index"]');
+	    },
+	    bind: function bind() {
+	        this.$zindex.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style['z-index'] = this.value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('z-index', function (value) {
+	            _this.$el.show();
+	            _this.$zindex.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -14815,10 +14919,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -14827,20 +14927,34 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <textarea class="innerHtml"></textarea>\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var $textarea = _taskJs2['default'].$style.find('textarea');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('innerHtml', function (value) {
-	    console.log(value);
-	    $textarea.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$textarea.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.child.innerHtml = this.value;
-	    _pageRenderJs2['default'].renderStep();
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <textarea class="innerHtml"></textarea>\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$text = this.$el.find('.innerHtml');
+	    },
+	    bind: function bind() {
+	        this.$text.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.child.innerHtml = this.value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('innerHtml', function (value) {
+	            _this.$el.show();
+	            _this.$text.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -15113,7 +15227,8 @@
 	    src: {
 	        'elements': [{
 	            'id': 'm_8',
-	            'type': 'btn',
+	            'type': 'default',
+	            'extra': {},
 	            'child': {
 	                'innerHtml': '',
 	                'style': {
@@ -15140,7 +15255,8 @@
 	            }
 	        }, {
 	            'id': 'm_9',
-	            'type': 'btn',
+	            'type': 'default',
+	            'extra': {},
 	            'child': {
 	                'innerHtml': 'who is this character in animation \'One Piece\'',
 	                'style': {
@@ -15165,7 +15281,8 @@
 	            }
 	        }, {
 	            'id': 'm_10',
-	            'type': 'btn',
+	            'type': 'default',
+	            'extra': {},
 	            'child': {
 	                'innerHtml': 'Hot Question',
 	                'style': {
@@ -15192,7 +15309,8 @@
 	            }
 	        }, {
 	            'id': 'm_11',
-	            'type': 'btn',
+	            'type': 'default',
+	            'extra': {},
 	            'child': {
 	                'innerHtml': 'Click here',
 	                'style': {
@@ -41060,9 +41178,13 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
+	var _react = __webpack_require__(64);
 	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactDom = __webpack_require__(221);
+	
+	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
 	var _dataStageDataJs = __webpack_require__(10);
 	
@@ -41072,24 +41194,28 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _react = __webpack_require__(64);
+	var _tasksJs = __webpack_require__(277);
 	
-	var _react2 = _interopRequireDefault(_react);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var _reactDom = __webpack_require__(221);
+	var _taskJs = __webpack_require__(15);
 	
-	var _reactDom2 = _interopRequireDefault(_reactDom);
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var _componentTextPickerJs = __webpack_require__(271);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="textPicker"></div>\n                    </div>\n                </div>\n            </div>';
-	
-	_taskJs2['default'].$style.append(html);
-	
-	_reactDom2['default'].render(_react2['default'].createElement(_componentTextPickerJs.Picker, null), document.getElementById('textPicker'));
-	
-	_taskJs2['default'].register('color', function (value) {
-	    _componentTextPickerJs.controller.set(value);
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="textPicker"></div>\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        _reactDom2['default'].render(_react2['default'].createElement(_componentTextPickerJs.Picker, null), document.getElementById('textPicker'));
+	    },
+	    bind: function bind() {},
+	    register: function register() {
+	        _tasksJs2['default'].register('color', function (value) {
+	            _componentTextPickerJs.controller.set(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -41253,10 +41379,6 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _taskJs = __webpack_require__(15);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -41265,20 +41387,35 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">padding</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="padding" type="number">\n                    </div>\n                </div>\n            </div>';
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].$style.append(html);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var $padding = _taskJs2['default'].$style.find('[data-role="padding"]');
+	var _taskJs = __webpack_require__(15);
 	
-	_taskJs2['default'].register('padding', function (value) {
-	    value = parseInt(value, 10);
-	    $padding.val(value);
-	});
+	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	$padding.on('change.property', function () {
-	    _dataStageDataJs2['default'].curElem.child.style.padding = this.value + 'px';
-	    _pageRenderJs2['default'].renderStep();
+	var task = new _taskJs2['default']({
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">padding</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="padding" type="number">\n                    </div>\n                </div>\n            </div>',
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$padding = this.$el.find('[data-role="padding"]');
+	    },
+	    bind: function bind() {
+	        this.$padding.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.child.style.padding = this.value + 'px';
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('padding', function (value) {
+	            value = parseInt(value, 10);
+	            _this.$el.show();
+	            _this.$padding.val(value);
+	        });
+	    }
 	});
 
 /***/ },
@@ -41289,23 +41426,156 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _dataStageDataJs = __webpack_require__(10);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _tasksJs = __webpack_require__(277);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
 	var _taskJs = __webpack_require__(15);
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        jump\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" placeholder="enter page number" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
+	var task = new _taskJs2['default']({
+	    html: html,
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$jump = this.$el.find('[data-role="jump"]');
+	    },
+	    bind: function bind() {
+	        this.$jump.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.extra.jump = this.value;
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('jump', function (value) {
+	            _this.$jump.val(value);
+	        });
+	    }
+	
+	});
+
+/***/ },
+/* 276 */,
+/* 277 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(6);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	// make a factory that other property can extend it
+	//
+	//
+	
+	var core = {
+	
+	    events: {},
+	    // 注册一个事件
+	    register: function register(name, callback) {
+	        // 注册一个新的任务
+	        var task = {};
+	        task[name] = callback;
+	        _lodash2['default'].extend(this.events, task);
+	
+	        // events[name](value);
+	    },
+	
+	    init: function init() {
+	        this.create();
+	        this.bind();
+	    },
+	
+	    create: function create() {
+	        var html = '<div class="edit-panel-tab cf">\n                        <div class="edit-panel-li active">属性</div>\n                        <div class="edit-panel-li">动画</div>\n                    </div>\n                    <div class="edit-panel-cont">\n                        <div class="edit-panel" id="stylePanel" style="display: block;"></div>\n                        <div class="edit-panel" id="animaPanel" style="display: none;"></div>\n                    </div>';
+	        var $el = $('#editPanel');
+	        $el.html(html);
+	
+	        this.$tab = $el.find('.edit-panel-tab');
+	        this.$cont = $el.find('.edit-panel-cont');
+	    },
+	
+	    bind: function bind() {
+	        var self = this;
+	        this.$tab.on('click', '.edit-panel-li', function () {
+	            var index = $(this).index();
+	            self.$tab.children().eq(index).addClass('active').siblings().removeClass('active');
+	            self.$cont.children().eq(index).show().siblings().hide();
+	        });
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 278 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
 	var _dataStageDataJs = __webpack_require__(10);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        jump\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="enter page number u wanna jump" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
+	var _pageRenderJs = __webpack_require__(11);
 	
-	_taskJs2['default'].$style.append(html);
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var $jump = _taskJs2['default'].$el.find('[data-role="jump"]');
+	var _tasksJs = __webpack_require__(277);
 	
-	_taskJs2['default'].register('jump', function (value) {
-	    // console.log('%c jump here', 'color: #f00', value);
-	    $jump.val(value);
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	var _taskJs = __webpack_require__(15);
+	
+	var _taskJs2 = _interopRequireDefault(_taskJs);
+	
+	var html = '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-12">\n                    <div class="elem-character">\n                        <a class="btn btn-default" data-value="link">link</a>\n                        <a class="btn btn-default" data-value="audio">audio</a>\n                        <a class="btn btn-default" data-value="video">video</a>\n                        <a class="btn btn-default" data-value="jump">jump</a>\n                        <a class="btn btn-default" data-value="default">default</a>\n                    </div>\n                </div>\n            </div>\n        </div>';
+	
+	var link = new _taskJs2['default']({
+	    html: html,
+	    parent: '#stylePanel',
+	    init: function init() {
+	        this.$type = this.$el.find('.elem-character');
+	    },
+	    bind: function bind() {
+	        this.$type.on('click', 'a', function () {
+	            var value = $(this).data('value');
+	            _dataStageDataJs2['default'].curElem.type = value;
+	
+	            // meet some special value to change the innerHtml
+	            // switch(value){
+	            //     case 'video':
+	            //         stageData.curElem.child.innerHtml = `<video src="http://www.hujinag.com"></video>`;
+	            //         break;
+	            //     default:
+	            //         break;
+	            // }
+	            _pageRenderJs2['default'].renderStep();
+	        });
+	    },
+	    register: function register() {
+	        var _this = this;
+	
+	        _tasksJs2['default'].register('type', function (value) {
+	            _this.$el.show();
+	            _this.$type.find('a').removeClass('active').end().find('[data-value="' + value + '"]').addClass('active');
+	        });
+	    }
 	});
 
 /***/ }
