@@ -5,6 +5,7 @@ import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
 import watchlist    from '../page/watchlist.js';
+import operation    from './operation.js';
 
 var core = {
 
@@ -32,8 +33,8 @@ var core = {
                             </li>
                         </ul>
                     </div>`;
-        this.$elem = $(html);
-        $('body').append(this.$elem);
+        this.$menu = $(html);
+        $('body').append(this.$menu);
     },
 
     showContextmenu(event){
@@ -42,15 +43,15 @@ var core = {
         top = event.pageY - 10;
 
         // handle when reach bottom
-        var target_height = this.$elem.height();
-        var offset = target_height + this.$elem.offset().top;
+        var target_height = this.$menu.height();
+        var offset = target_height + this.$menu.offset().top;
         var window_height = $(window).height();
 
         if(offset >= window_height){
             top = window_height - target_height - 20;
         }
 
-        this.$elem.show().css({
+        this.$menu.show().css({
             position: 'absolute',
             left: left,
             top: top
@@ -73,20 +74,20 @@ var core = {
             var $this = $(event.target),
                 isIn = $this.closest('#contextMenu').length > 0;
             if(!isIn){
-                self.$elem.hide();
+                self.$menu.hide();
             }
         });
 
-        self.$elem.find('[data-role="copy-elem"]').on('click', function(){
-            self.copyElem();
+        self.$menu.find('[data-role="copy-elem"]').on('click', function(){
+            operation.copyElem();
             self.callbackRender();
         });
-        self.$elem.find('[data-role="paste-elem"]').on('click', function(){
-            self.pasteElem();
+        self.$menu.find('[data-role="paste-elem"]').on('click', function(){
+            operation.pasteElem();
             self.callbackRender();
         });
-        self.$elem.find('[data-role="remove-elem"]').on('click', function(){
-            self.removeElem();
+        self.$menu.find('[data-role="remove-elem"]').on('click', function(){
+            operation.removeElem();
             self.callbackRender();
         });
     },
@@ -94,26 +95,8 @@ var core = {
     callbackRender(){
         render.renderPage();
         watchlist.render();
-        this.$elem.hide();
-    },
-
-    removeElem(){
-        let current = pageData.list[stageData.index],
-            index = _.findIndex(current.elements, {id: stageData.curElem.id});
-        current.elements.splice(index, 1);
-    },
-
-    copyElem(){
-        stageData.clone = stageData.curElem;
-    },
-
-    pasteElem(){
-        let clone = _.cloneDeep(stageData.clone);
-        stageData.countID ++;
-        clone.id = 'm_' + stageData.countID;
-
-        pageData.list[stageData.index].elements.push(clone);
-    },
+        this.$menu.hide();
+    }
 };
 
 module.exports = core;

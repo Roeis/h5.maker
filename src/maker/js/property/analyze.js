@@ -20,7 +20,10 @@ var task = new Task({
         this.$analyze = this.$el.find('[data-role="analyze"]');
     },
     bind(){
-
+        this.$analyze.on('change.property', function(){
+            stageData.curElem.extra.analyze = this.value;
+            render.renderStep();
+        });
     },
     register(){
         let self = this;

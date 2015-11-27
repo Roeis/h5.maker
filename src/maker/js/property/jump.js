@@ -23,10 +23,12 @@ var task = new Task({
     bind(){
         this.$jump.on('change.property', function(){
             stageData.curElem.extra.jump = this.value;
+            render.renderStep();
         });
     },
     register(){
         tasks.register('jump', (value) => {
+            this.$el.show();
             this.$jump.val(value);
         });
     }

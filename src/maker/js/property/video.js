@@ -20,13 +20,15 @@ var task = new Task({
         this.$video = this.$el.find('[data-role="video"]');
     },
     bind(){
-
+        this.$video.on('change.property', function(){
+            stageData.curElem.extra.video = this.value;
+            render.renderStep();
+        });
     },
     register(){
-        let self = this;
-        tasks.register('video', function(value){
-            self.$el.show();
-            self.$video.val(value);
+        tasks.register('video', (value) => {
+            this.$el.show();
+            this.$video.val(value);
         });
     }
 });

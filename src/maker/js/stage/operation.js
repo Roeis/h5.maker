@@ -3,6 +3,7 @@
 import _            from 'lodash';
 import util         from '../biz/util.js';
 import stageData    from '../data/stageData.js';
+import pageData     from '../data/pageData.js';
 import render       from '../page/render.js';
 
 /**
@@ -17,6 +18,24 @@ import render       from '../page/render.js';
  *
  */
 var core = {
+
+    removeElem(){
+        let current = pageData.list[stageData.index],
+            index = _.findIndex(current.elements, {id: stageData.curElem.id});
+        current.elements.splice(index, 1);
+    },
+
+    copyElem(){
+        stageData.clone = stageData.curElem;
+    },
+
+    pasteElem(){
+        let clone = _.cloneDeep(stageData.clone);
+        stageData.countID ++;
+        clone.id = 'm_' + stageData.countID;
+
+        pageData.list[stageData.index].elements.push(clone);
+    },
 
     /**
      * 水平居中
@@ -117,7 +136,7 @@ var core = {
     },
 
     $el: $('#page'),
-    
+
     _create(){
         let html = `<div class="quick-key">
                         <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>

@@ -92,6 +92,8 @@ p{
     margin-top: -270px;
     background-color: #ddd;
     .wrapper{
+        -webkit-backface-visibility: hidden;
+        -webkit-transform-style: preserve-3d;
         height: 100%;
         .page{
             height: 100%;
@@ -107,6 +109,12 @@ p{
     }
 }
 
+// for backup, if it's need to cancel the animation
+.disable-anmia{
+    * {
+        animation: none;
+    }
+}
 
 
 
@@ -163,6 +171,7 @@ p{
 .editable{
     position: absolute;
     display: table;
+    animation-fill-mode: both;
     &:hover{
         &:after{
             position: absolute;
@@ -180,6 +189,9 @@ p{
         background-repeat: no-repeat;
         background-position: center center;
         background-size: 100% auto;
+        img{
+            width: 100%;
+        }
     }
 }
 
@@ -324,6 +336,7 @@ p{
     height: 40px;
     z-index: 2;
     background-color: #eee;
+    box-shadow: 0 1px 5px 1px rgba(0,0,0,.05);
     .edit-panel-li{
         width: 50%;
         float: left;
@@ -377,10 +390,15 @@ p{
     color: #fff;
     background-color: $brand;
 }
-
-
-
-
+.colorpicker{
+    width: 50px;
+}
+.innerHtml{
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 3px;
+    outline: none;
+}
 
 
 

@@ -13,6 +13,7 @@ import toolbar      from './toolbar.js';
 import operation    from './operation.js';
 
 window.theData = stageData;
+window.render = render;
 
 var core = {
     init() {
@@ -31,6 +32,7 @@ var core = {
             console.log('alert editor');
         });
         this.handleSingleClick();
+        this.handleFocusText();
     },
 
     handleSingleClick(){
@@ -72,11 +74,19 @@ var core = {
                 self.syncRole();
             }
 
-            menu.$elem.hide();
+            menu.$menu.hide();
         });
     },
 
-    clearCurUi: function(){
+    handleFocusText(){
+        util.$doc.find('input,textarea').on('focus', function(){
+            stageData.isFocusText = true;
+        }).on('blur',function(){
+            stageData.isFocusText = false;
+        });
+    },
+
+    clearCurUi(){
         $('.cur').removeClass('cur');
         this.destroyEditable();
     },
@@ -148,7 +158,6 @@ var core = {
         // syncValue('link', curElem.extra.link);
         switch(curElem.type){
             case 'audio':
-                console.log(curElem.extra[curElem.type]);
                 property.syncValue('audio', curElem.extra.audio);
                 break;
             case 'video':

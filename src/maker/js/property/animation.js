@@ -50,6 +50,7 @@ var task = new Task({
         this.$name
             .on('click', '.anima', function(){
                 let name = $(this).data('value');
+                stageData.curElem.style.opacity = name === 'none' ? 1 : 0;
                 stageData.curElem.style['animation-name'] = name;
                 render.renderStep();
             })
@@ -79,19 +80,18 @@ var task = new Task({
         // name      duration    time-func   delay
 
         tasks.register('animation-name', (value) => {
+
             this.$el.show();
             this.$name.find('.anima').removeClass('active');
             this.$name.find('.anima-' + value).addClass('active');
         });
 
         tasks.register('animation-duration', (value) => {
-            this.$el.show();
             value = parseFloat(value);
             this.$duration.val(value);
         });
 
         tasks.register('animation-delay', (value) => {
-            this.$el.show();
             value = parseFloat(value);
             this.$delay.val(value);
         });

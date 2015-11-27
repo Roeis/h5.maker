@@ -20,13 +20,15 @@ var task = new Task({
         this.$audio = this.$el.find('[data-role="audio"]');
     },
     bind(){
-
+        this.$audio.on('change.property', function(){
+            stageData.curElem.extra.audio = this.value;
+            render.renderStep();
+        });
     },
     register(){
-        let self = this;
-        tasks.register('audio', function(value){
-            self.$el.show();
-            self.$audio.val(value);
+        tasks.register('audio', (value) => {
+            this.$el.show();
+            this.$audio.val(value);
         });
     }
 });

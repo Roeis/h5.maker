@@ -6,7 +6,7 @@ import render       from '../page/render.js';
 import tasks        from './tasks.js';
 import Task         from './task.js';
 
-import {Picker, controller}     from '../component/bgcolor.picker.js';
+import {Picker, controller}     from '../component/colorPickerBG.js';
 
 var task = new Task({
     html: `<div class="edit-group">
@@ -49,6 +49,7 @@ var task = new Task({
     register(){
         let self = this;
         tasks.register('background-color', function(value){
+            self.$el.show();
             controller.set(value);
         });
 

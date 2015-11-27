@@ -4,6 +4,8 @@ import key          from '../biz/key.js';
 import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render';
+import watchlist    from '../page/watchlist.js';
+import operation    from './operation.js';
 import history      from './history.js';
 
 var core = {
@@ -11,6 +13,7 @@ var core = {
     init() {
         document.onkeydown = this.keyboardEvent;
     },
+
     /**
      *  mac 平台， windows 平台的快捷键
      *
@@ -20,8 +23,12 @@ var core = {
 
         let curElem = stageData.curElem,
             top, left;
+        if(stageData.isFocusText){
+            return;
+        }
+
         if(curElem){
-            top = parseInt(curElem.style.top, 10),
+            top = parseInt(curElem.style.top, 10);
             left = parseInt(curElem.style.left, 10);
         }
 
@@ -30,19 +37,25 @@ var core = {
             ALT     = e.altKey,
             Z       = e.keyCode === key.Z,
             Y       = e.keyCode === key.Y,
+            C       = e.keyCode === key.C,
+            V       = e.keyCode === key.V,
             UP      = e.keyCode === key.Up,
             DOWN    = e.keyCode === key.Down,
             LEFT    = e.keyCode === key.Left,
             RIGHT   = e.keyCode === key.Right;
 
         // 复制
-        if(CTRL && e.keyCode === key.C){
-            console.log('copy');
+        if(CTRL && C){
+            operation.copyElem();
+            render.renderPage();
+            watchlist.render();
         }
 
         // 粘贴
-        if(CTRL && e.keyCode === key.V){
-            console.log('paste');
+        if(CTRL && V){
+            operation.pasteElem();
+            render.renderPage();
+            watchlist.render();
         }
 
         // 保存
@@ -69,8 +82,8 @@ var core = {
 
         if(UP || DOWN){
             let t = top;
-            t = CTRL && UP ? t - 1 : t;
-            t = CTRL && DOWN ? t + 1 : t;
+            t = UP ? t - 1 : t;
+            t = DOWN ? t + 1 : t;
             t = SHIFT && UP ? t - 9 : t;
             t = SHIFT && DOWN ? t + 9 : t;
             if(t !== top){
@@ -81,8 +94,8 @@ var core = {
 
         if(LEFT || RIGHT){
             let l = left;
-            l = CTRL && LEFT ? l - 1 : l;
-            l = CTRL && RIGHT ? l + 1 : l;
+            l = LEFT ? l - 1 : l;
+            l = RIGHT ? l + 1 : l;
             l = SHIFT && LEFT ? l - 9 : l;
             l = SHIFT && RIGHT ? l + 9 : l;
             if(l !== left){

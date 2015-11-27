@@ -12,5 +12,7 @@ module.exports = {
 
     countID: 0,
 
+    isFocusText: false,
+
     index: 0
 };

@@ -67,6 +67,8 @@ p {
   background-color: #ddd;
 }
 .device .wrapper {
+  -webkit-backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
   height: 100%;
 }
 .device .wrapper .page {
@@ -79,6 +81,11 @@ p {
 .device .wrapper .cont {
   position: relative;
   height: 100%;
+}
+
+.disable-anmia * {
+  -webkit-animation: none;
+          animation: none;
 }
 
 .qrcode-helper {
@@ -122,6 +129,8 @@ p {
 .editable {
   position: absolute;
   display: table;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
 }
 .editable:hover:after {
   position: absolute;
@@ -138,6 +147,9 @@ p {
   background-repeat: no-repeat;
   background-position: center center;
   background-size: 100% auto;
+}
+.editable .inner img {
+  width: 100%;
 }
 
 .tool-bar {
@@ -255,6 +267,7 @@ p {
   height: 40px;
   z-index: 2;
   background-color: #eee;
+  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
 }
 .edit-panel-tab .edit-panel-li {
   width: 50%;
@@ -307,6 +320,17 @@ p {
 .btn-active {
   color: #fff;
   background-color: #2a64cd;
+}
+
+.colorpicker {
+  width: 50px;
+}
+
+.innerHtml {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  outline: none;
 }
 
 .page-ul {

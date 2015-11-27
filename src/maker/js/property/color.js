@@ -6,7 +6,7 @@ import render       from '../page/render.js';
 import tasks        from './tasks.js';
 import Task         from './task.js';
 
-import {Picker, controller}     from '../component/text.picker.js';
+import {Picker, controller}     from '../component/colorPickerText.js';
 
 var task = new Task({
     html : `<div class="edit-group">
@@ -30,7 +30,8 @@ var task = new Task({
 
     },
     register(){
-        tasks.register('color', function(value){
+        tasks.register('color', (value) => {
+            this.$el.show();
             controller.set(value);
         });
     }
