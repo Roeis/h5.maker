@@ -34,14 +34,17 @@ var core = {
         let self = this;
         util.$doc.on('click', '[data-role="copy"]', function() {
             handle.copyPage();
+            history.push();
             self.renderOne();
         });
         util.$doc.on('click', '[data-role="remove"]', function(){
             handle.removePage();
+            history.remove();
             self.renderOne();
         });
         util.$doc.on('click', '[data-role="add"]', function(){
             handle.addPage();
+            history.push();
             self.renderOne();
         });
         util.$doc.on('click', '[data-role="template"]', function(){
@@ -77,6 +80,7 @@ var core = {
 
                 if(old_index !== new_index){
                     handle.swapPage(old_index, new_index);
+                    history.swap(old_index, new_index);
                     self.renderOne();
                 }
             }
@@ -84,14 +88,17 @@ var core = {
 
         // 页面跳转
         self.$page.on('click', '.page-li', function() {
-            let index = $(this).index();
+            let index = $(this).index(),
+                cache = stageData.caches[index];
             if(index === stageData.index) return;
             stageData.index = index;
             self.$page.find('.page-ul').children().eq(stageData.index).addClass('active')
                 .siblings().removeClass('active');
-            history.clear();
+
             render.renderPage();
-            history.pushStep();
+
+            // push 初始状态
+            cache.cursor === -1 ? history.pushStep() : history.renderHistory();
             watchlist.render();
         });
 

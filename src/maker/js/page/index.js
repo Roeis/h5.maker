@@ -19,7 +19,8 @@ var core = {
 
         //渲染页面和管理页面, 包含了初始化页面滚动
         render.renderPage();
-        history.pushStep();
+        history.initStatus();
+
     }
 };
 

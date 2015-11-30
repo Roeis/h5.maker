@@ -9,6 +9,29 @@
             console.log('h5 maker go');
             this.setSize();
             this.bind();
+
+            var te = document.getElementById("code");
+            var editor = window.CodeMirror.fromTextArea(te, {
+                mode: 'htmlmixed',
+                lineNumbers: true,
+                lineWrapping: true,
+                selectionPointer: true
+            });
+
+            editor.setValue(`
+<style>
+    .test {
+        line-height: 20px;
+    }
+</style>
+<div class="demo1">sdfas</div>
+<script>
+    var test = 'dasfasd';
+</script>
+                `);
+
+            console.log(editor.getValue())
+
         },
 
         setSize() {

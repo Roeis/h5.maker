@@ -93,7 +93,9 @@ p{
     background-color: #ddd;
     .wrapper{
         -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
         -webkit-transform-style: preserve-3d;
+        transform-style: preserve-3d;
         height: 100%;
         .page{
             height: 100%;
@@ -398,6 +400,18 @@ p{
     border: 1px solid #ddd;
     border-radius: 3px;
     outline: none;
+    img{
+        max-width: 100%;
+    }
+}
+.codeOrigin{
+    display: none;
+}
+.CodeMirror{
+    display: none;
+    width: 100%;
+    border-top: 1px solid #999;
+    border-bottom: 1px solid #999;
 }
 
 

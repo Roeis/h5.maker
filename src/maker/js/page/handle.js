@@ -21,13 +21,14 @@ var core = {
 
         // clone the current page data
         // plus the global countID on the id of each element
-        var copy = _.cloneDeep(pageData.list[stageData.index]);
+        let copy = _.cloneDeep(pageData.list[stageData.index]);
         _.forEach(copy.elements, function(value, key){
             stageData.countID ++;
             value.id = 'm_' + stageData.countID;
         });
 
         pageData.list.push(copy);
+
         stageData.index = pageData.list.length - 1;
     },
 
@@ -36,14 +37,14 @@ var core = {
 
         pageData.list.splice(stageData.index, 1);
         //note: pageData.length has minused one
-        var length = pageData.list.length;
+        let length = pageData.list.length;
         stageData.index = stageData.index === length ? length - 1 : stageData.index;
     },
 
     //交换页面顺序
     swapPage(oldIndex, newIndex) {
 
-        var temp = pageData.list[oldIndex];
+        let temp = pageData.list[oldIndex];
 
         pageData.list.splice(oldIndex, 1);
         pageData.list.splice(newIndex, 0, temp);

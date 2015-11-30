@@ -232,7 +232,7 @@
 	
 	        //渲染页面和管理页面, 包含了初始化页面滚动
 	        _renderJs2['default'].renderPage();
-	        _stageHistoryJs2['default'].pushStep();
+	        _stageHistoryJs2['default'].initStatus();
 	    }
 	};
 	
@@ -246,9 +246,8 @@
 	
 	module.exports = {
 	
-	    cache: [],
+	    caches: [],
 	    cacheMax: 20,
-	    cursor: -1,
 	
 	    $curElem: null,
 	
@@ -482,13 +481,43 @@
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
 	var core = {
-	    addStep: function addStep(step) {
-	        _dataStageDataJs2['default'].cache = _dataStageDataJs2['default'].cache.slice(0, _dataStageDataJs2['default'].cursor + 1);
-	        if (_dataStageDataJs2['default'].cache.length >= _dataStageDataJs2['default'].cacheMax) {
-	            _dataStageDataJs2['default'].cache.shift();
+	
+	    initStatus: function initStatus() {
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            this.push();
 	        }
-	        _dataStageDataJs2['default'].cache.push(step);
-	        _dataStageDataJs2['default'].cursor = _dataStageDataJs2['default'].cache.length - 1;
+	        this.pushStep();
+	    },
+	
+	    push: function push() {
+	        _dataStageDataJs2['default'].caches.push({
+	            data: [],
+	            cacheMax: 20,
+	            cursor: -1
+	        });
+	    },
+	
+	    swap: function swap(oldIndex, newIndex) {
+	        var temp = _dataStageDataJs2['default'].caches[oldIndex];
+	
+	        _dataStageDataJs2['default'].caches.splice(oldIndex, 1);
+	        _dataStageDataJs2['default'].caches.splice(newIndex, 0, temp);
+	    },
+	
+	    remove: function remove() {
+	        _dataStageDataJs2['default'].caches.splice(_dataStageDataJs2['default'].index, 1);
+	    },
+	
+	    addStep: function addStep(step) {
+	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index];
+	
+	        cache.data = cache.data.slice(0, cache.cursor + 1);
+	
+	        if (cache.data.length >= _dataStageDataJs2['default'].cacheMax) {
+	            cache.data.shift();
+	        }
+	        cache.data.push(step);
+	        cache.cursor = cache.data.length - 1;
 	
 	        this.renderHistory();
 	    },
@@ -498,20 +527,23 @@
 	     * flag < 0: 左移游标
 	     */
 	    _updateCursor: function _updateCursor(flag) {
+	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index];
+	
 	        if (flag > 0) {
-	            if (_dataStageDataJs2['default'].cursor < _dataStageDataJs2['default'].cache.length - 1) {
-	                _dataStageDataJs2['default'].cursor++;
+	            if (cache.cursor < cache.data.length - 1) {
+	                cache.cursor++;
 	            }
 	        } else {
-	            if (_dataStageDataJs2['default'].cursor > 0) {
-	                _dataStageDataJs2['default'].cursor--;
+	            if (cache.cursor > 0) {
+	                cache.cursor--;
 	            }
 	        }
 	    },
 	
 	    _stepCallback: function _stepCallback(flag, callback) {
 	        this._updateCursor(flag);
-	        var step = _dataStageDataJs2['default'].cache[_dataStageDataJs2['default'].cursor];
+	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index],
+	            step = cache.data[cache.cursor];
 	        callback && callback(step);
 	    },
 	
@@ -525,17 +557,21 @@
 	        this.renderHistory();
 	    },
 	
+	    change: function change() {},
+	
 	    clear: function clear() {
-	        _dataStageDataJs2['default'].cache = [];
-	        _dataStageDataJs2['default'].cursor = -1;
+	        // stageData.cache = [];
+	        // stageData.cursor = -1;
 	    },
 	
 	    container: document.getElementById('history'),
 	
 	    renderHistory: function renderHistory() {
-	        var html = '<div class="history">\n                        <div class="total">\n                            steps: ' + _dataStageDataJs2['default'].cache.length + '\n                        </div>\n                        <div class="cursor">\n                            cursor: ' + _dataStageDataJs2['default'].cursor + '\n                        </div>\n                        <div class="page">\n                            page: ' + (_dataStageDataJs2['default'].index + 1) + '\n                        </div>\n                    </div>';
+	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index];
+	        var html = '<div class="history">\n                        <div class="total">\n                            steps: ' + cache.data.length + '\n                        </div>\n                        <div class="cursor">\n                            cursor: ' + cache.cursor + '\n                        </div>\n                        <div class="page">\n                            page: ' + (_dataStageDataJs2['default'].index + 1) + '\n                        </div>\n                    </div>';
 	        this.container.innerHTML = html;
 	    },
+	    // 记录下当前页面的数据
 	    pushStep: function pushStep() {
 	        var index = _dataStageDataJs2['default'].index,
 	            data = _dataPageDataJs2['default'].list[index],
@@ -13313,14 +13349,17 @@
 	        var self = this;
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', function () {
 	            _handleJs2['default'].copyPage();
+	            _stageHistoryJs2['default'].push();
 	            self.renderOne();
 	        });
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', function () {
 	            _handleJs2['default'].removePage();
+	            _stageHistoryJs2['default'].remove();
 	            self.renderOne();
 	        });
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
 	            _handleJs2['default'].addPage();
+	            _stageHistoryJs2['default'].push();
 	            self.renderOne();
 	        });
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="template"]', function () {
@@ -13356,6 +13395,7 @@
 	
 	                if (old_index !== new_index) {
 	                    _handleJs2['default'].swapPage(old_index, new_index);
+	                    _stageHistoryJs2['default'].swap(old_index, new_index);
 	                    self.renderOne();
 	                }
 	            }
@@ -13363,13 +13403,16 @@
 	
 	        // 页面跳转
 	        self.$page.on('click', '.page-li', function () {
-	            var index = $(this).index();
+	            var index = $(this).index(),
+	                cache = _dataStageDataJs2['default'].caches[index];
 	            if (index === _dataStageDataJs2['default'].index) return;
 	            _dataStageDataJs2['default'].index = index;
 	            self.$page.find('.page-ul').children().eq(_dataStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
-	            _stageHistoryJs2['default'].clear();
+	
 	            _renderJs2['default'].renderPage();
-	            _stageHistoryJs2['default'].pushStep();
+	
+	            // push 初始状态
+	            cache.cursor === -1 ? _stageHistoryJs2['default'].pushStep() : _stageHistoryJs2['default'].renderHistory();
 	            _watchlistJs2['default'].render();
 	        });
 	    },
@@ -13433,6 +13476,7 @@
 	        });
 	
 	        _dataPageDataJs2['default'].list.push(copy);
+	
 	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
 	    },
 	
@@ -13500,15 +13544,15 @@
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _menuJs = __webpack_require__(248);
+	var _menuJs = __webpack_require__(249);
 	
 	var _menuJs2 = _interopRequireDefault(_menuJs);
 	
-	var _toolbarJs = __webpack_require__(249);
+	var _toolbarJs = __webpack_require__(250);
 	
 	var _toolbarJs2 = _interopRequireDefault(_toolbarJs);
 	
-	var _operationJs = __webpack_require__(258);
+	var _operationJs = __webpack_require__(248);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -14297,7 +14341,7 @@
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _componentColorPickerBGJs = __webpack_require__(261);
+	var _componentColorPickerBGJs = __webpack_require__(184);
 	
 	var task = new _taskJs2['default']({
 	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="bgPicker"></div>\n                    </div>\n                </div>\n            </div>',
@@ -33919,7 +33963,149 @@
 
 
 /***/ },
-/* 184 */,
+/* 184 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(26);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactColor = __webpack_require__(185);
+	
+	var _reactColor2 = _interopRequireDefault(_reactColor);
+	
+	var _dataStageDataJs = __webpack_require__(6);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _stageHistoryJs = __webpack_require__(8);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _bizUtilJs = __webpack_require__(12);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var controller = {};
+	// Color Picker
+	
+	var Picker = (function (_React$Component) {
+	    _inherits(Picker, _React$Component);
+	
+	    function Picker() {
+	        _classCallCheck(this, Picker);
+	
+	        _get(Object.getPrototypeOf(Picker.prototype), 'constructor', this).call(this);
+	        this.state = {
+	            isShow: false,
+	            color: '#ddd'
+	        };
+	
+	        this.handleClick = this.handleClick.bind(this);
+	        this.handleClose = this.handleClose.bind(this);
+	        this.handleChange = this.handleChange.bind(this);
+	        this.handleChangeComplete = this.handleChangeComplete.bind(this);
+	    }
+	
+	    _createClass(Picker, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var _this = this;
+	
+	            controller.set = function (data) {
+	                _this.setState({
+	                    color: data
+	                });
+	            };
+	        }
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick() {
+	            this.setState({
+	                isShow: !this.state.isShow
+	            });
+	        }
+	    }, {
+	        key: 'handleClose',
+	        value: function handleClose() {
+	            this.setState({
+	                isShow: false
+	            });
+	        }
+	    }, {
+	        key: 'handleChange',
+	        value: function handleChange(color) {
+	            var rgba = _bizUtilJs2['default'].rgba(color.rgb);
+	            this.setState({
+	                color: rgba
+	            });
+	            _dataStageDataJs2['default'].curElem.child.style['background-color'] = rgba;
+	            _pageRenderJs2['default'].renderElem();
+	        }
+	    }, {
+	        key: 'handleChangeComplete',
+	        value: function handleChangeComplete() {
+	            _stageHistoryJs2['default'].pushStep();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var popupPosition = {
+	                position: 'absolute',
+	                top: '40px',
+	                left: '0px'
+	            },
+	                stylebk = {
+	                width: '50px',
+	                height: '30px',
+	                border: '1px solid #ddd',
+	                backgroundColor: this.state.color
+	            };
+	            return _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(
+	                    'div',
+	                    { onClick: this.handleClick },
+	                    _react2['default'].createElement('div', { style: stylebk })
+	                ),
+	                _react2['default'].createElement(_reactColor2['default'], {
+	                    color: this.state.color,
+	                    positionCSS: popupPosition,
+	                    display: this.state.isShow,
+	                    onClose: this.handleClose,
+	                    onChange: this.handleChange,
+	                    onChangeComplete: this.handleChangeComplete,
+	                    type: 'chrome' })
+	            );
+	        }
+	    }]);
+	
+	    return Picker;
+	})(_react2['default'].Component);
+	
+	module.exports = {
+	    Picker: Picker,
+	    controller: controller
+	};
+
+/***/ },
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -39693,7 +39879,7 @@
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var _componentColorPickerTextJs = __webpack_require__(260);
+	var _componentColorPickerTextJs = __webpack_require__(234);
 	
 	var task = new _taskJs2['default']({
 	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="textPicker"></div>\n                    </div>\n                </div>\n            </div>',
@@ -39713,7 +39899,149 @@
 	});
 
 /***/ },
-/* 234 */,
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
+	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+	
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+	
+	var _react = __webpack_require__(26);
+	
+	var _react2 = _interopRequireDefault(_react);
+	
+	var _reactColor = __webpack_require__(185);
+	
+	var _reactColor2 = _interopRequireDefault(_reactColor);
+	
+	var _dataStageDataJs = __webpack_require__(6);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _stageHistoryJs = __webpack_require__(8);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _bizUtilJs = __webpack_require__(12);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var controller = {};
+	// Color Picker
+	
+	var Picker = (function (_React$Component) {
+	    _inherits(Picker, _React$Component);
+	
+	    function Picker() {
+	        _classCallCheck(this, Picker);
+	
+	        _get(Object.getPrototypeOf(Picker.prototype), 'constructor', this).call(this);
+	        this.state = {
+	            isShow: false,
+	            color: '#ddd'
+	        };
+	
+	        this.handleClick = this.handleClick.bind(this);
+	        this.handleClose = this.handleClose.bind(this);
+	        this.handleChange = this.handleChange.bind(this);
+	        this.handleChangeComplete = this.handleChangeComplete.bind(this);
+	    }
+	
+	    _createClass(Picker, [{
+	        key: 'componentDidMount',
+	        value: function componentDidMount() {
+	            var _this = this;
+	
+	            controller.set = function (data) {
+	                _this.setState({
+	                    color: data
+	                });
+	            };
+	        }
+	    }, {
+	        key: 'handleClick',
+	        value: function handleClick() {
+	            this.setState({
+	                isShow: !this.state.isShow
+	            });
+	        }
+	    }, {
+	        key: 'handleClose',
+	        value: function handleClose() {
+	            this.setState({
+	                isShow: false
+	            });
+	        }
+	    }, {
+	        key: 'handleChange',
+	        value: function handleChange(color) {
+	            var rgba = _bizUtilJs2['default'].rgba(color.rgb);
+	            this.setState({
+	                color: rgba
+	            });
+	            _dataStageDataJs2['default'].curElem.child.style.color = rgba;
+	            _pageRenderJs2['default'].renderElem();
+	        }
+	    }, {
+	        key: 'handleChangeComplete',
+	        value: function handleChangeComplete() {
+	            _stageHistoryJs2['default'].pushStep();
+	        }
+	    }, {
+	        key: 'render',
+	        value: function render() {
+	            var popupPosition = {
+	                position: 'absolute',
+	                top: '40px',
+	                left: '0px'
+	            },
+	                stylebk = {
+	                width: '50px',
+	                height: '30px',
+	                border: '1px solid #ddd',
+	                backgroundColor: this.state.color
+	            };
+	            return _react2['default'].createElement(
+	                'div',
+	                null,
+	                _react2['default'].createElement(
+	                    'div',
+	                    { onClick: this.handleClick },
+	                    _react2['default'].createElement('div', { style: stylebk })
+	                ),
+	                _react2['default'].createElement(_reactColor2['default'], {
+	                    color: this.state.color,
+	                    positionCSS: popupPosition,
+	                    display: this.state.isShow,
+	                    onClose: this.handleClose,
+	                    onChange: this.handleChange,
+	                    onChangeComplete: this.handleChangeComplete,
+	                    type: 'chrome' })
+	            );
+	        }
+	    }]);
+	
+	    return Picker;
+	})(_react2['default'].Component);
+	
+	module.exports = {
+	    Picker: Picker,
+	    controller: controller
+	};
+
+/***/ },
 /* 235 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -39738,10 +40066,17 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf">\n                            <a class="btn">B</a>\n                            <a class="btn">I</a>\n                            <a class="btn">U</a>\n                            <a class="btn">S</a>\n                            <a class="btn">F</a>\n                            <a class="btn">L</a>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor" contenteditable></div>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf">\n                            <a class="btn">B</a>\n                            <a class="btn">I</a>\n                            <a class="btn">U</a>\n                            <a class="btn">S</a>\n                            <a class="btn">F</a>\n                            <a class="btn">L</a>\n                            <a class="codeMirror">code</a>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor" contenteditable="true"></div>\n                        <textarea class="codeOrigin" id="codeOrigin"></textarea>\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$text = this.$el.find('.innerHtml');
+	        this.$code = this.$el.find('.codeOrigin');
+	        this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
+	            mode: 'text/html',
+	            // lineNumbers: true,
+	            // lineWrapping: true,
+	            selectionPointer: true
+	        });
 	    },
 	    bind: function bind() {
 	        this.$text.on('blur', function () {
@@ -39751,42 +40086,6 @@
 	                _pageRenderJs2['default'].renderStep();
 	            }
 	        });
-	        window.range = null;
-	        this.$text.on('mouseup', function () {
-	            // var range = document.createRange();
-	
-	            // if (window.getSelection) {
-	            // rangeObj = window.getSelection();
-	            // }
-	            var selection = window.getSelection();
-	            var range = selection.getRangeAt(0);
-	
-	            var start = range.startOffset,
-	                end = range.endOffset;
-	
-	            // range.setStart(selection.anchorNode, start);
-	            // range.setEnd(selection.anchorNode, end);
-	            //
-	            // console.log(range);
-	            // // cache string
-	            // let targetStr = range.toString();
-	            //
-	            // console.log(range.toString());
-	
-	            // create an new node for injection
-	            // let node = document.createElement('span');
-	            // node.className = 'select-word';
-	            // node.innerHTML = range.toString();
-	
-	            //delete origin content, then insert node
-	            // range.deleteContents();
-	
-	            // if(targetStr){
-	            //     range.insertNode(node);
-	            // }
-	
-	            // console.log(node, start, end);
-	        });
 	    },
 	    register: function register() {
 	        var _this = this;
@@ -39794,6 +40093,7 @@
 	        _tasksJs2['default'].register('innerHtml', function (value) {
 	            _this.$el.show();
 	            _this.$text.html(value);
+	            _this.editor.setValue(value);
 	        });
 	    }
 	});
@@ -40382,7 +40682,7 @@
 	
 	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
 	
-	var _operationJs = __webpack_require__(258);
+	var _operationJs = __webpack_require__(248);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -40560,6 +40860,181 @@
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
+	var _dataStageDataJs = __webpack_require__(6);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _dataPageDataJs = __webpack_require__(7);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	/**
+	 *
+	 * 多元素 水平居中， 居左， 居右
+	 * 多元素 垂直居中， 居左， 居右
+	 *
+	 * 单元素 自动调整
+	 * 多元素 自动调整
+	 *
+	 * 单元素 拷贝 剪切 粘贴
+	 *
+	 */
+	var core = {
+	
+	    removeElem: function removeElem() {
+	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
+	            index = _lodash2['default'].findIndex(current.elements, { id: _dataStageDataJs2['default'].curElem.id });
+	        current.elements.splice(index, 1);
+	    },
+	
+	    copyElem: function copyElem() {
+	        _dataStageDataJs2['default'].clone = _dataStageDataJs2['default'].curElem;
+	    },
+	
+	    pasteElem: function pasteElem() {
+	        var clone = _lodash2['default'].cloneDeep(_dataStageDataJs2['default'].clone);
+	        _dataStageDataJs2['default'].countID++;
+	        clone.id = 'm_' + _dataStageDataJs2['default'].countID;
+	
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(clone);
+	    },
+	
+	    /**
+	     * 水平居中
+	     */
+	    _horiCenterlize: function _horiCenterlize() {
+	        var curElem = _dataStageDataJs2['default'].curElem,
+	            w = parseInt(curElem.style.width, 10),
+	            l = (_bizUtilJs2['default'].SCREEN_WIDTH - w) / 2;
+	
+	        curElem.style.left = l + 'px';
+	    },
+	
+	    horiCenterlize: function horiCenterlize() {
+	        this._horiCenterlize();
+	        _pageRenderJs2['default'].renderStep();
+	    },
+	
+	    /**
+	     * 垂直居中
+	     */
+	    _vertCenterlize: function _vertCenterlize() {
+	        var curElem = _dataStageDataJs2['default'].curElem,
+	            h = parseInt(curElem.style.height, 10),
+	            t = (_bizUtilJs2['default'].SCREEN_HEIGHT - h) / 2;
+	
+	        curElem.style.top = t + 'px';
+	    },
+	
+	    vertCenterlize: function vertCenterlize() {
+	        this._vertCenterlize();
+	        _pageRenderJs2['default'].renderStep();
+	    },
+	
+	    /**
+	     * 居中
+	     */
+	    centerlize: function centerlize() {
+	        this._vertCenterlize();
+	        this._horiCenterlize();
+	        _pageRenderJs2['default'].renderStep();
+	    },
+	
+	    /**
+	     * 获取当前元素的位置尺寸
+	     */
+	    getSize: function getSize() {
+	        var curElem = _dataStageDataJs2['default'].curElem;
+	        return {
+	            l: parseInt(curElem.style.left, 10),
+	            t: parseInt(curElem.style.top),
+	            w: parseInt(curElem.style.width),
+	            h: parseInt(curElem.style.height)
+	        };
+	    },
+	
+	    _autoAdjust: function _autoAdjust() {
+	        var size = this.getSize(),
+	            w = _bizUtilJs2['default'].tofixed10(size.w),
+	            h = _bizUtilJs2['default'].tofixed10(size.h),
+	            l = _bizUtilJs2['default'].tofixed10(size.l),
+	            t = _bizUtilJs2['default'].tofixed10(size.t);
+	        // console.log(w, h, l ,t);
+	        _lodash2['default'].extend(_dataStageDataJs2['default'].curElem.style, {
+	            left: l + 'px',
+	            top: t + 'px',
+	            width: w + 'px',
+	            height: h + 'px'
+	        });
+	    },
+	    /**
+	     * 自动修正尺寸，趋向于10的倍数
+	     */
+	    autoAdjust: function autoAdjust() {
+	        this._autoAdjust();
+	        _pageRenderJs2['default'].renderStep();
+	    },
+	
+	    alignCallback: function alignCallback() {},
+	
+	    align: function align(direction) {
+	        switch (direction) {
+	            case 'up':
+	                break;
+	            case 'down':
+	                break;
+	            case 'right':
+	                break;
+	            case 'left':
+	                break;
+	        }
+	    },
+	
+	    init: function init() {
+	        this._create();
+	        this._bind();
+	    },
+	
+	    $el: $('#page'),
+	
+	    _create: function _create() {
+	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-role="centerlize">全屏居中</a>\n                        <a class="btn btn-default" data-role="autoAdjust">自动修正</a>\n                    </div>';
+	        this.$el.append(html);
+	    },
+	
+	    _bind: function _bind() {
+	        var self = this;
+	        this.$el.on('click', '.quick-key a', function () {
+	            var role = $(this).data('role');
+	            console.log(role);
+	            self[role]();
+	        });
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(9);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(12);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
 	var _dataPageDataJs = __webpack_require__(7);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
@@ -40576,7 +41051,7 @@
 	
 	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
 	
-	var _operationJs = __webpack_require__(258);
+	var _operationJs = __webpack_require__(248);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -40661,7 +41136,7 @@
 	module.exports = core;
 
 /***/ },
-/* 249 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40684,7 +41159,7 @@
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _templateDataJs = __webpack_require__(250);
+	var _templateDataJs = __webpack_require__(251);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
@@ -40867,27 +41342,27 @@
 	module.exports = core;
 
 /***/ },
-/* 250 */
+/* 251 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _listJs = __webpack_require__(251);
+	var _listJs = __webpack_require__(252);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
 	var files = ['elements', 'templates', 'resources', 'apis'];
 	
 	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(252)("./" + files[i] + '.js');
+	    __webpack_require__(253)("./" + files[i] + '.js');
 	}
 	
 	module.exports = _listJs2['default'].data;
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40912,17 +41387,17 @@
 	};
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./apis.js": 253,
-		"./baseElem.js": 254,
-		"./data.js": 250,
-		"./elements.js": 255,
-		"./list.js": 251,
-		"./resources.js": 256,
-		"./templates.js": 257
+		"./apis.js": 254,
+		"./baseElem.js": 255,
+		"./data.js": 251,
+		"./elements.js": 256,
+		"./list.js": 252,
+		"./resources.js": 257,
+		"./templates.js": 258
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -40935,11 +41410,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 252;
+	webpackContext.id = 253;
 
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40950,11 +41425,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(254);
+	var _baseElemJs = __webpack_require__(255);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(251);
+	var _listJs = __webpack_require__(252);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -40965,7 +41440,7 @@
 	});
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41007,7 +41482,7 @@
 	};
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41018,11 +41493,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(254);
+	var _baseElemJs = __webpack_require__(255);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(251);
+	var _listJs = __webpack_require__(252);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41070,32 +41545,6 @@
 	});
 
 /***/ },
-/* 256 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(9);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _baseElemJs = __webpack_require__(254);
-	
-	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
-	
-	var _listJs = __webpack_require__(251);
-	
-	var _listJs2 = _interopRequireDefault(_listJs);
-	
-	var resource = _listJs2['default'].register('resource', {
-	    id: 'toolResource',
-	    cn: '素材',
-	    list: {}
-	});
-
-/***/ },
 /* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -41107,11 +41556,37 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(254);
+	var _baseElemJs = __webpack_require__(255);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(251);
+	var _listJs = __webpack_require__(252);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var resource = _listJs2['default'].register('resource', {
+	    id: 'toolResource',
+	    cn: '素材',
+	    list: {}
+	});
+
+/***/ },
+/* 258 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(9);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _baseElemJs = __webpack_require__(255);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(252);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41393,468 +41868,6 @@
 	            "backgounnd-color": "#fff"
 	        }
 	    }
-	};
-
-/***/ },
-/* 258 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(9);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _bizUtilJs = __webpack_require__(12);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _dataStageDataJs = __webpack_require__(6);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _dataPageDataJs = __webpack_require__(7);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _pageRenderJs = __webpack_require__(11);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	/**
-	 *
-	 * 多元素 水平居中， 居左， 居右
-	 * 多元素 垂直居中， 居左， 居右
-	 *
-	 * 单元素 自动调整
-	 * 多元素 自动调整
-	 *
-	 * 单元素 拷贝 剪切 粘贴
-	 *
-	 */
-	var core = {
-	
-	    removeElem: function removeElem() {
-	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
-	            index = _lodash2['default'].findIndex(current.elements, { id: _dataStageDataJs2['default'].curElem.id });
-	        current.elements.splice(index, 1);
-	    },
-	
-	    copyElem: function copyElem() {
-	        _dataStageDataJs2['default'].clone = _dataStageDataJs2['default'].curElem;
-	    },
-	
-	    pasteElem: function pasteElem() {
-	        var clone = _lodash2['default'].cloneDeep(_dataStageDataJs2['default'].clone);
-	        _dataStageDataJs2['default'].countID++;
-	        clone.id = 'm_' + _dataStageDataJs2['default'].countID;
-	
-	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(clone);
-	    },
-	
-	    /**
-	     * 水平居中
-	     */
-	    _horiCenterlize: function _horiCenterlize() {
-	        var curElem = _dataStageDataJs2['default'].curElem,
-	            w = parseInt(curElem.style.width, 10),
-	            l = (_bizUtilJs2['default'].SCREEN_WIDTH - w) / 2;
-	
-	        curElem.style.left = l + 'px';
-	    },
-	
-	    horiCenterlize: function horiCenterlize() {
-	        this._horiCenterlize();
-	        _pageRenderJs2['default'].renderStep();
-	    },
-	
-	    /**
-	     * 垂直居中
-	     */
-	    _vertCenterlize: function _vertCenterlize() {
-	        var curElem = _dataStageDataJs2['default'].curElem,
-	            h = parseInt(curElem.style.height, 10),
-	            t = (_bizUtilJs2['default'].SCREEN_HEIGHT - h) / 2;
-	
-	        curElem.style.top = t + 'px';
-	    },
-	
-	    vertCenterlize: function vertCenterlize() {
-	        this._vertCenterlize();
-	        _pageRenderJs2['default'].renderStep();
-	    },
-	
-	    /**
-	     * 居中
-	     */
-	    centerlize: function centerlize() {
-	        this._vertCenterlize();
-	        this._horiCenterlize();
-	        _pageRenderJs2['default'].renderStep();
-	    },
-	
-	    /**
-	     * 获取当前元素的位置尺寸
-	     */
-	    getSize: function getSize() {
-	        var curElem = _dataStageDataJs2['default'].curElem;
-	        return {
-	            l: parseInt(curElem.style.left, 10),
-	            t: parseInt(curElem.style.top),
-	            w: parseInt(curElem.style.width),
-	            h: parseInt(curElem.style.height)
-	        };
-	    },
-	
-	    _autoAdjust: function _autoAdjust() {
-	        var size = this.getSize(),
-	            w = _bizUtilJs2['default'].tofixed10(size.w),
-	            h = _bizUtilJs2['default'].tofixed10(size.h),
-	            l = _bizUtilJs2['default'].tofixed10(size.l),
-	            t = _bizUtilJs2['default'].tofixed10(size.t);
-	        // console.log(w, h, l ,t);
-	        _lodash2['default'].extend(_dataStageDataJs2['default'].curElem.style, {
-	            left: l + 'px',
-	            top: t + 'px',
-	            width: w + 'px',
-	            height: h + 'px'
-	        });
-	    },
-	    /**
-	     * 自动修正尺寸，趋向于10的倍数
-	     */
-	    autoAdjust: function autoAdjust() {
-	        this._autoAdjust();
-	        _pageRenderJs2['default'].renderStep();
-	    },
-	
-	    alignCallback: function alignCallback() {},
-	
-	    align: function align(direction) {
-	        switch (direction) {
-	            case 'up':
-	                break;
-	            case 'down':
-	                break;
-	            case 'right':
-	                break;
-	            case 'left':
-	                break;
-	        }
-	    },
-	
-	    init: function init() {
-	        this._create();
-	        this._bind();
-	    },
-	
-	    $el: $('#page'),
-	
-	    _create: function _create() {
-	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-role="centerlize">全屏居中</a>\n                        <a class="btn btn-default" data-role="autoAdjust">自动修正</a>\n                    </div>';
-	        this.$el.append(html);
-	    },
-	
-	    _bind: function _bind() {
-	        var self = this;
-	        this.$el.on('click', '.quick-key a', function () {
-	            var role = $(this).data('role');
-	            console.log(role);
-	            self[role]();
-	        });
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 259 */,
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(26);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactColor = __webpack_require__(185);
-	
-	var _reactColor2 = _interopRequireDefault(_reactColor);
-	
-	var _dataStageDataJs = __webpack_require__(6);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _pageRenderJs = __webpack_require__(11);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	var _stageHistoryJs = __webpack_require__(8);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var _bizUtilJs = __webpack_require__(12);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var controller = {};
-	// Color Picker
-	
-	var Picker = (function (_React$Component) {
-	    _inherits(Picker, _React$Component);
-	
-	    function Picker() {
-	        _classCallCheck(this, Picker);
-	
-	        _get(Object.getPrototypeOf(Picker.prototype), 'constructor', this).call(this);
-	        this.state = {
-	            isShow: false,
-	            color: '#ddd'
-	        };
-	
-	        this.handleClick = this.handleClick.bind(this);
-	        this.handleClose = this.handleClose.bind(this);
-	        this.handleChange = this.handleChange.bind(this);
-	        this.handleChangeComplete = this.handleChangeComplete.bind(this);
-	    }
-	
-	    _createClass(Picker, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _this = this;
-	
-	            controller.set = function (data) {
-	                _this.setState({
-	                    color: data
-	                });
-	            };
-	        }
-	    }, {
-	        key: 'handleClick',
-	        value: function handleClick() {
-	            this.setState({
-	                isShow: !this.state.isShow
-	            });
-	        }
-	    }, {
-	        key: 'handleClose',
-	        value: function handleClose() {
-	            this.setState({
-	                isShow: false
-	            });
-	        }
-	    }, {
-	        key: 'handleChange',
-	        value: function handleChange(color) {
-	            var rgba = _bizUtilJs2['default'].rgba(color.rgb);
-	            this.setState({
-	                color: rgba
-	            });
-	            _dataStageDataJs2['default'].curElem.child.style.color = rgba;
-	            _pageRenderJs2['default'].renderElem();
-	        }
-	    }, {
-	        key: 'handleChangeComplete',
-	        value: function handleChangeComplete() {
-	            _stageHistoryJs2['default'].pushStep();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var popupPosition = {
-	                position: 'absolute',
-	                top: '40px',
-	                left: '0px'
-	            },
-	                stylebk = {
-	                width: '50px',
-	                height: '30px',
-	                border: '1px solid #ddd',
-	                backgroundColor: this.state.color
-	            };
-	            return _react2['default'].createElement(
-	                'div',
-	                null,
-	                _react2['default'].createElement(
-	                    'div',
-	                    { onClick: this.handleClick },
-	                    _react2['default'].createElement('div', { style: stylebk })
-	                ),
-	                _react2['default'].createElement(_reactColor2['default'], {
-	                    color: this.state.color,
-	                    positionCSS: popupPosition,
-	                    display: this.state.isShow,
-	                    onClose: this.handleClose,
-	                    onChange: this.handleChange,
-	                    onChangeComplete: this.handleChangeComplete,
-	                    type: 'chrome' })
-	            );
-	        }
-	    }]);
-	
-	    return Picker;
-	})(_react2['default'].Component);
-	
-	module.exports = {
-	    Picker: Picker,
-	    controller: controller
-	};
-
-/***/ },
-/* 261 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	var _get = function get(_x, _x2, _x3) { var _again = true; _function: while (_again) { var object = _x, property = _x2, receiver = _x3; _again = false; if (object === null) object = Function.prototype; var desc = Object.getOwnPropertyDescriptor(object, property); if (desc === undefined) { var parent = Object.getPrototypeOf(object); if (parent === null) { return undefined; } else { _x = parent; _x2 = property; _x3 = receiver; _again = true; desc = parent = undefined; continue _function; } } else if ('value' in desc) { return desc.value; } else { var getter = desc.get; if (getter === undefined) { return undefined; } return getter.call(receiver); } } };
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
-	
-	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
-	
-	var _react = __webpack_require__(26);
-	
-	var _react2 = _interopRequireDefault(_react);
-	
-	var _reactColor = __webpack_require__(185);
-	
-	var _reactColor2 = _interopRequireDefault(_reactColor);
-	
-	var _dataStageDataJs = __webpack_require__(6);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _pageRenderJs = __webpack_require__(11);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	var _stageHistoryJs = __webpack_require__(8);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var _bizUtilJs = __webpack_require__(12);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var controller = {};
-	// Color Picker
-	
-	var Picker = (function (_React$Component) {
-	    _inherits(Picker, _React$Component);
-	
-	    function Picker() {
-	        _classCallCheck(this, Picker);
-	
-	        _get(Object.getPrototypeOf(Picker.prototype), 'constructor', this).call(this);
-	        this.state = {
-	            isShow: false,
-	            color: '#ddd'
-	        };
-	
-	        this.handleClick = this.handleClick.bind(this);
-	        this.handleClose = this.handleClose.bind(this);
-	        this.handleChange = this.handleChange.bind(this);
-	        this.handleChangeComplete = this.handleChangeComplete.bind(this);
-	    }
-	
-	    _createClass(Picker, [{
-	        key: 'componentDidMount',
-	        value: function componentDidMount() {
-	            var _this = this;
-	
-	            controller.set = function (data) {
-	                _this.setState({
-	                    color: data
-	                });
-	            };
-	        }
-	    }, {
-	        key: 'handleClick',
-	        value: function handleClick() {
-	            this.setState({
-	                isShow: !this.state.isShow
-	            });
-	        }
-	    }, {
-	        key: 'handleClose',
-	        value: function handleClose() {
-	            this.setState({
-	                isShow: false
-	            });
-	        }
-	    }, {
-	        key: 'handleChange',
-	        value: function handleChange(color) {
-	            var rgba = _bizUtilJs2['default'].rgba(color.rgb);
-	            this.setState({
-	                color: rgba
-	            });
-	            _dataStageDataJs2['default'].curElem.child.style['background-color'] = rgba;
-	            _pageRenderJs2['default'].renderElem();
-	        }
-	    }, {
-	        key: 'handleChangeComplete',
-	        value: function handleChangeComplete() {
-	            _stageHistoryJs2['default'].pushStep();
-	        }
-	    }, {
-	        key: 'render',
-	        value: function render() {
-	            var popupPosition = {
-	                position: 'absolute',
-	                top: '40px',
-	                left: '0px'
-	            },
-	                stylebk = {
-	                width: '50px',
-	                height: '30px',
-	                border: '1px solid #ddd',
-	                backgroundColor: this.state.color
-	            };
-	            return _react2['default'].createElement(
-	                'div',
-	                null,
-	                _react2['default'].createElement(
-	                    'div',
-	                    { onClick: this.handleClick },
-	                    _react2['default'].createElement('div', { style: stylebk })
-	                ),
-	                _react2['default'].createElement(_reactColor2['default'], {
-	                    color: this.state.color,
-	                    positionCSS: popupPosition,
-	                    display: this.state.isShow,
-	                    onClose: this.handleClose,
-	                    onChange: this.handleChange,
-	                    onChangeComplete: this.handleChangeComplete,
-	                    type: 'chrome' })
-	            );
-	        }
-	    }]);
-	
-	    return Picker;
-	})(_react2['default'].Component);
-	
-	module.exports = {
-	    Picker: Picker,
-	    controller: controller
 	};
 
 /***/ }

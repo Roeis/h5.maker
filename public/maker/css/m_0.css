@@ -159,5 +159,5 @@ a {
   background-size: 100% auto;
 }
 .elem .inner img {
-  width: 100%;
+  max-width: 100%;
 }

@@ -1,9 +1,8 @@
 module.exports = {
 
-    cache: [],
+    caches: [],
     cacheMax: 20,
-    cursor: -1,
-
+    
     $curElem: null,
 
     clone: null,
