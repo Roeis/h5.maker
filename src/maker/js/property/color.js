@@ -12,7 +12,7 @@ var task = new Task({
     html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        color
+                        文本颜色
                     </div>
                     <div class="col-md-8">
                         <div class="colorpicker" id="textPicker"></div>

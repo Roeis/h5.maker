@@ -76,7 +76,7 @@ var task = new Task({
 
         this.$fontsizes.on('click', 'li', function(){
             let value = $(this).data('value');
-            
+
             stageData.curElem.child.style['font-size'] = value + 'px';
             render.renderStep();
         });

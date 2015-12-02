@@ -3,6 +3,11 @@ body {
   height: 100%;
 }
 
+body {
+  -webkit-text-size-adjust: none;
+  font-family: "Microsoft Yahei", "Helvetica Neue", Helvetica, STHeiTi, sans-serif;
+}
+
 ul {
   padding: 0;
   margin: 0;
@@ -51,8 +56,21 @@ p {
   overflow: hidden;
 }
 
+.stage-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
 .stage {
-  background-color: #eee;
+  background-color: #EDECF5;
+  width: 100%;
+  margin-right: -450px;
+  padding: 0 450px 0 0;
+}
+
+.back-stage {
+  width: 450px;
 }
 
 .device {
@@ -65,6 +83,10 @@ p {
   margin-left: -180px;
   margin-top: -270px;
   background-color: #ddd;
+  -webkit-transition: -webkit-transform .4s ease;
+  transition: -webkit-transform .4s ease;
+  transition: transform .4s ease;
+  transition: transform .4s ease, -webkit-transform .4s ease;
 }
 .device .wrapper {
   -webkit-backface-visibility: hidden;
@@ -88,6 +110,28 @@ p {
 .disable-anmia * {
   -webkit-animation: none;
           animation: none;
+}
+
+.stage3D {
+  -webkit-perspective: 5000px;
+          perspective: 5000px;
+}
+.stage3D .device {
+  -webkit-transform: translate3d(0, -30px, 0);
+          transform: translate3d(0, -30px, 0);
+}
+.stage3D .device:after {
+  position: absolute;
+  content: '';
+  height: 40px;
+  width: 100%;
+  bottom: -40px;
+  left: 0;
+  background-image: -webkit-radial-gradient(rgba(0, 0, 0, 0.2) 10%, rgba(0, 0, 0, 0) 60%);
+  background-image: radial-gradient(rgba(0, 0, 0, 0.2) 10%, rgba(0, 0, 0, 0) 60%);
+}
+.stage3D .editable {
+  box-shadow: 0 5px 15px 5px rgba(0, 0, 0, 0.15);
 }
 
 .qrcode-helper {
@@ -133,6 +177,12 @@ p {
   display: table;
   -webkit-animation-fill-mode: both;
           animation-fill-mode: both;
+  -webkit-transition: box-shadow .3s ease;
+  transition: box-shadow .3s ease;
+}
+.editable:hover {
+  cursor: pointer;
+  z-index: 99;
 }
 .editable:hover:after {
   position: absolute;
@@ -148,7 +198,6 @@ p {
   width: 100%;
   background-repeat: no-repeat;
   background-position: center center;
-  background-size: 100% auto;
 }
 .editable .inner img {
   width: 100%;
@@ -159,7 +208,7 @@ p {
   left: 50%;
   top: 0;
   margin-left: -160px;
-  background-color: #ddd;
+  background-color: #e1e0e9;
 }
 .tool-bar li {
   position: relative;
@@ -170,7 +219,7 @@ p {
   float: left;
 }
 .tool-bar li:hover {
-  background-color: #cccccc;
+  background-color: #d0cfd8;
 }
 .tool-bar li.active:after {
   position: absolute;
@@ -200,7 +249,7 @@ p {
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: rgba(255, 255, 255, 0.9);
+  background-color: rgba(255, 255, 255, 0.95);
   border-radius: 10px;
   box-shadow: 0px 20px 20px 5px rgba(0, 0, 0, 0.1);
   padding: 50px 30px;
@@ -251,8 +300,16 @@ p {
   background-color: #fff;
   padding: 10px;
 }
+.edit-group:last-child .row {
+  border-bottom: none;
+}
 .edit-group .row {
   margin: 0;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #EDECF5;
+}
+.edit-group .col-md-4 {
+  line-height: 30px;
 }
 .edit-group textarea {
   width: 100%;
@@ -268,15 +325,15 @@ p {
   width: 100%;
   height: 40px;
   z-index: 2;
-  background-color: #eee;
-  box-shadow: 0 1px 5px 1px rgba(0, 0, 0, 0.05);
+  background-color: #f6f6f6;
+  box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.05);
 }
 .edit-panel-tab .edit-panel-li {
   width: 50%;
   float: left;
   text-align: center;
   line-height: 40px;
-  color: #ccc;
+  color: #999;
 }
 .edit-panel-tab .active {
   background-color: #fff;
@@ -286,7 +343,7 @@ p {
 .edit-panel-cont {
   height: 100%;
   position: relative;
-  background-color: #ddd;
+  background-color: #fff;
 }
 .edit-panel-cont .edit-panel {
   position: absolute;
@@ -299,12 +356,24 @@ p {
   overflow-y: scroll;
 }
 
+.form-control {
+  box-shadow: none;
+}
+.form-control:focus {
+  box-shadow: none;
+}
+
+.anima-name {
+  padding-left: 10px;
+}
+
 .anima {
   position: relative;
   width: 60px;
   height: 60px;
-  margin: 0 12px 20px 0;
-  box-shadow: 0 0 0 2px #EEE;
+  margin: 10px;
+  box-shadow: 0 0 0 1px #eee;
+  background-color: #f8f8f8;
   float: left;
   font-size: 1rem;
   cursor: pointer;
@@ -318,14 +387,28 @@ p {
   box-shadow: 0 0 0 2px #3b75de;
   color: #3b75de;
 }
+.anima div {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  left: 10px;
+  top: 10px;
+  line-height: 20px;
+  background-color: #fff;
+}
 
 .btn-active {
   color: #fff;
   background-color: #2a64cd;
 }
+.btn-active:hover {
+  background-color: #2a64cd;
+  color: #fff;
+}
 
 .colorpicker {
   width: 50px;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
 }
 
 .innerHtml {
@@ -342,25 +425,18 @@ p {
   display: none;
 }
 
-.CodeMirror {
-  display: none;
-  width: 100%;
-  border-top: 1px solid #999;
-  border-bottom: 1px solid #999;
-}
-
 .page-ul {
   position: absolute;
   right: 0;
   top: 0;
   width: 80px;
   height: 100%;
-  background-color: #ccc;
+  background-color: #e1e0e9;
   padding: 10px;
   overflow-y: scroll;
 }
 .page-ul .page-li {
-  background-color: #bbb;
+  background-color: #d0cfd8;
   color: #fff;
   margin-bottom: 10px;
   padding: 10px;
@@ -369,7 +445,7 @@ p {
   cursor: pointer;
 }
 .page-ul .page-li:hover {
-  background-color: #aaaaaa;
+  background-color: #bfbec7;
 }
 .page-ul .page-li.active {
   background-color: #2a64cd;
@@ -400,14 +476,19 @@ p {
   position: absolute;
   left: 20px;
   top: 50%;
-  padding: 5px;
+  padding: 10px;
   margin-top: -270px;
-  background-color: #ddd;
+  background-color: #e1e0e9;
   border-radius: 2px;
+}
+.elem-list .title {
+  border-bottom: 1px solid #cbcad3;
+  margin-bottom: 5px;
+  padding-bottom: 5px;
 }
 .elem-list li {
   padding: 0px 10px;
-  text-align: center;
+  text-align: left;
   cursor: pointer;
 }
 .elem-list li:hover {

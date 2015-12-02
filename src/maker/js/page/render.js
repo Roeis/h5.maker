@@ -23,7 +23,7 @@ var core = {
         for(let i = 0; i < data.length; i++){
             let it = data[i];
                 html += `
-                    <div class="elem" id="${it.id}">
+                    <div class="elem" id="${it.id}" data-role="${it.type}">
                         <div class="inner">
                             ${it.child.innerHtml}
                         </div>
@@ -99,30 +99,6 @@ var core = {
         }
 
         return util.flatStyle(style);
-    },
-
-    // DEPRECATED
-    _insertStyle(styleSheet, styleID) {
-
-        let style = document.createElement('style');
-        let doc = document.head;
-        style.id = styleID;
-        doc.appendChild(style);
-
-        style.appendChild(document.createTextNode(styleSheet));
-    },
-    // DEPRECATED
-    _renderStyle() {
-        let stylesheet = '';
-        for(let i = 0; i < pageData.list.length; i++){
-            for(let j = 0; j < pageData.list[i].elements.length; j++){
-                let it = pageData.list[i].elements[j];
-                let style = this.stringifyStyle(it);
-                stylesheet += style;
-            }
-        }
-        this.insertStyle(stylesheet, 'maker');
-
     },
 
     // 渲染单页，当前

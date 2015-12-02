@@ -8,7 +8,7 @@ import Task         from './task.js';
 var html = `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        duration
+                        时长
                     </div>
                     <div class="col-md-8">
                         <input type="number" class="form-control animation-duration" min="0" step="0.1" />
@@ -18,7 +18,7 @@ var html = `<div class="edit-group">
             <div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        delay
+                        延时
                     </div>
                     <div class="col-md-8">
                         <input type="number" class="form-control animation-delay" min="0" step="0.1" />

@@ -29,12 +29,12 @@ var task = new Task({
     init(){
         this.$text = this.$el.find('.innerHtml');
         this.$code = this.$el.find('.codeOrigin');
-        this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
-            mode: 'text/html',
-            // lineNumbers: true,
-            // lineWrapping: true,
-            selectionPointer: true
-        });
+        // this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
+        //     mode: 'text/html',
+        //     // lineNumbers: true,
+        //     // lineWrapping: true,
+        //     selectionPointer: true
+        // });
     },
     bind(){
         this.$text.on('blur', function(){
@@ -49,7 +49,7 @@ var task = new Task({
         tasks.register('innerHtml', (value) => {
             this.$el.show();
             this.$text.html(value);
-            this.editor.setValue(value);
+            // this.editor.setValue(value);
         });
     }
 });

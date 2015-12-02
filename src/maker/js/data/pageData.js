@@ -29,6 +29,7 @@ var data = {
                                 'color': '#333',
                                 'background-image': 'none',
                                 'background-color': '#f50',
+                                'background-size': '100% auto',
                                 'border-radius': '0px',
                                 'padding': 0
                             }
@@ -65,6 +66,7 @@ var data = {
                                 'border-radius': '0px',
                                 'background-color': '#fff',
                                 'background-image': 'none',
+                                'background-size': '100% auto',
                                 'padding': 0
                             }
                         },
@@ -98,8 +100,9 @@ var data = {
                                 'font-size': '15px',
                                 'color': '#333',
                                 'border-radius': '10px',
-                                'background-color': '#fff',
                                 'padding': 0,
+                                'background-color': '#fff',
+                                'background-size': 'auto 100%',
                                 'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
                             }
                         },
@@ -117,74 +120,10 @@ var data = {
                     }
                 ],
             style: {
-                'background': 'url("http://jsdf.com/sdf.jpg")',
+                'background-image': 'url("http://jsdf.com/sdf.jpg")',
                 'backgounnd-color': '#fff'
             }
-        },
-        {
-            elements: [
-                    {
-                        id: 'm_3',
-                        type: 'btn',
-                        child: {
-                            innerHtml: '<div class="inner"></div>',
-                            style: {
-                                'transform': 'rotate(45deg)',
-                                'text-align': 'center',
-                                'font-size': '15px',
-                                'color': '#fff',
-                                'padding': 0,
-                                'background-color': '#fff',
-                            }
-                        },
-                        style: {
-                            left: 0,
-                            top: 0,
-                            width: '50px',
-                            height: '50px',
-                            'animation-name': 'wobble',
-                            'animation-duration': '1s',
-                            'animation-delay': '1s'
-                        }
-                    }
-                ],
-            style: {
-                'background': 'url("http://jsdf.com/sdf.jpg")',
-                'backgounnd-color': '#fff'
-            }
-        },
-        {
-            elements: [
-                    {
-                        id: 'm_4',
-                        type: 'btn',
-                        child: {
-                            innerHtml: 'tests',
-                            style: {
-                                'transform': 'rotate(45deg)',
-                                'text-align': 'center',
-                                'font-size': '15px',
-                                'color': '#fff',
-                                'padding': 0,
-                                'background-color': '#fff',
-                            }
-                        },
-                        style: {
-                            left: 0,
-                            top: 0,
-                            width: '50px',
-                            height: '50px',
-                            'animation-name': 'tada',
-                            'animation-duration': '1s',
-                            'animation-delay': '0s'
-                        }
-                    }
-                ],
-            style: {
-                'background': 'url("http://jsdf.com/sdf.jpg")',
-                'backgounnd-color': '#fff'
-            }
-        },
+        }
     ],
     // generate by render function
     listHtml: [],

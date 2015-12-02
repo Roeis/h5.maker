@@ -8,7 +8,7 @@ var task = new Task({
     html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        width
+                        宽度
                     </div>
                     <div class="col-md-8">
                         <input class="form-control" min="0" data-role="width" type="number">
@@ -18,7 +18,7 @@ var task = new Task({
             <div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        height
+                        高度
                     </div>
                     <div class="col-md-8">
                         <input class="form-control" min="0" data-role="height" type="number">

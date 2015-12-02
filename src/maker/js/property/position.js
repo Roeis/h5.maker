@@ -7,7 +7,9 @@ import Task         from './task.js';
 var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">left</div>
+                    <div class="col-md-4">
+                        距左
+                    </div>
                     <div class="col-md-8">
                         <input class="form-control" min="0" data-role="left" type="number">
                     </div>
@@ -15,7 +17,9 @@ var task = new Task({
             </div>
             <div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">top</div>
+                    <div class="col-md-4">
+                        距上
+                    </div>
                     <div class="col-md-8">
                         <input class="form-control" min="0" data-role="top" type="number">
                     </div>

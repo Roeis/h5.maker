@@ -5,14 +5,15 @@ module.exports = {
         link: '',
         audio: '',
         video: '',
-        analyze: ''
+        analyze: '',
+        jump: ''
     },
     child: {
         innerHtml: '',
         style: {
             'background-image': 'none',
-            'background-color': '#fff',
-            'color': '#fff',
+            'background-color': 'rgba(0,0,0,0)',
+            'color': '#333',
             'font-size': '14px',
             'text-align': 'center',
             'vertical-align': 'middle',
@@ -22,10 +23,10 @@ module.exports = {
         },
     },
     style: {
-        'width': '100px',
+        'width': '160px',
         'height': '100px',
-        'left': '10px',
-        'top': '10px',
+        'left': '100px',
+        'top': '200px',
         'z-index': 0,
         'animation-name': 'none',
         'animation-duration': '1s',

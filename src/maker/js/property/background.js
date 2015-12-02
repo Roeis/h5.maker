@@ -12,7 +12,7 @@ var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        background image
+                        背景图片
                     </div>
                     <div class="col-md-8">
                         <input type="text" class="form-control" data-role="bg-image">
@@ -22,7 +22,24 @@ var task = new Task({
             <div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        background color
+                        背景尺寸
+                    </div>
+                    <div class="col-md-8">
+                        <div class="btn-group elem-bg-size" role="group">
+                            <a class="btn btn-default" data-value="auto 100%">
+                                高度100%
+                            </a>
+                            <a class="btn btn-default" data-value="100% auto">
+                                宽度100%
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="edit-group">
+                <div class="row">
+                    <div class="col-md-4">
+                        背景颜色
                     </div>
                     <div class="col-md-8">
                         <div class="colorpicker" id="bgPicker"></div>
@@ -33,6 +50,7 @@ var task = new Task({
     init(){
         // background-image
         this.$image = this.$el.find('[data-role="bg-image"]');
+        this.$size = this.$el.find('.elem-bg-size');
         // react color picker
         ReactDom.render(
             <Picker />,
@@ -40,24 +58,35 @@ var task = new Task({
         );
     },
     bind(){
-
         this.$image.on('change.property', function(){
             stageData.curElem.child.style['background-image'] = 'url(' + this.value + ')';
             render.renderStep();
         });
+
+        this.$size.on('click', 'a', function(){
+            let value = $(this).data('value');
+            console.log(value);
+            stageData.curElem.child.style['background-size'] = value;
+            render.renderStep();
+        });
     },
     register(){
-        let self = this;
-        tasks.register('background-color', function(value){
-            self.$el.show();
+        tasks.register('background-color', (value) => {
+            this.$el.show();
             controller.set(value);
         });
 
-        tasks.register('background-image', function(value){
-            self.$el.show();
+        tasks.register('background-image', (value) => {
             value = value.match(/\((.*)\)/);
             if(value) value = value[1];
-            self.$image.val(value);
+            this.$image.val(value);
+        });
+
+        tasks.register('background-size', (value) => {
+            console.log(value);
+            console.log()
+            this.$size.children().removeClass('btn-active').end()
+                .find(`[data-value="${value}"]`).addClass('btn-active');
         });
     }
 })

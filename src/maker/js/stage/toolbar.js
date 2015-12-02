@@ -1,12 +1,11 @@
 'use strict';
 import _            from 'lodash';
 import util         from '../biz/util.js';
-import pageData     from '../data/pageData.js';
-import stageData    from '../data/stageData.js';
 import template     from '../template/data.js';
 import render       from '../page/render.js';
 import watchlist    from '../page/watchlist.js';
 import history      from '../stage/history.js';
+import operation    from './operation.js';
 
 var core = {
     $toolBar : $('#toolBar'),
@@ -37,7 +36,7 @@ var core = {
     },
 
     _createTabcont() {
-        var html = `<div class="tool-bar-cont">`;
+        let html = `<div class="tool-bar-cont">`;
             _.forEach(template, function(value, key){
                 html += `<div class="tool-bar-cont-li cf" id="${value.id}"></div>`;
             });
@@ -48,7 +47,7 @@ var core = {
     },
 
     _insertData(){
-        var self = this;
+        let self = this;
         _.forEach(template, function(value, key){
             let id = value.id,
                 html = self._getExtraDom(key);
@@ -88,7 +87,7 @@ var core = {
     },
 
     _getExtraDom(key){
-        var html = '';
+        let html = '';
         switch(key){
             case 'resource':
                 html += `
@@ -115,7 +114,7 @@ var core = {
         var self = this;
 
         util.$doc.on('click', '.tool-bar li', function(){
-            var $this = $(this),
+            let $this = $(this),
                 index = $this.index(),
                 id = $this.attr('data-id');
             self.$elem.find('li').removeClass('active');
@@ -127,7 +126,7 @@ var core = {
         });
 
         util.$doc.on('click', function(event){
-            var $this = $(event.target),
+            let $this = $(event.target),
                 isIn = $this.closest('#toolBar').length > 0;
             if(!isIn){
                 self.hideTab();
@@ -136,18 +135,18 @@ var core = {
 
         //点击模板
         util.$doc.on('click', '.tool-src', function(event){
-            var $this = $(this),
+            let $this = $(this),
                 cate = $this.attr('data-category'),
                 id = $this.attr('data-id');
-            console.log(id);
+
             switch(cate){
                 case 'element':
-                    self.addElem(cate, id);
+                    operation.addElem(cate, id);
                     break;
                 case 'template':
-                    var confirm = window.confirm('确定要覆盖当前页面吗？');
+                    let confirm = window.confirm('确定要覆盖当前页面吗？');
                     if(confirm){
-                        self.replacePage(cate, id);
+                        operation.replacePage(cate, id);
                     }
                     break;
                 case 'resource':
@@ -168,29 +167,6 @@ var core = {
     hideTab(){
         this.$tabCont.hide();
         this.$elem.find('li').removeClass('active');
-    },
-
-    // 新增元素，clone then plus id
-    addElem(cate, id){
-        let elem = _.cloneDeep(template[cate].list[id].src);
-        console.log(elem);
-        stageData.countID ++;
-        elem.id = 'm_' + stageData.countID;
-        pageData.list[stageData.index].elements.push(elem);
-
-    },
-
-    // 填充模板页面
-    replacePage(cate, id){
-        let clone = _.cloneDeep(template[cate].list[id].src);
-        console.log(clone);
-        // add id for every element in copy
-        _.forEach(clone.elements, (value, key) => {
-            stageData.countID ++;
-            value.id = 'm_' + stageData.countID;
-        });
-
-        pageData.list[stageData.index] = clone;
     },
 
 };

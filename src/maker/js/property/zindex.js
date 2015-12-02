@@ -8,7 +8,7 @@ var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        z-index
+                        层级
                     </div>
                     <div class="col-md-8">
                         <input type="number" min="0" class="form-control" data-role="z-index">

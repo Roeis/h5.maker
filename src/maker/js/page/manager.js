@@ -25,29 +25,33 @@ var core = {
                         <button class="btn btn-default" data-role="add">新增</button>
                         <button class="btn btn-default" data-role="remove">删除</button>
                         <button class="btn btn-default" data-role="copy">复制</button>
-                        <button class="btn btn-default" data-role="template" title="同步至云端，由管理员审核">保存为魔板</button>
+                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">保存为魔板</button>
                     </div>`;
         this.$page.append(html);
     },
 
     bindManager(){
-        let self = this;
-        util.$doc.on('click', '[data-role="copy"]', function() {
-            handle.copyPage();
-            history.push();
-            self.renderOne();
-        });
-        util.$doc.on('click', '[data-role="remove"]', function(){
-            handle.removePage();
-            history.remove();
-            self.renderOne();
-        });
-        util.$doc.on('click', '[data-role="add"]', function(){
+        util.$doc.on('click', '[data-role="add"]', () => {
             handle.addPage();
             history.push();
-            self.renderOne();
+            this.renderOne();
+            history.pushStep();
         });
-        util.$doc.on('click', '[data-role="template"]', function(){
+        util.$doc.on('click', '[data-role="copy"]', () =>  {
+            handle.copyPage();
+            history.push();
+            this.renderOne();
+            history.pushStep();
+        });
+        util.$doc.on('click', '[data-role="remove"]', () => {
+            handle.removePage();
+            history.remove();
+            this.renderOne();
+            history.renderHistory();
+        });
+        util.$doc.on('click', '[data-role="upload"]', () => {
+            let page = handle.getCurPage();
+            console.log(page);
             console.log('%csync template with cloud', 'color: #f00;');
         });
     },

@@ -103,7 +103,7 @@ var core = {
         $obj.draggable({
             containment: 'parent',
             grid: [2, 2],
-            zIndex: 9,
+            // zIndex: 9,
             start: function() {
             },
             drag: function(event, ui) {

@@ -8,7 +8,7 @@ var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        video
+                        视频
                     </div>
                     <div class="col-md-8">
                         <input class="form-control" data-role="video">
@@ -21,6 +21,8 @@ var task = new Task({
     },
     bind(){
         this.$video.on('change.property', function(){
+            //check this value if it's ok
+            // do something
             stageData.curElem.extra.video = this.value;
             render.renderStep();
         });

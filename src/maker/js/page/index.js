@@ -10,10 +10,10 @@ import manager      from './manager.js';
 
 var core = {
 
-    init: function() {
+    init() {
 
         // get Data
-        stageData.countID = pageData.global.count + 1;
+        stageData.countID = pageData.global.count;
         manager.init();
         watchlist.init();
 

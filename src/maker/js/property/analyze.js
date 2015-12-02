@@ -4,14 +4,26 @@ import render       from '../page/render.js';
 import tasks        from './tasks.js';
 import Task         from './task.js';
 
+const text = {
+    en : {
+        name: 'analyze',
+        placeholder: 'please enter your analyze name'
+    },
+    cn: {
+        name: '统计',
+        placeholder: '输入统计事件名'
+    }
+};
+var langs = 'en';
+
 var task = new Task({
     html: `<div class="edit-group">
             <div class="row">
                 <div class="col-md-4">
-                    analyze
+                    ${text[langs].name}
                 </div>
                 <div class="col-md-8">
-                    <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">
+                    <input placeholder="${text[langs].placeholder}" class="form-control" data-role="analyze">
                 </div>
             </div>
         </div>`,

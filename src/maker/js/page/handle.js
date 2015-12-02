@@ -54,7 +54,7 @@ var core = {
 
     getCurPage(){
         return pageData.list[stageData.index];
-    }
+    },
 
 };
 

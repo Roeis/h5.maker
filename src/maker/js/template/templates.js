@@ -11,6 +11,22 @@ var template = List.register('template', {
 
 var list = template.list = {};
 
+//http://i2.w.yun.hjfile.cn/news/2015020211234465694.jpg
+//http://i2.w.yun.hjfile.cn/news/201501302081011823.jpg
+//http://i2.w.hjfile.cn/news/201503/201503264434009167.jpg
+//http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg
+//http://i2.w.hjfile.cn/news/201503/201503265020906725.jpg
+//
+//http://i2.w.hjfile.cn/news/201503/201503302221505845.jpg title
+//http://i2.w.hjfile.cn/news/201503/201503302253810187.jpg para
+//http://i2.w.hjfile.cn/news/201503/201503302231831210.jpg pic
+//http://i2.w.hjfile.cn/news/201503/201503302233840644.jpg audio
+//http://i2.w.hjfile.cn/news/201503/201503302244522319.jpg link
+//http://i2.w.hjfile.cn/news/201506/201506101164650169.jpg jump
+//http://i2.w.hjfile.cn/news/201503/201503302272062291.jpg video
+//
+//http://i2.w.hjfile.cn/news/201506/201506263441245184.jpg qq
+//
 list.template1 = {
     author: 'roeis',
     name: '模板名称',

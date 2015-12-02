@@ -2,7 +2,7 @@
 {% block head %}
 <link rel="stylesheet" href="/vendor/bootstrap/css/bootstrap.min.css">
 <link rel="stylesheet" href="/vendor/jquery-ui-1.11.4/jquery-ui.min.css">
-<link rel="stylesheet" href="/vendor/codeMirror/codemirror.css">
+<link rel="stylesheet" href="/vendor/mu/mu.min.css">
 <link rel="stylesheet" href="css/animate.css">
 <link rel="stylesheet" href="css/app.css">
 {% endblock %}
@@ -10,21 +10,22 @@
 <div class="container-fluid app">
     <div class="row">
         <div class="col-md-8 stage" id="stage">
-            <div class="device">
-                <div class="wrapper" id="output">
-                    <div class="page">
-                        <div class="cont">
+            <div class="stage-inner">
+                <div class="device">
+                    <div class="wrapper" id="output">
+                        <div class="page">
+                            <div class="cont">
 
+                            </div>
                         </div>
                     </div>
                 </div>
+                <div id="helper"></div>
+                <div id="watchList"></div>
+                <div id="toolBar"></div>
+                <div id="page"></div>
+                <div id="history"></div>
             </div>
-            <div id="helper"></div>
-            <div id="watchList"></div>
-            <div id="toolBar"></div>
-            <div id="page"></div>
-            <div id="history"></div>
-            <div id="test"></div>
         </div>
         <div class="col-md-4 back-stage" id="backStage">
             <div class="ppd">
@@ -46,10 +47,6 @@
 <script src="/vendor/jquery-ui-1.11.4/jquery-ui.min.js"></script>
 <script src="/vendor/bootstrap/js/bootstrap.min.js"></script>
 <script src="/vendor/jquery.qrcode.min.js"></script>
-<script src="/vendor/codeMirror/codemirror.js"></script>
-<script src="/vendor/codeMirror/mode/javascript.js"></script>
-<script src="/vendor/codeMirror/mode/xml.js"></script>
-<script src="/vendor/codeMirror/mode/css.js"></script>
-<script src="/vendor/codeMirror/mode/htmlmixed.js"></script>
+<script src="/vendor/mu/mu.latest.min.js"></script>
 <script src="js/app.js"></script>
 {% endblock %}

@@ -226,7 +226,7 @@
 	    init: function init() {
 	
 	        // get Data
-	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].global.count + 1;
+	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].global.count;
 	        _managerJs2['default'].init();
 	        _watchlistJs2['default'].init();
 	
@@ -295,6 +295,7 @@
 	                    'color': '#333',
 	                    'background-image': 'none',
 	                    'background-color': '#f50',
+	                    'background-size': '100% auto',
 	                    'border-radius': '0px',
 	                    'padding': 0
 	                }
@@ -330,6 +331,7 @@
 	                    'border-radius': '0px',
 	                    'background-color': '#fff',
 	                    'background-image': 'none',
+	                    'background-size': '100% auto',
 	                    'padding': 0
 	                }
 	            },
@@ -362,8 +364,9 @@
 	                    'font-size': '15px',
 	                    'color': '#333',
 	                    'border-radius': '10px',
-	                    'background-color': '#fff',
 	                    'padding': 0,
+	                    'background-color': '#fff',
+	                    'background-size': 'auto 100%',
 	                    'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
 	                }
 	            },
@@ -380,65 +383,7 @@
 	            }
 	        }],
 	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
-	            'backgounnd-color': '#fff'
-	        }
-	    }, {
-	        elements: [{
-	            id: 'm_3',
-	            type: 'btn',
-	            child: {
-	                innerHtml: '<div class="inner"></div>',
-	                style: {
-	                    'transform': 'rotate(45deg)',
-	                    'text-align': 'center',
-	                    'font-size': '15px',
-	                    'color': '#fff',
-	                    'padding': 0,
-	                    'background-color': '#fff'
-	                }
-	            },
-	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                'animation-name': 'wobble',
-	                'animation-duration': '1s',
-	                'animation-delay': '1s'
-	            }
-	        }],
-	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
-	            'backgounnd-color': '#fff'
-	        }
-	    }, {
-	        elements: [{
-	            id: 'm_4',
-	            type: 'btn',
-	            child: {
-	                innerHtml: 'tests',
-	                style: {
-	                    'transform': 'rotate(45deg)',
-	                    'text-align': 'center',
-	                    'font-size': '15px',
-	                    'color': '#fff',
-	                    'padding': 0,
-	                    'background-color': '#fff'
-	                }
-	            },
-	            style: {
-	                left: 0,
-	                top: 0,
-	                width: '50px',
-	                height: '50px',
-	                'animation-name': 'tada',
-	                'animation-duration': '1s',
-	                'animation-delay': '0s'
-	            }
-	        }],
-	        style: {
-	            'background': 'url("http://jsdf.com/sdf.jpg")',
+	            'background-image': 'url("http://jsdf.com/sdf.jpg")',
 	            'backgounnd-color': '#fff'
 	        }
 	    }],
@@ -12999,7 +12944,7 @@
 	            childStyle = '';
 	        for (var i = 0; i < data.length; i++) {
 	            var it = data[i];
-	            html += '\n                    <div class="elem" id="' + it.id + '">\n                        <div class="inner">\n                            ' + it.child.innerHtml + '\n                        </div>\n                    </div>\n                    ';
+	            html += '\n                    <div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                        <div class="inner">\n                            ' + it.child.innerHtml + '\n                        </div>\n                    </div>\n                    ';
 	            style = '#' + it.id + '{' + this._generateStyle(it.style) + '}';
 	            childStyle = '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
 	
@@ -13057,29 +13002,6 @@
 	        }
 	
 	        return _bizUtilJs2['default'].flatStyle(style);
-	    },
-	
-	    // DEPRECATED
-	    _insertStyle: function _insertStyle(styleSheet, styleID) {
-	
-	        var style = document.createElement('style');
-	        var doc = document.head;
-	        style.id = styleID;
-	        doc.appendChild(style);
-	
-	        style.appendChild(document.createTextNode(styleSheet));
-	    },
-	    // DEPRECATED
-	    _renderStyle: function _renderStyle() {
-	        var stylesheet = '';
-	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
-	            for (var j = 0; j < _dataPageDataJs2['default'].list[i].elements.length; j++) {
-	                var it = _dataPageDataJs2['default'].list[i].elements[j];
-	                var style = this.stringifyStyle(it);
-	                stylesheet += style;
-	            }
-	        }
-	        this.insertStyle(stylesheet, 'maker');
 	    },
 	
 	    // 渲染单页，当前
@@ -13155,6 +13077,29 @@
 	        return 'rgba(' + rgba.join(',') + ')';
 	    },
 	
+	    // DEPRECATED
+	    _insertStyle: function _insertStyle(styleSheet, styleID) {
+	
+	        var style = document.createElement('style');
+	        var doc = document.head;
+	        style.id = styleID;
+	        doc.appendChild(style);
+	
+	        style.appendChild(document.createTextNode(styleSheet));
+	    },
+	    // DEPRECATED
+	    _renderStyle: function _renderStyle() {
+	        // let stylesheet = '';
+	        // for(let i = 0; i < pageData.list.length; i++){
+	        //     for(let j = 0; j < pageData.list[i].elements.length; j++){
+	        //         let it = pageData.list[i].elements[j];
+	        //         let style = this.stringifyStyle(it);
+	        //         stylesheet += style;
+	        //     }
+	        // }
+	        // this.insertStyle(stylesheet, 'maker');
+	    },
+	
 	    percentValue: function percentValue(value, standard) {
 	        return (value / standard * 100).toFixed(0) + '%';
 	    },
@@ -13165,7 +13110,7 @@
 	        var str = _.map(obj, function (value, key) {
 	            return key + ':' + value + ';';
 	        }).join('');
-	        // console.log(str)
+	
 	        return str;
 	    },
 	
@@ -13341,28 +13286,34 @@
 	    },
 	
 	    createOperation: function createOperation() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="template" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
+	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
 	        this.$page.append(html);
 	    },
 	
 	    bindManager: function bindManager() {
-	        var self = this;
+	        var _this = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
+	            _handleJs2['default'].addPage();
+	            _stageHistoryJs2['default'].push();
+	            _this.renderOne();
+	            _stageHistoryJs2['default'].pushStep();
+	        });
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', function () {
 	            _handleJs2['default'].copyPage();
 	            _stageHistoryJs2['default'].push();
-	            self.renderOne();
+	            _this.renderOne();
+	            _stageHistoryJs2['default'].pushStep();
 	        });
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', function () {
 	            _handleJs2['default'].removePage();
 	            _stageHistoryJs2['default'].remove();
-	            self.renderOne();
+	            _this.renderOne();
+	            _stageHistoryJs2['default'].renderHistory();
 	        });
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
-	            _handleJs2['default'].addPage();
-	            _stageHistoryJs2['default'].push();
-	            self.renderOne();
-	        });
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="template"]', function () {
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="upload"]', function () {
+	            var page = _handleJs2['default'].getCurPage();
+	            console.log(page);
 	            console.log('%csync template with cloud', 'color: #f00;');
 	        });
 	    },
@@ -13646,7 +13597,7 @@
 	        $obj.draggable({
 	            containment: 'parent',
 	            grid: [2, 2],
-	            zIndex: 9,
+	            // zIndex: 9,
 	            start: function start() {},
 	            drag: function drag(event, ui) {},
 	            stop: function stop(event, ui) {
@@ -13920,8 +13871,20 @@
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
+	var text = {
+	    en: {
+	        name: 'analyze',
+	        placeholder: 'please enter your analyze name'
+	    },
+	    cn: {
+	        name: '统计',
+	        placeholder: '输入统计事件名'
+	    }
+	};
+	var langs = 'en';
+	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-4">\n                    analyze\n                </div>\n                <div class="col-md-8">\n                    <input placeholder="please enter your analyze key" class="form-control" data-role="analyze">\n                </div>\n            </div>\n        </div>',
+	    html: '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-4">\n                    ' + text[langs].name + '\n                </div>\n                <div class="col-md-8">\n                    <input placeholder="' + text[langs].placeholder + '" class="form-control" data-role="analyze">\n                </div>\n            </div>\n        </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$analyze = this.$el.find('[data-role="analyze"]');
@@ -14010,7 +13973,7 @@
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        duration\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-duration" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        delay\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-delay" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        时长\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-duration" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        延时\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-delay" min="0" step="0.1" />\n                    </div>\n                </div>\n            </div>';
 	
 	html += '<div class="edit-group">\n                <div class="row animation-name">';
 	for (var key in _bizAnimasJs2['default']) {
@@ -14288,7 +14251,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        audio\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        音频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$audio = this.$el.find('[data-role="audio"]');
@@ -14344,33 +14307,46 @@
 	var _componentColorPickerBGJs = __webpack_require__(184);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background image\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        background color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="bgPicker"></div>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        背景图片\n                    </div>\n                    <div class="col-md-8">\n                        <input type="text" class="form-control" data-role="bg-image">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        背景尺寸\n                    </div>\n                    <div class="col-md-8">\n                        <div class="btn-group elem-bg-size" role="group">\n                            <a class="btn btn-default" data-value="auto 100%">\n                                高度100%\n                            </a>\n                            <a class="btn btn-default" data-value="100% auto">\n                                宽度100%\n                            </a>\n                        </div>\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        背景颜色\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="bgPicker"></div>\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        // background-image
 	        this.$image = this.$el.find('[data-role="bg-image"]');
+	        this.$size = this.$el.find('.elem-bg-size');
 	        // react color picker
 	        _reactDom2['default'].render(_react2['default'].createElement(_componentColorPickerBGJs.Picker, null), document.getElementById('bgPicker'));
 	    },
 	    bind: function bind() {
-	
 	        this.$image.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.child.style['background-image'] = 'url(' + this.value + ')';
 	            _pageRenderJs2['default'].renderStep();
 	        });
+	
+	        this.$size.on('click', 'a', function () {
+	            var value = $(this).data('value');
+	            console.log(value);
+	            _dataStageDataJs2['default'].curElem.child.style['background-size'] = value;
+	            _pageRenderJs2['default'].renderStep();
+	        });
 	    },
 	    register: function register() {
-	        var self = this;
+	        var _this = this;
+	
 	        _tasksJs2['default'].register('background-color', function (value) {
-	            self.$el.show();
+	            _this.$el.show();
 	            _componentColorPickerBGJs.controller.set(value);
 	        });
 	
 	        _tasksJs2['default'].register('background-image', function (value) {
-	            self.$el.show();
 	            value = value.match(/\((.*)\)/);
 	            if (value) value = value[1];
-	            self.$image.val(value);
+	            _this.$image.val(value);
+	        });
+	
+	        _tasksJs2['default'].register('background-size', function (value) {
+	            console.log(value);
+	            console.log();
+	            _this.$size.children().removeClass('btn-active').end().find('[data-value="' + value + '"]').addClass('btn-active');
 	        });
 	    }
 	});
@@ -39825,7 +39801,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        border-radius\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="border-radius">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        圆角\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="border-radius">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$radius = this.$el.find('[data-role="border-radius"]');
@@ -39882,7 +39858,7 @@
 	var _componentColorPickerTextJs = __webpack_require__(234);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        color\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="textPicker"></div>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        文本颜色\n                    </div>\n                    <div class="col-md-8">\n                        <div class="colorpicker" id="textPicker"></div>\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        _reactDom2['default'].render(_react2['default'].createElement(_componentColorPickerTextJs.Picker, null), document.getElementById('textPicker'));
@@ -40071,12 +40047,12 @@
 	    init: function init() {
 	        this.$text = this.$el.find('.innerHtml');
 	        this.$code = this.$el.find('.codeOrigin');
-	        this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
-	            mode: 'text/html',
-	            // lineNumbers: true,
-	            // lineWrapping: true,
-	            selectionPointer: true
-	        });
+	        // this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
+	        //     mode: 'text/html',
+	        //     // lineNumbers: true,
+	        //     // lineWrapping: true,
+	        //     selectionPointer: true
+	        // });
 	    },
 	    bind: function bind() {
 	        this.$text.on('blur', function () {
@@ -40093,7 +40069,7 @@
 	        _tasksJs2['default'].register('innerHtml', function (value) {
 	            _this.$el.show();
 	            _this.$text.html(value);
-	            _this.editor.setValue(value);
+	            // this.editor.setValue(value);
 	        });
 	    }
 	});
@@ -40122,7 +40098,7 @@
 	
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        jump\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" placeholder="enter page number" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4" title="跳转某一页面">\n                        跳转\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" placeholder="enter page number" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
 	var task = new _taskJs2['default']({
 	    html: html,
 	    parent: '#stylePanel',
@@ -40171,7 +40147,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var link = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        link\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="enter your link url" class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        链接\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="enter your link url" class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$link = this.$el.find('[data-role="link"]');
@@ -40218,7 +40194,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">padding</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="padding" type="number">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        内间距\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="padding" type="number">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$padding = this.$el.find('[data-role="padding"]');
@@ -40265,7 +40241,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">left</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">top</div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        距左\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="left" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        距上\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="top" type="number">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$left = this.$el.find('[data-role="left"]');
@@ -40322,7 +40298,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        width\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        height\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        宽度\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="width" type="number">\n                    </div>\n                </div>\n            </div>\n            <div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        高度\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" min="0" data-role="height" type="number">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$width = this.$el.find('[data-role="width"]');
@@ -40464,7 +40440,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        rotate\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        旋转\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="transform" type="number">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$target = this.$el.find('[data-role="transform"]');
@@ -40583,13 +40559,15 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        video\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        视频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$video = this.$el.find('[data-role="video"]');
 	    },
 	    bind: function bind() {
 	        this.$video.on('change.property', function () {
+	            //check this value if it's ok
+	            // do something
 	            _dataStageDataJs2['default'].curElem.extra.video = this.value;
 	            _pageRenderJs2['default'].renderStep();
 	        });
@@ -40629,7 +40607,7 @@
 	var _taskJs2 = _interopRequireDefault(_taskJs);
 	
 	var task = new _taskJs2['default']({
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        z-index\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        层级\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" class="form-control" data-role="z-index">\n                    </div>\n                </div>\n            </div>',
 	    parent: '#stylePanel',
 	    init: function init() {
 	        this.$zindex = this.$el.find('[data-role="z-index"]');
@@ -40868,6 +40846,10 @@
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
+	var _templateDataJs = __webpack_require__(251);
+	
+	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
+	
 	var _pageRenderJs = __webpack_require__(11);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
@@ -40884,6 +40866,27 @@
 	 *
 	 */
 	var core = {
+	    // 新增元素，clone then plus id
+	    addElem: function addElem(cate, id) {
+	        var elem = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
+	
+	        _dataStageDataJs2['default'].countID++;
+	        elem.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(elem);
+	    },
+	
+	    // 填充模板页面
+	    replacePage: function replacePage(cate, id) {
+	        var clone = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
+	        console.log(clone);
+	        // add id for every element in copy
+	        _lodash2['default'].forEach(clone.elements, function (value, key) {
+	            _dataStageDataJs2['default'].countID++;
+	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        });
+	
+	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index] = clone;
+	    },
 	
 	    removeElem: function removeElem() {
 	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
@@ -40994,6 +40997,10 @@
 	        }
 	    },
 	
+	    turn3d: function turn3d() {
+	        $('#stage').toggleClass('stage3D');
+	    },
+	
 	    init: function init() {
 	        this._create();
 	        this._bind();
@@ -41002,7 +41009,7 @@
 	    $el: $('#page'),
 	
 	    _create: function _create() {
-	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-role="centerlize">全屏居中</a>\n                        <a class="btn btn-default" data-role="autoAdjust">自动修正</a>\n                    </div>';
+	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-role="centerlize">全屏居中</a>\n                        <a class="btn btn-default" data-role="autoAdjust">自动修正</a>\n                        <a class="btn btn-default" data-role="turn3d">3D模式</a>\n                    </div>';
 	        this.$el.append(html);
 	    },
 	
@@ -41027,21 +41034,9 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
 	var _bizUtilJs = __webpack_require__(12);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _dataPageDataJs = __webpack_require__(7);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _dataStageDataJs = __webpack_require__(6);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
 	var _pageRenderJs = __webpack_require__(11);
 	
@@ -41050,6 +41045,10 @@
 	var _pageWatchlistJs = __webpack_require__(13);
 	
 	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	
+	var _stageHistoryJs = __webpack_require__(8);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
 	var _operationJs = __webpack_require__(248);
 	
@@ -41066,7 +41065,7 @@
 	     * @return {[type]} [description]
 	     */
 	    createMenu: function createMenu() {
-	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
+	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="add-elem">\n                                <span class="glyphicon glyphicon-plus"></span>\n                                新建\n                            </li>\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
 	        this.$menu = $(html);
 	        $('body').append(this.$menu);
 	    },
@@ -41112,14 +41111,22 @@
 	            }
 	        });
 	
+	        self.$menu.find('[data-role="add-elem"]').on('click', function () {
+	            _operationJs2['default'].addElem('element', 'base');
+	            self.callbackRender();
+	            _stageHistoryJs2['default'].pushStep();
+	        });
+	
 	        self.$menu.find('[data-role="copy-elem"]').on('click', function () {
 	            _operationJs2['default'].copyElem();
 	            self.callbackRender();
 	        });
+	
 	        self.$menu.find('[data-role="paste-elem"]').on('click', function () {
 	            _operationJs2['default'].pasteElem();
 	            self.callbackRender();
 	        });
+	
 	        self.$menu.find('[data-role="remove-elem"]').on('click', function () {
 	            _operationJs2['default'].removeElem();
 	            self.callbackRender();
@@ -41127,8 +41134,8 @@
 	    },
 	
 	    callbackRender: function callbackRender() {
-	        _pageRenderJs2['default'].renderPage();
 	        _pageWatchlistJs2['default'].render();
+	        _pageRenderJs2['default'].renderPage();
 	        this.$menu.hide();
 	    }
 	};
@@ -41151,14 +41158,6 @@
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _dataStageDataJs = __webpack_require__(6);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
 	var _templateDataJs = __webpack_require__(251);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
@@ -41174,6 +41173,10 @@
 	var _stageHistoryJs = __webpack_require__(8);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _operationJs = __webpack_require__(248);
+	
+	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
 	var core = {
 	    $toolBar: $('#toolBar'),
@@ -41284,15 +41287,15 @@
 	            var $this = $(this),
 	                cate = $this.attr('data-category'),
 	                id = $this.attr('data-id');
-	            console.log(id);
+	
 	            switch (cate) {
 	                case 'element':
-	                    self.addElem(cate, id);
+	                    _operationJs2['default'].addElem(cate, id);
 	                    break;
 	                case 'template':
 	                    var confirm = window.confirm('确定要覆盖当前页面吗？');
 	                    if (confirm) {
-	                        self.replacePage(cate, id);
+	                        _operationJs2['default'].replacePage(cate, id);
 	                    }
 	                    break;
 	                case 'resource':
@@ -41313,28 +41316,6 @@
 	    hideTab: function hideTab() {
 	        this.$tabCont.hide();
 	        this.$elem.find('li').removeClass('active');
-	    },
-	
-	    // 新增元素，clone then plus id
-	    addElem: function addElem(cate, id) {
-	        var elem = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
-	        console.log(elem);
-	        _dataStageDataJs2['default'].countID++;
-	        elem.id = 'm_' + _dataStageDataJs2['default'].countID;
-	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(elem);
-	    },
-	
-	    // 填充模板页面
-	    replacePage: function replacePage(cate, id) {
-	        var clone = _lodash2['default'].cloneDeep(_templateDataJs2['default'][cate].list[id].src);
-	        console.log(clone);
-	        // add id for every element in copy
-	        _lodash2['default'].forEach(clone.elements, function (value, key) {
-	            _dataStageDataJs2['default'].countID++;
-	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
-	        });
-	
-	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index] = clone;
 	    }
 	
 	};
@@ -41452,14 +41433,15 @@
 	        link: '',
 	        audio: '',
 	        video: '',
-	        analyze: ''
+	        analyze: '',
+	        jump: ''
 	    },
 	    child: {
 	        innerHtml: '',
 	        style: {
 	            'background-image': 'none',
-	            'background-color': '#fff',
-	            'color': '#fff',
+	            'background-color': 'rgba(0,0,0,0)',
+	            'color': '#333',
 	            'font-size': '14px',
 	            'text-align': 'center',
 	            'vertical-align': 'middle',
@@ -41469,10 +41451,10 @@
 	        }
 	    },
 	    style: {
-	        'width': '100px',
+	        'width': '160px',
 	        'height': '100px',
-	        'left': '10px',
-	        'top': '10px',
+	        'left': '100px',
+	        'top': '200px',
 	        'z-index': 0,
 	        'animation-name': 'none',
 	        'animation-duration': '1s',
@@ -41514,6 +41496,12 @@
 	    pic: 'http://www.hujiang.com/2010/images/default2015/logo.png',
 	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
 	};
+	_lodash2['default'].extend(list.base.src.child, {
+	    innerHtml: '<p>Base Example</p>'
+	});
+	_lodash2['default'].extend(list.base.src.child.style, {
+	    'background-color': '#fff'
+	});
 	
 	list.btn = {
 	    author: 'roeis',
@@ -41521,11 +41509,30 @@
 	    pic: 'http://i2.w.hjfile.cn/news/201504/201504092444697730.jpg',
 	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
 	};
-	_lodash2['default'].assign(list.btn.src.style, {
+	_lodash2['default'].extend(list.btn.src.style, {
 	    width: '200px',
 	    height: '50px',
 	    left: '80px',
 	    top: '300px'
+	});
+	
+	list.title = {
+	    author: 'roeis',
+	    name: '元素2',
+	    pic: 'http://i2.w.hjfile.cn/news/201504/sd.jpg',
+	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
+	};
+	_lodash2['default'].extend(list.title.src.style, {
+	    width: '340px',
+	    height: '60px',
+	    left: '10px',
+	    top: '300px'
+	});
+	_lodash2['default'].extend(list.title.src.child, {
+	    innerHtml: '<p>标题 Example</p>'
+	});
+	_lodash2['default'].extend(list.title.src.child.style, {
+	    'font-size': '24px'
 	});
 	
 	list.video = {
@@ -41534,13 +41541,13 @@
 	    pic: 'http://i2.w.hjfile.cn/news/201504/201504092444697730.jpg',
 	    src: _lodash2['default'].cloneDeep(_baseElemJs2['default'])
 	};
-	_lodash2['default'].assign(list.video.src.style, {
+	_lodash2['default'].extend(list.video.src.style, {
 	    width: '300px',
 	    height: '200px',
 	    left: '30px',
 	    top: '100px'
 	});
-	_lodash2['default'].assign(list.video.src.extra, {
+	_lodash2['default'].extend(list.video.src.extra, {
 	    video: 'http://www.w3school.com.cn/i/movie.ogg'
 	});
 
@@ -41597,6 +41604,22 @@
 	
 	var list = template.list = {};
 	
+	//http://i2.w.yun.hjfile.cn/news/2015020211234465694.jpg
+	//http://i2.w.yun.hjfile.cn/news/201501302081011823.jpg
+	//http://i2.w.hjfile.cn/news/201503/201503264434009167.jpg
+	//http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg
+	//http://i2.w.hjfile.cn/news/201503/201503265020906725.jpg
+	//
+	//http://i2.w.hjfile.cn/news/201503/201503302221505845.jpg title
+	//http://i2.w.hjfile.cn/news/201503/201503302253810187.jpg para
+	//http://i2.w.hjfile.cn/news/201503/201503302231831210.jpg pic
+	//http://i2.w.hjfile.cn/news/201503/201503302233840644.jpg audio
+	//http://i2.w.hjfile.cn/news/201503/201503302244522319.jpg link
+	//http://i2.w.hjfile.cn/news/201506/201506101164650169.jpg jump
+	//http://i2.w.hjfile.cn/news/201503/201503302272062291.jpg video
+	//
+	//http://i2.w.hjfile.cn/news/201506/201506263441245184.jpg qq
+	//
 	list.template1 = {
 	    author: 'roeis',
 	    name: '模板名称',

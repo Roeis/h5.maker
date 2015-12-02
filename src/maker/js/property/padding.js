@@ -7,7 +7,9 @@ import Task         from './task.js';
 var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">padding</div>
+                    <div class="col-md-4">
+                        内间距
+                    </div>
                     <div class="col-md-8">
                         <input class="form-control" min="0" data-role="padding" type="number">
                     </div>

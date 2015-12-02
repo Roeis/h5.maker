@@ -1,10 +1,8 @@
 'use strict';
-import _            from 'lodash';
 import util         from '../biz/util.js';
-import pageData     from '../data/pageData.js';
-import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
 import watchlist    from '../page/watchlist.js';
+import history      from '../stage/history.js';
 import operation    from './operation.js';
 
 var core = {
@@ -20,6 +18,10 @@ var core = {
     createMenu(){
         var html = `<div class="menu" id="contextMenu" style="display: none;">
                         <ul class="list-unstyled">
+                            <li data-role="add-elem">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                新建
+                            </li>
                             <li data-role="copy-elem">
                                 <span class="glyphicon glyphicon-copy"></span>
                                 复制
@@ -78,14 +80,22 @@ var core = {
             }
         });
 
+        self.$menu.find('[data-role="add-elem"]').on('click', function(){
+            operation.addElem('element', 'base');
+            self.callbackRender();
+            history.pushStep();
+        });
+
         self.$menu.find('[data-role="copy-elem"]').on('click', function(){
             operation.copyElem();
             self.callbackRender();
         });
+
         self.$menu.find('[data-role="paste-elem"]').on('click', function(){
             operation.pasteElem();
             self.callbackRender();
         });
+
         self.$menu.find('[data-role="remove-elem"]').on('click', function(){
             operation.removeElem();
             self.callbackRender();
@@ -93,8 +103,8 @@ var core = {
     },
 
     callbackRender(){
-        render.renderPage();
         watchlist.render();
+        render.renderPage();
         this.$menu.hide();
     }
 };

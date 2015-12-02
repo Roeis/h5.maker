@@ -21,6 +21,28 @@ module.exports = {
         return 'rgba(' + rgba.join(',') + ')';
     },
 
+    // DEPRECATED
+    _insertStyle(styleSheet, styleID) {
+
+        let style = document.createElement('style');
+        let doc = document.head;
+        style.id = styleID;
+        doc.appendChild(style);
+
+        style.appendChild(document.createTextNode(styleSheet));
+    },
+    // DEPRECATED
+    _renderStyle() {
+        // let stylesheet = '';
+        // for(let i = 0; i < pageData.list.length; i++){
+        //     for(let j = 0; j < pageData.list[i].elements.length; j++){
+        //         let it = pageData.list[i].elements[j];
+        //         let style = this.stringifyStyle(it);
+        //         stylesheet += style;
+        //     }
+        // }
+        // this.insertStyle(stylesheet, 'maker');
+    },
 
     percentValue(value, standard){
         return (value / standard * 100).toFixed(0) + '%';
@@ -32,7 +54,7 @@ module.exports = {
         let str = _.map(obj, function(value, key){
             return key + ':' + value + ';';
         }).join('');
-        // console.log(str)
+
         return str;
     },
 

@@ -8,7 +8,7 @@ var task = new Task({
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
-                        audio
+                        音频
                     </div>
                     <div class="col-md-8">
                         <input class="form-control" data-role="audio">

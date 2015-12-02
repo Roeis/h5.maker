@@ -4,6 +4,7 @@ import _            from 'lodash';
 import util         from '../biz/util.js';
 import stageData    from '../data/stageData.js';
 import pageData     from '../data/pageData.js';
+import template     from '../template/data.js';
 import render       from '../page/render.js';
 
 /**
@@ -18,6 +19,28 @@ import render       from '../page/render.js';
  *
  */
 var core = {
+    // 新增元素，clone then plus id
+    addElem(cate, id){
+        let elem = _.cloneDeep(template[cate].list[id].src);
+
+        stageData.countID ++;
+        elem.id = 'm_' + stageData.countID;
+        pageData.list[stageData.index].elements.push(elem);
+
+    },
+
+    // 填充模板页面
+    replacePage(cate, id){
+        let clone = _.cloneDeep(template[cate].list[id].src);
+        console.log(clone);
+        // add id for every element in copy
+        _.forEach(clone.elements, (value, key) => {
+            stageData.countID ++;
+            value.id = 'm_' + stageData.countID;
+        });
+
+        pageData.list[stageData.index] = clone;
+    },
 
     removeElem(){
         let current = pageData.list[stageData.index],
@@ -130,6 +153,10 @@ var core = {
         }
     },
 
+    turn3d(){
+        $('#stage').toggleClass('stage3D');
+    },
+
     init(){
         this._create();
         this._bind();
@@ -143,6 +170,7 @@ var core = {
                         <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>
                         <a class="btn btn-default" data-role="centerlize">全屏居中</a>
                         <a class="btn btn-default" data-role="autoAdjust">自动修正</a>
+                        <a class="btn btn-default" data-role="turn3d">3D模式</a>
                     </div>`;
         this.$el.append(html);
     },
