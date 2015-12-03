@@ -1,10 +1,9 @@
 'use strict';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
-var task = new Task({
+tasks.register('padding', {
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
@@ -15,7 +14,7 @@ var task = new Task({
                     </div>
                 </div>
             </div>`,
-    parent: '#stylePanel',
+    target: '#stylePanel',
     init(){
         this.$padding = this.$el.find('[data-role="padding"]');
     },
@@ -25,11 +24,9 @@ var task = new Task({
             render.renderStep();
         });
     },
-    register(){
-        tasks.register('padding', (value) => {
-            value = parseInt(value, 10);
-            this.$el.show();
-            this.$padding.val(value);
-        });
+    callback(value){
+        value = parseInt(value, 10);
+        this.$el.show();
+        this.$padding.val(value);
     }
 });

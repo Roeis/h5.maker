@@ -46,6 +46,7 @@ list.template1 = {
                     'color': '#f50',
                     'border-radius': '0px',
                     'background-color': '#fff',
+                    'background-size': '100% auto',
                     'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)'
                 }
             },
@@ -74,6 +75,7 @@ list.template1 = {
                     'color': '#f50',
                     'border-radius': '0px',
                     'background-color': '#fff',
+                    'background-size': '100% auto',
                     'background-image': 'none'
                 }
             },
@@ -84,7 +86,8 @@ list.template1 = {
                 'height': '100px',
                 'left': '0px',
                 'top': '280px',
-                'width': '360px'
+                'width': '360px',
+                'z-index': 0
             }
         }, {
             'id': 'm_10',
@@ -95,12 +98,14 @@ list.template1 = {
                 'style': {
                     'background-color': 'rgba(249,93,0,1)',
                     'background-image': 'none',
+                    'background-size': '100% auto',
                     'border-radius': '50px',
                     'color': '#fff',
                     'font-size': '15px',
                     'text-align': 'center',
                     'transform': 'rotate(30deg)',
-                    'vertical-align': 'middle'
+                    'vertical-align': 'middle',
+                    'padding': 0
                 }
             },
             'style': {
@@ -122,6 +127,7 @@ list.template1 = {
                 'innerHtml': 'Click here',
                 'style': {
                     'background-color': 'rgba(214,39,16,1)',
+                    'background-size': '100% auto',
                     'background-image': 'none',
                     'border-radius': '50px',
                     'color': '#fff',
@@ -144,8 +150,9 @@ list.template1 = {
             }
         }],
         'style': {
-            'background': 'url(http://jsdf.com/sdf.jpg)',
-            'backgounnd-color': '#fff'
+            'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)',
+            'background-color': '#fff',
+            'background-size': 'auto 100%',
         }
     }
 
@@ -171,6 +178,7 @@ list.template2 = {
                 "style": {
                     "background-image": "url(http://i2.w.hjfile.cn/news/201511/201511259323552698.jpg)",
                     "background-color": "rgba(165,132,132,1)",
+                    'background-size': '100% auto',
                     "color": "#fff",
                     "font-size": "14px",
                     "text-align": "center",
@@ -295,8 +303,9 @@ list.template2 = {
             }
         }],
         "style": {
-            "background": "url(\"http://jsdf.com/sdf.jpg\")",
-            "backgounnd-color": "#fff"
+            'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)',
+            'background-color': '#fff',
+            'background-size': 'auto 100%'
         }
     }
 };

@@ -9,7 +9,7 @@ var core = {
         var data = pageData.list[stageData.index].elements,
             html = `<div class="elem-list">
                         <div class="title">
-                            当前视图
+                            当前图层
                         </div>
                         <ul>`;
             for (var i = 0; i < data.length; i++){
@@ -21,16 +21,20 @@ var core = {
                 </div>`;
         this.$el.html(html);
     },
-    
+
     bind() {
         var self = this;
         this.$el.on('click', 'li', function(){
-                var $this = $(this),
-                    id = $this.attr('data-id');
-                $('#' +id).trigger('click');
-                self.$el.find('li').removeClass('active');
-                $this.addClass('active');
-            });
+            var $this = $(this),
+                id = $this.attr('data-id');
+            $('#' +id).trigger('click');
+            self.renderStatus(id);
+        });
+    },
+
+    renderStatus(id){
+        this.$el.find('li').removeClass('active').end()
+            .find(`[data-id="${id}"]`).addClass('active');
     },
 
     init(){

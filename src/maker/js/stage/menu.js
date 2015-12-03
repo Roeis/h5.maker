@@ -1,4 +1,5 @@
 'use strict';
+import _            from 'lodash';
 import util         from '../biz/util.js';
 import render       from '../page/render.js';
 import watchlist    from '../page/watchlist.js';
@@ -61,10 +62,12 @@ var core = {
     },
 
     bindMenu() {
-        var self = this;
+        let self = this,
+            $device = $('.device');
+
         util.$doc.on('contextmenu', '.device', function(event) {
 
-            var $this = $(event.target);
+            let $this = $(event.target);
             $this.trigger('click');
 
             self.showContextmenu(event);
@@ -73,15 +76,22 @@ var core = {
         });
 
         util.$doc.on('click', function(event){
-            var $this = $(event.target),
+            let $this = $(event.target),
                 isIn = $this.closest('#contextMenu').length > 0;
             if(!isIn){
                 self.$menu.hide();
             }
         });
 
-        self.$menu.find('[data-role="add-elem"]').on('click', function(){
-            operation.addElem('element', 'base');
+        self.$menu.find('[data-role="add-elem"]').on('click', function(event){
+
+            let offset = $device.offset(),
+                left = event.pageX - offset.left,
+                top = event.pageY - offset.top;
+
+            operation.addElem('element', 'base', function(elem){
+                self._resetPos(elem, left, top);
+            });
             self.callbackRender();
             history.pushStep();
         });
@@ -91,14 +101,30 @@ var core = {
             self.callbackRender();
         });
 
-        self.$menu.find('[data-role="paste-elem"]').on('click', function(){
-            operation.pasteElem();
+        self.$menu.find('[data-role="paste-elem"]').on('click', function(event){
+            let offset = $device.offset(),
+                left = event.pageX - offset.left,
+                top = event.pageY - offset.top;
+            operation.pasteElem(function(clone){
+                self._resetPos(clone, left, top);
+            });
             self.callbackRender();
+            history.pushStep();
         });
 
         self.$menu.find('[data-role="remove-elem"]').on('click', function(){
             operation.removeElem();
             self.callbackRender();
+            history.pushStep();
+        });
+    },
+
+    _resetPos(obj, left, top){
+        let middle = parseInt(obj.style.width) / 2,
+            center = parseInt(obj.style.height) / 2;
+        _.extend(obj.style, {
+            left: left - middle + 'px',
+            top: top - center + 'px'
         });
     },
 

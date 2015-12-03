@@ -20,11 +20,12 @@ import render       from '../page/render.js';
  */
 var core = {
     // 新增元素，clone then plus id
-    addElem(cate, id){
+    addElem(cate, id, callback){
         let elem = _.cloneDeep(template[cate].list[id].src);
 
         stageData.countID ++;
         elem.id = 'm_' + stageData.countID;
+        callback && callback(elem);
         pageData.list[stageData.index].elements.push(elem);
 
     },
@@ -52,11 +53,12 @@ var core = {
         stageData.clone = stageData.curElem;
     },
 
-    pasteElem(){
+    pasteElem(callback){
         let clone = _.cloneDeep(stageData.clone);
         stageData.countID ++;
         clone.id = 'm_' + stageData.countID;
 
+        callback && callback(clone);
         pageData.list[stageData.index].elements.push(clone);
     },
 

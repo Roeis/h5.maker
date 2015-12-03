@@ -106,7 +106,8 @@ var core = {
 
         let idx = stageData.index,
             data = pageData.list[idx],
-            html = '';
+            html = '',
+            pageStyle = util.flatStyle(data.style);
 
         for(let i = 0; i < data.elements.length; i++){
             let it = data.elements[i],
@@ -120,7 +121,9 @@ var core = {
                     </div>`;
         }
 
-        $('.page').eq(0).find('.cont').html(html);
+        $('.page').eq(0)
+            .attr('style', pageStyle)
+            .find('.cont').html(html);
     },
     /**
      * 渲染单个元素，避免整页动画重渲染
@@ -148,6 +151,13 @@ var core = {
             $('#' + stageData.curElem.id).trigger('click');
         }
     },
+
+    logPageStep(){
+        this.renderPage();
+        history.pushStep();
+
+        $('.device').trigger('click');
+    }
 
 };
 

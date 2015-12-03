@@ -2,6 +2,7 @@
 import React        from 'react';
 import ColorPicker  from 'react-color';
 import stageData    from '../data/stageData.js';
+import pageData     from '../data/pageData.js';
 import render       from '../page/render.js';
 import history      from '../stage/history.js';
 import util         from '../biz/util.js';
@@ -48,8 +49,30 @@ class Picker extends React.Component {
         this.setState({
             color: rgba
         });
-        stageData.curElem.child.style['background-color'] = rgba;
-        render.renderElem();
+
+        let role = stageData.curRole;
+
+        switch (role) {
+            case 'elem':
+                let bgcolor = stageData.curElem.child.style['background-color'];
+                if(bgcolor !== rgba){
+                    stageData.curElem.child.style['background-color'] = rgba;
+                    render.renderElem();
+                }
+                break;
+            case 'page':
+                let bgcolorPage = pageData.list[stageData.index].style['background-color'];
+                if(bgcolorPage !== rgba){
+                    pageData.list[stageData.index].style['background-color'] = rgba;
+                    render.logPageStep();
+                }
+                break;
+            case 'global':
+                break;
+            default:
+                break;
+
+        }
     }
 
     handleChangeComplete(){

@@ -13,6 +13,7 @@ module.exports = {
         style: {
             'background-image': 'none',
             'background-color': 'rgba(0,0,0,0)',
+            'background-size': '100% auto',
             'color': '#333',
             'font-size': '14px',
             'text-align': 'center',

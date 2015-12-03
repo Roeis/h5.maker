@@ -68,6 +68,7 @@ var core = {
             history.undo(function(data){
                 pageData.list[stageData.index] = _.cloneDeep(data);
                 render.renderPage();
+                watchlist.render();
             });
         }
 
@@ -76,6 +77,7 @@ var core = {
             history.redo(function(data){
                 pageData.list[stageData.index] = _.cloneDeep(data);
                 render.renderPage();
+                watchlist.render();
             });
         }
 

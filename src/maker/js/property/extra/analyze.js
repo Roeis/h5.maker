@@ -1,8 +1,7 @@
 'use strict';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
 const text = {
     en : {
@@ -15,8 +14,7 @@ const text = {
     }
 };
 var langs = 'en';
-
-var task = new Task({
+tasks.register('analyze', {
     html: `<div class="edit-group">
             <div class="row">
                 <div class="col-md-4">
@@ -27,7 +25,7 @@ var task = new Task({
                 </div>
             </div>
         </div>`,
-    parent: '#stylePanel',
+    target: '#extraPanel',
     init(){
         this.$analyze = this.$el.find('[data-role="analyze"]');
     },
@@ -37,11 +35,8 @@ var task = new Task({
             render.renderStep();
         });
     },
-    register(){
-        let self = this;
-        tasks.register('analyze', function(value){
-            self.$el.show();
-            self.$analyze.val(value);
-        });
+    callback(value){
+        this.$el.show();
+        this.$analyze.val(value);
     }
 });

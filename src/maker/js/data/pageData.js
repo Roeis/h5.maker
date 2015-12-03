@@ -120,8 +120,9 @@ var data = {
                     }
                 ],
             style: {
-                'background-image': 'url("http://jsdf.com/sdf.jpg")',
-                'backgounnd-color': '#fff'
+                'background-image': 'url(http://i2.w.hjfile.cn/news/201503/201503263340041851.jpg)',
+                'background-color': '#fff',
+                'background-size': 'auto 100%'
             }
         }
     ],

@@ -10,7 +10,11 @@ var core = {
 
         pageData.list.push({
             elements: [],
-            style:''
+            style:{
+                'background-image': 'none',
+                'background-color': 'rgba(0,0,0,0)',
+                'background-size': 'auto 100%'
+            }
         });
 
         stageData.index = pageData.list.length - 1;

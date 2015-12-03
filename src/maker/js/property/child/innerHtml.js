@@ -1,11 +1,10 @@
 'use strict';
 
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
-var task = new Task({
+tasks.register('innerHtml', {
     html : `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-12">
@@ -25,16 +24,10 @@ var task = new Task({
                     </div>
                 </div>
             </div>`,
-    parent: '#stylePanel',
+    target: '#stylePanel',
     init(){
         this.$text = this.$el.find('.innerHtml');
-        this.$code = this.$el.find('.codeOrigin');
-        // this.editor = window.CodeMirror.fromTextArea(document.getElementById('codeOrigin'), {
-        //     mode: 'text/html',
-        //     // lineNumbers: true,
-        //     // lineWrapping: true,
-        //     selectionPointer: true
-        // });
+        // this.$code = this.$el.find('.codeOrigin');
     },
     bind(){
         this.$text.on('blur', function(){
@@ -45,11 +38,9 @@ var task = new Task({
             }
         });
     },
-    register(){
-        tasks.register('innerHtml', (value) => {
-            this.$el.show();
-            this.$text.html(value);
-            // this.editor.setValue(value);
-        });
+    callback(value){
+        this.$el.show();
+        this.$text.html(value);
+        // this.editor.setValue(value);
     }
 });

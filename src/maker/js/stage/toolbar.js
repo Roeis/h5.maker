@@ -90,8 +90,7 @@ var core = {
         let html = '';
         switch(key){
             case 'resource':
-                html += `
-                            <div class="row">
+                html += `<div class="row">
                                 <div class="col-md-8">
                                     <input type="file" class="form-control">
                                 </div>

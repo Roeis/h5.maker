@@ -1,10 +1,9 @@
 'use strict';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
-var task = new Task({
+tasks.register('z-index', {
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
@@ -15,7 +14,7 @@ var task = new Task({
                     </div>
                 </div>
             </div>`,
-    parent: '#stylePanel',
+    target: '#stylePanel',
     init(){
         this.$zindex = this.$el.find('[data-role="z-index"]');
     },
@@ -25,10 +24,8 @@ var task = new Task({
             render.renderStep();
         });
     },
-    register(){
-        tasks.register('z-index', (value) => {
-            this.$el.show();
-            this.$zindex.val(value);
-        });
+    callback(value){
+        this.$el.show();
+        this.$zindex.val(value);
     }
 });

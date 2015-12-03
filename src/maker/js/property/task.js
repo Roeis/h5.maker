@@ -3,20 +3,17 @@
 class Task {
     constructor(opts){
         this.opts = opts;
-        this._init();
     }
     _init(){
         this.$el = $(this.opts.html);
-        this.$parent = $(this.opts.parent);
-        this.$parent.append(this.$el);
+        this.$target = $(this.opts.target);
+        this.$target.append(this.$el);
         this.$el.hide();
         this.init();
+        this.bind();
     }
-    init(){
-        this.opts.init.call(this);
-        this.opts.bind.call(this);
-        this.opts.register.call(this);
-    }
+    init(){}
+    bind(){}
 }
 
 module.exports = Task;

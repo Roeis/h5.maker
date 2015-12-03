@@ -1,8 +1,7 @@
 'use strict';
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
@@ -14,9 +13,9 @@ var html = `<div class="edit-group">
                     </div>
                 </div>
             </div>`;
-var task = new Task({
+tasks.register('jump', {
     html : html,
-    parent: '#stylePanel',
+    target: '#extraPanel',
     init(){
         this.$jump = this.$el.find('[data-role="jump"]');
     },
@@ -26,11 +25,8 @@ var task = new Task({
             render.renderStep();
         });
     },
-    register(){
-        tasks.register('jump', (value) => {
-            this.$el.show();
-            this.$jump.val(value);
-        });
+    callback(value){
+        this.$el.show();
+        this.$jump.val(value);
     }
-
 });

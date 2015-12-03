@@ -4,7 +4,8 @@ import _            from 'lodash';
 import util         from '../biz/util.js';
 import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
-import render       from '../page/render';
+import watchlist    from '../page/watchlist.js';
+import render       from '../page/render.js';
 import property     from '../property';
 
 import hotkey       from './hotkey.js';
@@ -37,15 +38,20 @@ var core = {
 
     handleSingleClick(){
         let self = this;
+        // 点击范围：在模拟设备的尺寸中
         util.$doc.on('click', '.device', (event) => {
 
             var $this = $(event.target),
                 $parent = $this.closest('.editable'),
                 isEditable = $parent.length > 0,
                 isCurrent = $this.hasClass('editable'),
-                $temp = null, id,
+                $temp = null,
+                $page = null,
+                id,
                 e = event || window.event;
 
+
+            console.log('%cclick', 'color: #f50');
             // 选中元素时
             if(isEditable || isCurrent){
                 $temp = isCurrent ? $this : $parent;
@@ -62,16 +68,27 @@ var core = {
                     stageData.curElem = self.getById(id);
                     self.clearCurUi();
                 }
+                stageData.curRole = 'elem';
             }else{
+                $page = $this.closest('.page');
                 stageData.curElems = [];
                 self.clearCurUi();
+                stageData.curRole = 'page';
             }
 
+            // 选中当前元素
             if($temp){
                 $temp.addClass('cur');
                 self.intoEditable($temp);
                 self.syncProperty();
                 self.syncRole();
+
+                watchlist.renderStatus(id);
+            }
+
+            if($page){
+                $page.addClass('cur');
+                self.syncPage();
             }
 
             menu.$menu.hide();
@@ -182,6 +199,13 @@ var core = {
         property.sync(curElem.child.style);
         property.syncValue('innerHtml', curElem.child.innerHtml);
         property.syncValue('type', curElem.type);
+    },
+
+    syncPage(){
+        let style = pageData.list[stageData.index].style;
+        // console.log(style);
+        property.unSyncAll();
+        property.sync(style);
     },
 
     getById(id){

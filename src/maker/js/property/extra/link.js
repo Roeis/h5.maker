@@ -1,11 +1,10 @@
 'use strict';
 
-import stageData    from '../data/stageData.js';
-import render       from '../page/render.js';
-import tasks        from './tasks.js';
-import Task         from './task.js';
+import stageData    from '../../data/stageData.js';
+import render       from '../../page/render.js';
+import tasks        from '../tasks.js';
 
-var link = new Task({
+tasks.register('link', {
     html: `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-4">
@@ -16,7 +15,7 @@ var link = new Task({
                     </div>
                 </div>
             </div>`,
-    parent: '#stylePanel',
+    target: '#extraPanel',
     init(){
         this.$link = this.$el.find('[data-role="link"]');
     },
@@ -27,10 +26,8 @@ var link = new Task({
             render.renderStep();
         });
     },
-    register: function(){
-        tasks.register('link', (value) => {
-            this.$el.show();
-            this.$link.val(value);
-        });
+    callback(value){
+        this.$el.show();
+        this.$link.val(value);
     }
 });

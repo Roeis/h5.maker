@@ -8,24 +8,33 @@ tasks.init();
 
 var files = [
     // character
-    'type',
-    'link',
-    'audio',
-    'video',
-    'analyze',
-    'jump',
-    // style
-    'innerHtml',
-    'text',
-    'color',
-    'background',
-    'transform',
-    'borderadius',
-    'padding',
-    'zindex',
-    'size',
-    'position',
-    'animation',
+    'extra/type',
+    'extra/link',
+    'extra/audio',
+    'extra/video',
+    'extra/analyze',
+    'extra/jump',
+    // child style
+    'child/innerHtml',
+    'child/color',
+    'child/transform',
+    'child/font-size',
+    'child/text-align',
+    'child/vertical-align',
+    'child/background-color',
+    'child/background-image',
+    'child/background-size',
+    'child/border-radius',
+    'child/padding',
+    // elem style
+    'style/zindex',
+    'style/left',
+    'style/top',
+    'style/width',
+    'style/height',
+    'style/animation-duration',
+    'style/animation-delay',
+    'style/animation-name',
 ];
 
 for(let i = 0; i < files.length; i++){
@@ -52,7 +61,7 @@ var core = {
 
     unSyncAll(){
 
-        console.log(tasks);
+        // console.log(tasks);
         $('.edit-group').hide();
     }
 };
