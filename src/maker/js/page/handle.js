@@ -38,7 +38,6 @@ var core = {
 
     //删除当前分页
     removePage() {
-
         pageData.list.splice(stageData.index, 1);
         //note: pageData.length has minused one
         let length = pageData.list.length;

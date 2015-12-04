@@ -13,7 +13,7 @@ var core = {
     init() {
 
         // get Data
-        stageData.countID = pageData.global.count;
+        stageData.countID = pageData.setting.countID;
         manager.init();
         watchlist.init();
 

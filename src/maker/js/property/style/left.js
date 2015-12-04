@@ -6,7 +6,7 @@ import tasks        from '../tasks.js';
 tasks.register('left', {
     html: `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 label-blue">
                         距左
                     </div>
                     <div class="col-md-8">

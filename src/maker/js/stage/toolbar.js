@@ -132,7 +132,7 @@ var core = {
             }
         });
 
-        //点击模板
+        //点击模板列表页面，根据不同种类和ID做操作
         util.$doc.on('click', '.tool-src', function(event){
             let $this = $(this),
                 cate = $this.attr('data-category'),
@@ -141,12 +141,19 @@ var core = {
             switch(cate){
                 case 'element':
                     operation.addElem(cate, id);
+                    self._render();
                     break;
                 case 'template':
-                    let confirm = window.confirm('确定要覆盖当前页面吗？');
-                    if(confirm){
-                        operation.replacePage(cate, id);
-                    }
+                    // let confirm = window.confirm('确定要覆盖当前页面吗？');
+                    // if(confirm){
+                    //     operation.replacePage(cate, id);
+                    // }
+                    mu.util.confirm('确定要覆盖当前页面吗？', function(flag){
+                        if(flag){
+                            operation.replacePage(cate, id);
+                            self._render();
+                        }
+                    });
                     break;
                 case 'resource':
                     break;
@@ -157,10 +164,13 @@ var core = {
             }
 
             self.hideTab();
-            watchlist.render();
-            render.renderPage();
-            history.pushStep();
         });
+    },
+
+    _render(){
+        watchlist.render();
+        render.renderPage();
+        history.pushStep();
     },
 
     hideTab(){

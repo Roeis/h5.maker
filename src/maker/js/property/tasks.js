@@ -27,18 +27,16 @@ var core = {
     },
 
     init(){
-        this.create();
-        this.bind();
+        this._create();
+        this._bind();
     },
 
-    create(){
+    _create(){
         let html = `<div class="edit-panel-tab cf">
-                        <div class="edit-panel-li">角色</div>
-                        <div class="edit-panel-li active">样式</div>
+                        <div class="edit-panel-li active">属性</div>
                         <div class="edit-panel-li">动画</div>
                     </div>
                     <div class="edit-panel-cont">
-                        <div class="edit-panel" id="extraPanel" style="display: none;"></div>
                         <div class="edit-panel" id="stylePanel" style="display: block;"></div>
                         <div class="edit-panel" id="animaPanel" style="display: none;"></div>
                     </div>`;
@@ -49,7 +47,7 @@ var core = {
         this.$cont = $el.find('.edit-panel-cont');
     },
 
-    bind(){
+    _bind(){
         let self = this;
         this.$tab.on('click', '.edit-panel-li', function(){
             let index = $(this).index();

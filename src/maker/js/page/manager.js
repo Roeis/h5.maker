@@ -44,6 +44,10 @@ var core = {
             history.pushStep();
         });
         util.$doc.on('click', '[data-role="remove"]', () => {
+            if(pageData.list.length === 1){
+                mu.util.alert('已不能再删除');
+                return;
+            }
             handle.removePage();
             history.remove();
             this.renderOne();

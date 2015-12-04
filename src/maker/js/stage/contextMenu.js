@@ -9,14 +9,14 @@ import operation    from './operation.js';
 var core = {
 
     init() {
-        this.createMenu();
-        this.bindMenu();
+        this._createMenu();
+        this._bindMenu();
     },
     /**
      * 创建右键
      * @return {[type]} [description]
      */
-    createMenu(){
+    _createMenu(){
         var html = `<div class="menu" id="contextMenu" style="display: none;">
                         <ul class="list-unstyled">
                             <li data-role="add-elem">
@@ -40,7 +40,7 @@ var core = {
         $('body').append(this.$menu);
     },
 
-    showContextmenu(event){
+    _showContextmenu(event){
         var left, top;
         left = event.pageX - 20;
         top = event.pageY - 10;
@@ -61,7 +61,7 @@ var core = {
         });
     },
 
-    bindMenu() {
+    _bindMenu() {
         let self = this,
             $device = $('.device');
 
@@ -70,7 +70,7 @@ var core = {
             let $this = $(event.target);
             $this.trigger('click');
 
-            self.showContextmenu(event);
+            self._showContextmenu(event);
             // 取消默认contextmenu
             return false;
         });
@@ -92,13 +92,13 @@ var core = {
             operation.addElem('element', 'base', function(elem){
                 self._resetPos(elem, left, top);
             });
-            self.callbackRender();
+            self._callbackRender();
             history.pushStep();
         });
 
         self.$menu.find('[data-role="copy-elem"]').on('click', function(){
             operation.copyElem();
-            self.callbackRender();
+            self._callbackRender();
         });
 
         self.$menu.find('[data-role="paste-elem"]').on('click', function(event){
@@ -108,13 +108,13 @@ var core = {
             operation.pasteElem(function(clone){
                 self._resetPos(clone, left, top);
             });
-            self.callbackRender();
+            self._callbackRender();
             history.pushStep();
         });
 
         self.$menu.find('[data-role="remove-elem"]').on('click', function(){
             operation.removeElem();
-            self.callbackRender();
+            self._callbackRender();
             history.pushStep();
         });
     },
@@ -128,7 +128,7 @@ var core = {
         });
     },
 
-    callbackRender(){
+    _callbackRender(){
         watchlist.render();
         render.renderPage();
         this.$menu.hide();

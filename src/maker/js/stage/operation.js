@@ -159,6 +159,11 @@ var core = {
         $('#stage').toggleClass('stage3D');
     },
 
+
+    setting(){
+
+    },
+
     init(){
         this._create();
         this._bind();
@@ -168,11 +173,14 @@ var core = {
 
     _create(){
         let html = `<div class="quick-key">
-                        <a class="btn btn-default" data-role="horiCenterlize">水平居中</a>
-                        <a class="btn btn-default" data-role="vertCenterlize">垂直居中</a>
-                        <a class="btn btn-default" data-role="centerlize">全屏居中</a>
-                        <a class="btn btn-default" data-role="autoAdjust">自动修正</a>
-                        <a class="btn btn-default" data-role="turn3d">3D模式</a>
+                        <p>&nbsp;</p>
+                        <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>
+                        <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>
+                        <a class="btn btn-default" data-func="centerlize">全屏居中</a>
+                        <p>&nbsp;</p>
+                        <a class="btn btn-default" data-func="autoAdjust">自动修正</a>
+                        <p>&nbsp;</p>
+                        <a class="btn btn-default" data-func="turn3d">3D模式</a>
                     </div>`;
         this.$el.append(html);
     },
@@ -180,9 +188,8 @@ var core = {
     _bind(){
         let self = this;
         this.$el.on('click', '.quick-key a', function(){
-            let role = $(this).data('role');
-            console.log(role);
-            self[role]();
+            let func = $(this).data('func');
+            self[func]();
         });
     }
 

@@ -14,7 +14,7 @@ tasks.register('audio', {
                     </div>
                 </div>
             </div>`,
-    target: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$audio = this.$el.find('[data-role="audio"]');
     },

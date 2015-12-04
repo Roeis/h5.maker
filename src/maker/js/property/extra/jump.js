@@ -15,7 +15,7 @@ var html = `<div class="edit-group">
             </div>`;
 tasks.register('jump', {
     html : html,
-    target: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$jump = this.$el.find('[data-role="jump"]');
     },

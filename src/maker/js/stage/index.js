@@ -9,26 +9,25 @@ import render       from '../page/render.js';
 import property     from '../property';
 
 import hotkey       from './hotkey.js';
-import menu         from './menu.js';
+import contextMenu  from './contextMenu.js';
 import toolbar      from './toolbar.js';
 import operation    from './operation.js';
 
-window.theData = stageData;
-window.render = render;
+window.stageData = stageData;
 
 var core = {
     init() {
 
         hotkey.init();
-        menu.init();
+        contextMenu.init();
         toolbar.init();
         operation.init();
 
-        this.bindEvent();
+        this._bindEvent();
 
     },
 
-    bindEvent() {
+    _bindEvent() {
         util.$doc.on('dblclick', '.device', (event) => {
             console.log('alert editor');
         });
@@ -41,7 +40,7 @@ var core = {
         // 点击范围：在模拟设备的尺寸中
         util.$doc.on('click', '.device', (event) => {
 
-            var $this = $(event.target),
+            let $this = $(event.target),
                 $parent = $this.closest('.editable'),
                 isEditable = $parent.length > 0,
                 isCurrent = $this.hasClass('editable'),
@@ -80,7 +79,7 @@ var core = {
             if($temp){
                 $temp.addClass('cur');
                 self.intoEditable($temp);
-                self.syncProperty();
+                self.syncElem();
                 self.syncRole();
 
                 watchlist.renderStatus(id);
@@ -91,12 +90,14 @@ var core = {
                 self.syncPage();
             }
 
-            menu.$menu.hide();
+            contextMenu.$menu.hide();
         });
+
+
     },
 
     handleFocusText(){
-        util.$doc.find('input,textarea').on('focus', function(){
+        util.$doc.find('input, .innerHtml').on('focus', function(){
             stageData.isFocusText = true;
         }).on('blur',function(){
             stageData.isFocusText = false;
@@ -192,7 +193,7 @@ var core = {
         }
     },
 
-    syncProperty(){
+    syncElem(){
         let curElem = stageData.curElem;
         property.unSyncAll();
         property.sync(curElem.style);
@@ -202,11 +203,17 @@ var core = {
     },
 
     syncPage(){
-        let style = pageData.list[stageData.index].style;
-        // console.log(style);
+        let pageStyle = pageData.list[stageData.index].style;
         property.unSyncAll();
-        property.sync(style);
+        property.sync(pageStyle);
     },
+
+    syncGlobal(){
+        property.unSyncAll();
+        property.sync(pageData.style);
+        property.sync(pageData.setting);
+    },
+
 
     getById(id){
         let target = null, it;

@@ -15,7 +15,7 @@ tasks.register('link', {
                     </div>
                 </div>
             </div>`,
-    target: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$link = this.$el.find('[data-role="link"]');
     },

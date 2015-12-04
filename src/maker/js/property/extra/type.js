@@ -20,7 +20,7 @@ var html = `<div class="edit-group">
 
 tasks.register('type', {
     html: html,
-    target: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$type = this.$el.find('.elem-character');
     },

@@ -82,7 +82,7 @@ p {
   z-index: 0;
   margin-left: -180px;
   margin-top: -270px;
-  background-color: #ddd;
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
   -webkit-transition: -webkit-transform .4s ease;
   transition: -webkit-transform .4s ease;
   transition: transform .4s ease;
@@ -90,9 +90,9 @@ p {
 }
 .device .wrapper {
   -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+          backface-visibility: hidden;
   -webkit-transform-style: preserve-3d;
-  transform-style: preserve-3d;
+          transform-style: preserve-3d;
   height: 100%;
 }
 .device .wrapper .page {
@@ -308,7 +308,10 @@ p {
 
 .edit-group {
   background-color: #fff;
-  padding: 10px;
+  padding: 20px 10px 0;
+}
+.edit-group:hover {
+  background-color: #f5f4fd;
 }
 .edit-group:last-child .row {
   border-bottom: none;
@@ -340,6 +343,14 @@ p {
 .edit-group .btn-active:active, .edit-group .btn-active:focus {
   background-color: #1953bc;
   color: #fff;
+}
+
+.label-yellow {
+  background-color: #F9F3EA;
+}
+
+.label-blue {
+  background-color: #EDECF5;
 }
 
 .edit-panel-tab {
@@ -480,8 +491,9 @@ p {
   position: absolute;
   left: 50%;
   top: 50%;
-  margin-top: 320px;
-  margin-left: -180px;
+  margin-top: -270px;
+  margin-left: 190px;
+  width: 90px;
 }
 
 .elem-list {

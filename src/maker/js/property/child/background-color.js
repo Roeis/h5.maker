@@ -8,7 +8,7 @@ import {Picker, controller}     from '../../component/colorPickerBG.js';
 tasks.register('background-color', {
     html: `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 label-blue">
                         背景颜色
                     </div>
                     <div class="col-md-8">

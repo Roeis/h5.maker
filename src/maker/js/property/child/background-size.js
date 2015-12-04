@@ -7,7 +7,7 @@ import tasks        from '../tasks.js';
 tasks.register('background-size', {
     html: `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4">
+                    <div class="col-md-4 label-blue" title="宽大于高的图，选择高度100%">
                         背景尺寸
                     </div>
                     <div class="col-md-8">

@@ -14,7 +14,7 @@ tasks.register('video', {
                     </div>
                 </div>
             </div>`,
-    taregt: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$video = this.$el.find('[data-role="video"]');
     },

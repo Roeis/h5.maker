@@ -9,13 +9,7 @@ tasks.register('innerHtml', {
                 <div class="row">
                     <div class="col-md-12">
                         <div class="cf">
-                            <a class="btn">B</a>
-                            <a class="btn">I</a>
-                            <a class="btn">U</a>
-                            <a class="btn">S</a>
-                            <a class="btn">F</a>
-                            <a class="btn">L</a>
-                            <a class="codeMirror">code</a>
+                            <a class="codeMirror"></a>
                         </div>
                     </div>
                     <div class="col-md-12">

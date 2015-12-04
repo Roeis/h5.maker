@@ -25,7 +25,7 @@ tasks.register('analyze', {
                 </div>
             </div>
         </div>`,
-    target: '#extraPanel',
+    target: '#stylePanel',
     init(){
         this.$analyze = this.$el.find('[data-role="analyze"]');
     },

@@ -128,16 +128,16 @@ var data = {
     ],
     // generate by render function
     listHtml: [],
-    config: {
+    style: {
+        'background-image': 'none',
+        'background-color': 'rgba(0,0,0,0)'
+    },
+    setting: {
         isLoop: false,
         direction: 'vertical',
-    },
-    global: {
-        music: '',
-        style: '',
-        count: 6,
+        audio: '',
+        countID: 6,
         template: 1,
-        style: ''
     }
 
 };

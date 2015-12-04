@@ -106,12 +106,10 @@ $dark-bg: $bg - #0c0c0c;
     z-index: 0;
     margin-left: -180px;
     margin-top: -270px;
-    background-color: #ddd;
+    background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
     transition: transform .4s ease;
     .wrapper{
-        -webkit-backface-visibility: hidden;
         backface-visibility: hidden;
-        -webkit-transform-style: preserve-3d;
         transform-style: preserve-3d;
         height: 100%;
         .page{
@@ -365,7 +363,10 @@ $dark-bg: $bg - #0c0c0c;
 
 .edit-group{
     background-color: #fff;
-    padding: 10px;
+    padding: 20px 10px 0;
+    &:hover{
+        background-color: $bg + #080808;
+    }
     &:last-child{
         .row{
             border-bottom: none;
@@ -400,6 +401,12 @@ $dark-bg: $bg - #0c0c0c;
             color: #fff;
         }
     }
+}
+.label-yellow{
+    background-color: #F9F3EA;
+}
+.label-blue{
+    background-color: $bg;
 }
 .edit-panel-tab{
     position: absolute;
@@ -542,8 +549,9 @@ $dark-bg: $bg - #0c0c0c;
     position: absolute;
     left: 50%;
     top: 50%;
-    margin-top: 320px;
-    margin-left: -180px;
+    margin-top: -270px;
+    margin-left: 190px;
+    width: 90px;
 }
 
 
