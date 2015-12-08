@@ -13519,7 +13519,7 @@
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _contextMenuJs = __webpack_require__(268);
+	var _contextMenuJs = __webpack_require__(265);
 	
 	var _contextMenuJs2 = _interopRequireDefault(_contextMenuJs);
 	
@@ -42088,7 +42088,151 @@
 	};
 
 /***/ },
-/* 265 */,
+/* 265 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(9);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _bizUtilJs = __webpack_require__(12);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _pageRenderJs = __webpack_require__(11);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _pageWatchlistJs = __webpack_require__(13);
+	
+	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	
+	var _stageHistoryJs = __webpack_require__(8);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _operationJs = __webpack_require__(256);
+	
+	var _operationJs2 = _interopRequireDefault(_operationJs);
+	
+	var core = {
+	
+	    init: function init() {
+	        this._createMenu();
+	        this._bindMenu();
+	    },
+	    /**
+	     * 创建右键
+	     * @return {[type]} [description]
+	     */
+	    _createMenu: function _createMenu() {
+	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="add-elem">\n                                <span class="glyphicon glyphicon-plus"></span>\n                                新建\n                            </li>\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
+	        this.$menu = $(html);
+	        $('body').append(this.$menu);
+	    },
+	
+	    _showContextmenu: function _showContextmenu(event) {
+	        var left, top;
+	        left = event.pageX - 20;
+	        top = event.pageY - 10;
+	
+	        // handle when reach bottom
+	        var target_height = this.$menu.height();
+	        var offset = target_height + this.$menu.offset().top;
+	        var window_height = $(window).height();
+	
+	        if (offset >= window_height) {
+	            top = window_height - target_height - 20;
+	        }
+	
+	        this.$menu.show().css({
+	            position: 'absolute',
+	            left: left,
+	            top: top
+	        });
+	    },
+	
+	    _bindMenu: function _bindMenu() {
+	        var self = this,
+	            $device = $('.device');
+	
+	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
+	
+	            var $this = $(event.target);
+	            $this.trigger('click');
+	
+	            self._showContextmenu(event);
+	            // 取消默认contextmenu
+	            return false;
+	        });
+	
+	        _bizUtilJs2['default'].$doc.on('click', function (event) {
+	            var $this = $(event.target),
+	                isIn = $this.closest('#contextMenu').length > 0;
+	            if (!isIn) {
+	                self.$menu.hide();
+	            }
+	        });
+	
+	        self.$menu.find('[data-role="add-elem"]').on('click', function (event) {
+	
+	            var offset = $device.offset(),
+	                left = event.pageX - offset.left,
+	                top = event.pageY - offset.top;
+	
+	            _operationJs2['default'].addElem('element', 'base', function (elem) {
+	                self._resetPos(elem, left, top);
+	            });
+	            self._callbackRender();
+	            _stageHistoryJs2['default'].pushStep();
+	        });
+	
+	        self.$menu.find('[data-role="copy-elem"]').on('click', function () {
+	            _operationJs2['default'].copyElem();
+	            self._callbackRender();
+	        });
+	
+	        self.$menu.find('[data-role="paste-elem"]').on('click', function (event) {
+	            var offset = $device.offset(),
+	                left = event.pageX - offset.left,
+	                top = event.pageY - offset.top;
+	            _operationJs2['default'].pasteElem(function (clone) {
+	                self._resetPos(clone, left, top);
+	            });
+	            self._callbackRender();
+	            _stageHistoryJs2['default'].pushStep();
+	        });
+	
+	        self.$menu.find('[data-role="remove-elem"]').on('click', function () {
+	            _operationJs2['default'].removeElem();
+	            self._callbackRender();
+	            _stageHistoryJs2['default'].pushStep();
+	        });
+	    },
+	
+	    _resetPos: function _resetPos(obj, left, top) {
+	        var middle = parseInt(obj.style.width) / 2,
+	            center = parseInt(obj.style.height) / 2;
+	        _lodash2['default'].extend(obj.style, {
+	            left: left - middle + 'px',
+	            top: top - center + 'px'
+	        });
+	    },
+	
+	    _callbackRender: function _callbackRender() {
+	        _pageWatchlistJs2['default'].render();
+	        _pageRenderJs2['default'].renderPage();
+	        this.$menu.hide();
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
 /* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -42274,152 +42418,6 @@
 	        this.$elem.find('li').removeClass('active');
 	    }
 	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 267 */,
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(9);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _bizUtilJs = __webpack_require__(12);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _pageRenderJs = __webpack_require__(11);
-	
-	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
-	
-	var _pageWatchlistJs = __webpack_require__(13);
-	
-	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
-	
-	var _stageHistoryJs = __webpack_require__(8);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var _operationJs = __webpack_require__(256);
-	
-	var _operationJs2 = _interopRequireDefault(_operationJs);
-	
-	var core = {
-	
-	    init: function init() {
-	        this._createMenu();
-	        this._bindMenu();
-	    },
-	    /**
-	     * 创建右键
-	     * @return {[type]} [description]
-	     */
-	    _createMenu: function _createMenu() {
-	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="add-elem">\n                                <span class="glyphicon glyphicon-plus"></span>\n                                新建\n                            </li>\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
-	        this.$menu = $(html);
-	        $('body').append(this.$menu);
-	    },
-	
-	    _showContextmenu: function _showContextmenu(event) {
-	        var left, top;
-	        left = event.pageX - 20;
-	        top = event.pageY - 10;
-	
-	        // handle when reach bottom
-	        var target_height = this.$menu.height();
-	        var offset = target_height + this.$menu.offset().top;
-	        var window_height = $(window).height();
-	
-	        if (offset >= window_height) {
-	            top = window_height - target_height - 20;
-	        }
-	
-	        this.$menu.show().css({
-	            position: 'absolute',
-	            left: left,
-	            top: top
-	        });
-	    },
-	
-	    _bindMenu: function _bindMenu() {
-	        var self = this,
-	            $device = $('.device');
-	
-	        _bizUtilJs2['default'].$doc.on('contextmenu', '.device', function (event) {
-	
-	            var $this = $(event.target);
-	            $this.trigger('click');
-	
-	            self._showContextmenu(event);
-	            // 取消默认contextmenu
-	            return false;
-	        });
-	
-	        _bizUtilJs2['default'].$doc.on('click', function (event) {
-	            var $this = $(event.target),
-	                isIn = $this.closest('#contextMenu').length > 0;
-	            if (!isIn) {
-	                self.$menu.hide();
-	            }
-	        });
-	
-	        self.$menu.find('[data-role="add-elem"]').on('click', function (event) {
-	
-	            var offset = $device.offset(),
-	                left = event.pageX - offset.left,
-	                top = event.pageY - offset.top;
-	
-	            _operationJs2['default'].addElem('element', 'base', function (elem) {
-	                self._resetPos(elem, left, top);
-	            });
-	            self._callbackRender();
-	            _stageHistoryJs2['default'].pushStep();
-	        });
-	
-	        self.$menu.find('[data-role="copy-elem"]').on('click', function () {
-	            _operationJs2['default'].copyElem();
-	            self._callbackRender();
-	        });
-	
-	        self.$menu.find('[data-role="paste-elem"]').on('click', function (event) {
-	            var offset = $device.offset(),
-	                left = event.pageX - offset.left,
-	                top = event.pageY - offset.top;
-	            _operationJs2['default'].pasteElem(function (clone) {
-	                self._resetPos(clone, left, top);
-	            });
-	            self._callbackRender();
-	            _stageHistoryJs2['default'].pushStep();
-	        });
-	
-	        self.$menu.find('[data-role="remove-elem"]').on('click', function () {
-	            _operationJs2['default'].removeElem();
-	            self._callbackRender();
-	            _stageHistoryJs2['default'].pushStep();
-	        });
-	    },
-	
-	    _resetPos: function _resetPos(obj, left, top) {
-	        var middle = parseInt(obj.style.width) / 2,
-	            center = parseInt(obj.style.height) / 2;
-	        _lodash2['default'].extend(obj.style, {
-	            left: left - middle + 'px',
-	            top: top - center + 'px'
-	        });
-	    },
-	
-	    _callbackRender: function _callbackRender() {
-	        _pageWatchlistJs2['default'].render();
-	        _pageRenderJs2['default'].renderPage();
-	        this.$menu.hide();
-	    }
 	};
 	
 	module.exports = core;

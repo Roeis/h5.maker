@@ -15,6 +15,7 @@ var localStrategy = require('passport-local').Strategy;
 var home = require('./routes/index.js');
 var api = require('./routes/api.js');
 var user = require('./routes/user.js');
+var edit = require('./routes/edit.js');
 
 // model
 var Account = require('./model/account.js');
@@ -39,6 +40,8 @@ app.use(require('express-session')({
     // cookie: { maxAge: 60000} // 过期时间
 }));
 
+
+
 //初始化passport
 app.use(passport.initialize());
 app.use(passport.session());
@@ -47,6 +50,8 @@ app.use(passport.session());
 passport.use(new localStrategy(Account.authenticate()));
 passport.serializeUser(Account.serializeUser());
 passport.deserializeUser(Account.deserializeUser());
+
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 // mongoose database;
@@ -65,6 +70,7 @@ var port = app.get('port');
 app.use('/', home);
 app.use('/', user);
 app.use('/api', api);
+app.use('/edit', edit);
 
 app.use(function(req, res, next){
   res.send('404');

@@ -1,0 +1,16 @@
+<% include header.ejs %>
+
+<div class="editor">
+    welcome to editor page
+</div>
+<script src="/js/vendor/jquery/jquery-1.9.1.min.js"></script>
+<script src="/js/vendor/mu/mu.latest.min.js"></script>
+<script>
+    var CUR_DATA = {
+        username : '<%= username %>'
+    };
+</script>
+<script src="/js/api.js"></script>
+<script src="/js/editor.js"></script>
+
+<% include footer.ejs %>

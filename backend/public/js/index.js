@@ -1,14 +1,16 @@
 /**
  * Copyright (c) 2015 All rights reserved
  * author: roeis
- * description: 
+ * description:
  */
 (function(){
     'use strict';
 
     var core = {
         init: function(){
-            this.bind();
+
+            this.getPageList();
+            this._bind();
         },
         commonGet: function(url, type, data, callback){
             $.ajax({
@@ -19,62 +21,48 @@
                     callback && callback(data);
                 },
                 error: function(err){
-                    errCallba
+                    console.log(err);
                 }
-            })
-        },
-        checkUserData: function(){
-
-        },
-        getUserData: function(){
-            var data = {
-                name: document.getElementById('name').value,
-                age: parseInt(document.getElementById('age').value, 10),
-                flag: document.getElementById('flag').checked
-            };
-            return data;
-        },
-        addUser: function(){
-            var data = this.getUserData();
-            this.requestUser(data);
-        },
-        requestUser: function(data){
-            this.commonGet('/json', 'POST', data, function(data){
-                console.log(data);
             });
         },
-        updateUser: function(){
-            var data = this.getUserData();
-            this.commonGet('/update', 'POST', data, function(data){
+        getPageList: function(){
+            this.commonGet('/api/list', 'GET', {
+                pageIndex: 1,
+                pageSize: 10
+            }, function(data){
                 console.log(data);
-            });
-        },
-        getUserList: function(){
-            this.commonGet('/json', 'GET', {}, function(data){
-                console.log(data);
-                var html = '';
+                var html = '',
+                    html_online = '',
+                    link = '';
                 if(data.Code === 0){
-                    var it = data.data;
+                    var it = data.data.list;
                     for(var i = 0; i < it.length; i++){
-                        html += '<p>'+ it[i].name + ': '+ it[i].age +'</p>'
+                        html_online = it[i].isPublish ? '<span class="label label-success">online</span>' : '<span class="label label-default">offline</span>';
+                        link = '/edit/?id=' + it[i]._id;
+                        html += '<tr data-id="'+ it[i]._id +'">'+
+                                    '<td>'+ it[i].title +'</td>'+
+                                    '<td>'+ it[i].alias +'</td>'+
+                                    '<td>'+ it[i].langs +'</td>'+
+                                    '<td>'+ it[i].createUser +'</td>'+
+                                    '<td>'+ it[i].updateDate +'</td>'+
+                                    '<td>'+ html_online +'</td>'+
+                                    '<td>'+
+                                        '<a href="'+ link +'" target="_blank" type="type" class="btn btn-default">编辑</a>'+
+                                        '<a href="javascript:;" type="type" class="btn btn-default">删除</a>'+
+                                        '<a href="javascript:;" type="type" class="btn btn-default">预览</a>'+
+                                    '</td>'+
+                                '</tr>';
                     }
-                    $('#lists').html(html);
+                    $('#pageList').html(html);
                 }
             });
         },
-        bind: function(){
-            var self = this;
+        _bind: function(){
 
-            self.getUserList();
-
-            $('.add').on('click', function(){
-                self.addUser();
-            });
-            $('.update').on('click', function(){
-                self.updateUser();
-            })
         }
-    }
+    };
+
     core.init();
 
+    window.h5 = core;
 })();

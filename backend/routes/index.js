@@ -1,3 +1,4 @@
+'use strict';
 var express = require('express');
 var router = express.Router();
 // var redis = require('redis');
@@ -10,10 +11,10 @@ router.get('/', function(req, res, next) {
 
     console.log('user', req.user);
     if(!req.user){
-        res.redirect('/login');
+        return res.redirect('/login');
     }
     res.render('index', {
-        user: req.user
+        username: req.user ? req.user : '0'
     });
 });
 
