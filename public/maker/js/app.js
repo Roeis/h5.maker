@@ -67,8 +67,6 @@
 	
 	var _stage2 = _interopRequireDefault(_stage);
 	
-	window.page = _page2['default'];
-	window.stage = _stage2['default'];
 	// 拿到data, 绑定数据渲染
 	
 	// 事件操作，数据绑定
@@ -193,7 +191,6 @@
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
-	// import ajax from './ajax.js';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
@@ -221,11 +218,62 @@
 	
 	var _managerJs2 = _interopRequireDefault(_managerJs);
 	
+	var isSaving = false;
 	var core = {
+	
+	    // 更新数据
+	    updateData: function updateData() {
+	
+	        if (isSaving) {
+	            mu.util.alert('还在保存中...');
+	            return;
+	        }
+	        isSaving = true;
+	        $.ajax({
+	            url: '/api/update/',
+	            type: 'POST',
+	            data: {
+	                data: JSON.stringify(_dataPageDataJs2['default'])
+	            },
+	            dataType: 'json',
+	            success: function success(data) {
+	                console.log(data);
+	                mu.util.alert('保存成功');
+	                isSaving = false;
+	            },
+	            error: function error(err) {
+	                isSaving = false;
+	            }
+	        });
+	    },
+	
+	    // 获取数据
+	    getInitData: function getInitData(callback) {
+	        var id = mu.util.getQueryString('id');
+	        if (!id) return;
+	        mu.request.get({
+	            url: '/api/get',
+	            data: {
+	                id: id
+	            },
+	            dataType: 'json',
+	            success: function success(data) {
+	                if (data.Code === 0) {
+	                    var _pageData = JSON.parse(data.data);
+	                    console.log(_pageData);
+	                    // get Data
+	
+	                    callback && callback(_pageData);
+	                }
+	            },
+	            error: function error(err) {}
+	        });
+	    },
 	
 	    init: function init() {
 	
-	        // get Data
+	        this.getInitData();
+	
 	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
 	        _managerJs2['default'].init();
 	        _watchlistJs2['default'].init();
@@ -13289,21 +13337,31 @@
 	
 	var core = {
 	    $page: $('#page'),
+	
+	    init: function init() {
+	        this._create();
+	        this._createBtn();
+	        this.bindPage();
+	    },
+	
 	    // 创建页面管理
-	    createManager: function createManager() {
-	        this.$page.append('<div class="page-ul"></div>');
+	    _create: function _create() {
+	        this.$page.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
 	
-	        this.renderManager();
+	        this._renderList();
+	        this._bind();
 	
-	        this.bindManager();
+	        this.$page.find('.page-ul-wrap').append('');
 	    },
 	
-	    createOperation: function createOperation() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="add">新增</button>\n                        <button class="btn btn-default" data-role="remove">删除</button>\n                        <button class="btn btn-default" data-role="copy">复制</button>\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">保存为魔板</button>\n                    </div>';
+	    _createBtn: function _createBtn() {
+	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>\n                    </div>';
 	        this.$page.append(html);
+	        var html_control = '<div class="page-control">\n                                <a class="btn btn-brand" data-role="add">添加</a>\n                                <a class="btn btn-brand" data-role="copy">复制</a>\n                                <a class="btn btn-default" data-role="remove">删除</a>\n                            </div>';
+	        this.$page.find('.page-ul-wrap').append(html_control);
 	    },
 	
-	    bindManager: function bindManager() {
+	    _bind: function _bind() {
 	        var _this = this;
 	
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
@@ -13311,14 +13369,12 @@
 	            _stageHistoryJs2['default'].push();
 	            _this.renderOne();
 	            _stageHistoryJs2['default'].pushStep();
-	        });
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="copy"]', function () {
+	        }).on('click', '[data-role="copy"]', function () {
 	            _handleJs2['default'].copyPage();
 	            _stageHistoryJs2['default'].push();
 	            _this.renderOne();
 	            _stageHistoryJs2['default'].pushStep();
-	        });
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="remove"]', function () {
+	        }).on('click', '[data-role="remove"]', function () {
 	            if (_dataPageDataJs2['default'].list.length === 1) {
 	                mu.util.alert('已不能再删除');
 	                return;
@@ -13327,15 +13383,15 @@
 	            _stageHistoryJs2['default'].remove();
 	            _this.renderOne();
 	            _stageHistoryJs2['default'].renderHistory();
-	        });
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="upload"]', function () {
+	        }).on('click', '[data-role="upload"]', function () {
 	            var page = _handleJs2['default'].getCurPage();
 	            console.log(page);
+	            // post Delate;
 	            console.log('%csync template with cloud', 'color: #f00;');
 	        });
 	    },
 	
-	    renderManager: function renderManager() {
+	    _renderList: function _renderList() {
 	        var html = '';
 	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
 	            html += '<div class="page-li">' + (i + 1) + '</div>';
@@ -13386,15 +13442,9 @@
 	    },
 	
 	    renderOne: function renderOne() {
-	        this.renderManager();
+	        this._renderList();
 	        _watchlistJs2['default'].render();
 	        _renderJs2['default'].renderPage();
-	    },
-	
-	    init: function init() {
-	        this.createManager();
-	        this.createOperation();
-	        this.bindPage();
 	    }
 	};
 	
@@ -13607,6 +13657,11 @@
 	            }
 	
 	            _contextMenuJs2['default'].$menu.hide();
+	        });
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.stage-inner', function () {
+	            var $this = $(event.target);
+	            console.log($this);
 	        });
 	    },
 	
@@ -39813,7 +39868,7 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('font-size', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group" id="elem-text-group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">\n                                    <span class="elem-font-size"></span>\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="dropdownFont">\n                                    <li data-value="12"><a>12px</a></li>\n                                    <li data-value="14"><a>14px</a></li>\n                                    <li data-value="16"><a>16px</a></li>\n                                    <li data-value="18"><a>18px</a></li>\n                                    <li data-value="24"><a>24px</a></li>\n                                    <li data-value="32"><a>32px</a></li>\n                                    <li data-value="36"><a>36px</a></li>\n                                    <li data-value="48"><a>48px</a></li>\n                                </ul>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group" id="elem-text-group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="elemFontSize" data-toggle="dropdown">\n                                    <span class="elem-font-size"></span>\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="elemFontSize">\n                                    <li data-value="12"><a>12px</a></li>\n                                    <li data-value="14"><a>14px</a></li>\n                                    <li data-value="16"><a>16px</a></li>\n                                    <li data-value="18"><a>18px</a></li>\n                                    <li data-value="24"><a>24px</a></li>\n                                    <li data-value="32"><a>32px</a></li>\n                                    <li data-value="36"><a>36px</a></li>\n                                    <li data-value="48"><a>48px</a></li>\n                                </ul>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
 	        // horizontal align text
@@ -40151,7 +40206,7 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('audio', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        音频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        音频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="audio" placeholder="输入音频链接">\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
 	        this.$audio = this.$el.find('[data-role="audio"]');
@@ -40188,7 +40243,7 @@
 	
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4" title="跳转某一页面">\n                        跳转\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" placeholder="enter page number" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4" title="跳转至某一页面">\n                        跳转\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" min="0" placeholder="输入跳转页码" class="form-control" data-role="jump">\n                    </div>\n                </div>\n            </div>';
 	_tasksJs2['default'].register('jump', {
 	    html: html,
 	    target: '#stylePanel',
@@ -40228,7 +40283,7 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('link', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        链接\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="enter your link url" class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        链接\n                    </div>\n                    <div class="col-md-8">\n                        <input placeholder="输入链接url" class="form-control" data-role="link">\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
 	        this.$link = this.$el.find('[data-role="link"]');
@@ -40266,7 +40321,7 @@
 	
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="elem-character">\n                            <a class="btn btn-default" data-value="link">link</a>\n                            <a class="btn btn-default" data-value="audio">audio</a>\n                            <a class="btn btn-default" data-value="video">video</a>\n                            <a class="btn btn-default" data-value="jump">jump</a>\n                            <a class="btn btn-default" data-value="default">default</a>\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="elem-character">\n                            <a class="btn btn-default" data-value="link">链接</a>\n                            <a class="btn btn-default" data-value="audio">音频</a>\n                            <a class="btn btn-default" data-value="video">视频</a>\n                            <a class="btn btn-default" data-value="jump">跳转</a>\n                            <a class="btn btn-default" data-value="default">默认</a>\n                        </div>\n                    </div>\n                </div>\n            </div>';
 	
 	_tasksJs2['default'].register('type', {
 	    html: html,
@@ -40317,7 +40372,7 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('video', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        视频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video">\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        视频\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="video" placeholder="输入视频链接">\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
 	        this.$video = this.$el.find('[data-role="video"]');

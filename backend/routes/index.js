@@ -1,22 +1,33 @@
 'use strict';
 var express = require('express');
 var router = express.Router();
-// var redis = require('redis');
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
+var passport = require('passport');
 
-//===========================
-/* GET home page. */
-router.get('/', function(req, res, next) {
+var home = require('./home.js');
+var user = require('./user.js');
+var api  = require('./api.js');
+var edit = require('./edit.js');
 
-    console.log('user', req.user);
-    if(!req.user){
-        return res.redirect('/login');
-    }
-    res.render('index', {
-        username: req.user ? req.user : '0'
-    });
-});
+// 首页
+router.get('/', home.index);
 
+// 用户登录注册
+router.get('/register', user.getRegister);
+router.post('/register', user.postRegister);
+router.get('/login', user.getLogin);
+router.post('/login', passport.authenticate('local'), user.postLogin);
+router.get('/logout', user.logout);
+
+// 接口
+router.get('/api/list', api.getPageList);
+router.post('/api/add', api.addPage);
+router.post('/api/update', api.updatePage);
+router.get('/api/get', api.getPage);
+
+router.post('/api/template/add', api.addTemplate);
+router.get('/api/template/list', api.getTemplateList);
+
+// 编辑页面
+router.get('/edit', edit.index);
 
 module.exports = router;

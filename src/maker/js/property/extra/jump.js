@@ -5,11 +5,11 @@ import tasks        from '../tasks.js';
 
 var html = `<div class="edit-group">
                 <div class="row">
-                    <div class="col-md-4" title="跳转某一页面">
+                    <div class="col-md-4" title="跳转至某一页面">
                         跳转
                     </div>
                     <div class="col-md-8">
-                        <input type="number" min="0" placeholder="enter page number" class="form-control" data-role="jump">
+                        <input type="number" min="0" placeholder="输入跳转页码" class="form-control" data-role="jump">
                     </div>
                 </div>
             </div>`;

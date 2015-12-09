@@ -11,11 +11,8 @@ var mongoose = require('mongoose');
 var passport = require('passport');
 var localStrategy = require('passport-local').Strategy;
 
-// route
-var home = require('./routes/index.js');
-var api = require('./routes/api.js');
-var user = require('./routes/user.js');
-var edit = require('./routes/edit.js');
+// router
+var router = require('./routes/index.js');
 
 // model
 var Account = require('./model/account.js');
@@ -30,6 +27,7 @@ app.use(bodyParser.urlencoded({
     extended: false
 }));
 app.use(cookieParser());
+
 
 // express-session
 app.use(require('express-session')({
@@ -67,11 +65,9 @@ app.set('port', process.env.PORT || 6001);
 var port = app.get('port');
 
 // Routes
-app.use('/', home);
-app.use('/', user);
-app.use('/api', api);
-app.use('/edit', edit);
+app.use('/', router);
 
+// 404
 app.use(function(req, res, next){
   res.send('404');
 });

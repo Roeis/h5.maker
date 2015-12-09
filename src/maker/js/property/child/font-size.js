@@ -10,11 +10,11 @@ tasks.register('font-size', {
                     <div class="col-md-12">
                         <div class="btn-group" role="group" id="elem-text-group">
                             <div class="btn-group" role="group">
-                                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownFont" data-toggle="dropdown">
+                                <button class="btn btn-default dropdown-toggle" type="button" id="elemFontSize" data-toggle="dropdown">
                                     <span class="elem-font-size"></span>
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="dropdownFont">
+                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="elemFontSize">
                                     <li data-value="12"><a>12px</a></li>
                                     <li data-value="14"><a>14px</a></li>
                                     <li data-value="16"><a>16px</a></li>

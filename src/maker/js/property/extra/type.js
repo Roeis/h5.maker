@@ -8,11 +8,11 @@ var html = `<div class="edit-group">
                 <div class="row">
                     <div class="col-md-12">
                         <div class="elem-character">
-                            <a class="btn btn-default" data-value="link">link</a>
-                            <a class="btn btn-default" data-value="audio">audio</a>
-                            <a class="btn btn-default" data-value="video">video</a>
-                            <a class="btn btn-default" data-value="jump">jump</a>
-                            <a class="btn btn-default" data-value="default">default</a>
+                            <a class="btn btn-default" data-value="link">链接</a>
+                            <a class="btn btn-default" data-value="audio">音频</a>
+                            <a class="btn btn-default" data-value="video">视频</a>
+                            <a class="btn btn-default" data-value="jump">跳转</a>
+                            <a class="btn btn-default" data-value="default">默认</a>
                         </div>
                     </div>
                 </div>

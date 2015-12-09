@@ -10,7 +10,7 @@ tasks.register('audio', {
                         音频
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="audio">
+                        <input class="form-control" data-role="audio" placeholder="输入音频链接">
                     </div>
                 </div>
             </div>`,

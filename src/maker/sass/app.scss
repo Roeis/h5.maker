@@ -168,7 +168,7 @@ $dark-bg: $bg - #0c0c0c;
 // helper
 .qrcode-helper{
     position: absolute;
-    right: 100px;
+    right: 570px;
     bottom: 20px;
     font-size: 24px;
     z-index: 9;
@@ -259,7 +259,7 @@ $dark-bg: $bg - #0c0c0c;
     position: absolute;
     left: 50%;
     top: 0;
-    margin-left: -160px;
+    margin-left: -160px - 225px;
     background-color: $c;
     li{
         position: relative;
@@ -289,13 +289,14 @@ $dark-bg: $bg - #0c0c0c;
     }
 }
 .tool-bar-cont{
-    position: absolute;
     display: none;
-    width: 90%;
+    position: absolute;
+    width: 800px;
+    left: 50%;
+    margin-left: -400px - 225px;
     height: 90%;
     z-index: 9;
     top: 40px;
-    left: 5%;
     .tool-bar-cont-li{
         position: relative;
         width: 100%;
@@ -355,8 +356,6 @@ $dark-bg: $bg - #0c0c0c;
     }
     .body{
         height: 100%;
-        padding: $h 0 0;
-        margin: -$h 0 0;
         position: relative;
     }
 }
@@ -365,7 +364,7 @@ $dark-bg: $bg - #0c0c0c;
     background-color: #fff;
     padding: 20px 10px 0;
     &:hover{
-        background-color: $bg + #080808;
+        background-color: #fbfbfb;
     }
     &:last-child{
         .row{
@@ -388,17 +387,19 @@ $dark-bg: $bg - #0c0c0c;
         border: 1px solid #ddd;
         padding: 10px;
     }
-    .btn-active{
-        color: #fff;
-        background-color: $brand;
-        &:hover{
-            background-color: $brand;
-            color: #fff;
-        }
-        &:active,
-        &:focus{
-            background-color: $brand - #111;
-            color: #fff;
+    .row{
+        .btn-active{
+            color: $brand;
+            border: 1px solid $brand;
+            z-index: 2;
+            &:hover{
+                color: $brand;
+            }
+            &:active,
+            &:focus{
+                background-color: $dark-bg - #111;
+                color: $brand;
+            }
         }
     }
 }
@@ -409,11 +410,10 @@ $dark-bg: $bg - #0c0c0c;
     background-color: $bg;
 }
 .edit-panel-tab{
-    position: absolute;
     width: 100%;
     height: 40px;
-    z-index: 2;
     background-color: $brand;
+    position: relative;
     .edit-panel-li{
         width: 25%;
         float: left;
@@ -429,17 +429,13 @@ $dark-bg: $bg - #0c0c0c;
 .edit-panel-cont{
     $w: 40px;
     height: 100%;
-    position: relative;
     background-color: #fff;
+    padding-top: $w;
+    margin-top: -$w;
     .edit-panel{
-        position: absolute;
         // display: none;
-        left: 0;
-        top: $w;
         height: 100%;
         width: 100%;
-        padding-top: $w;
-        margin-top: -$w;
         overflow-y: scroll;
     }
 }
@@ -508,15 +504,19 @@ $dark-bg: $bg - #0c0c0c;
 
 
 // 页面管理 | page management
-.page-ul{
+.page-ul-wrap{
     position: absolute;
-    right: 0;
+    right: 450px;
     top: 0;
-    width: 80px;
+    width: 100px;
     height: 100%;
     background-color: $dark-bg;
-    padding: 10px;
+    padding-bottom:200px;
+}
+.page-ul{
     overflow-y: scroll;
+    height: 100%;
+    padding: 10px;
     .page-li{
         background-color: $dark-bg - #111;
         color: #fff;
@@ -530,12 +530,31 @@ $dark-bg: $bg - #0c0c0c;
         }
         &.active{
             background-color: $brand;
+            &:hover{
+                background-color: $brand - #111;
+            }
         }
     }
     .ui-tip{
         border: 1px dashed $brand;
         height: 40px;
         margin-bottom: 10px;
+    }
+}
+.page-control{
+    padding: 10px;
+    border-top: 1px solid $dark-bg - #111;
+    a{
+        margin-bottom: 10px;
+        width: 100%;
+    }
+    .btn-brand{
+        background-color: $brand;
+        color: #fff;
+        border-radius: 2px;
+        &:hover{
+            background-color: $brand - #111;
+        }
     }
 }
 .page-operation{
@@ -550,7 +569,7 @@ $dark-bg: $bg - #0c0c0c;
     left: 50%;
     top: 50%;
     margin-top: -270px;
-    margin-left: 190px;
+    margin-left: 190px - 225px;
     width: 90px;
 }
 

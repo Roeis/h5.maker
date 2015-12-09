@@ -11,8 +11,6 @@ require('./task/copy.js');
 require('./task/revision.js');
 require('./task/webpackdev.js');
 
-require('./task/temp.js');
-
 
 var bsConfig = {
     server: {

@@ -10,7 +10,7 @@ tasks.register('video', {
                         视频
                     </div>
                     <div class="col-md-8">
-                        <input class="form-control" data-role="video">
+                        <input class="form-control" data-role="video" placeholder="输入视频链接">
                     </div>
                 </div>
             </div>`,

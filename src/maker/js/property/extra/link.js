@@ -11,7 +11,7 @@ tasks.register('link', {
                         链接
                     </div>
                     <div class="col-md-8">
-                        <input placeholder="enter your link url" class="form-control" data-role="link">
+                        <input placeholder="输入链接url" class="form-control" data-role="link">
                     </div>
                 </div>
             </div>`,

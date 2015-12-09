@@ -93,15 +93,21 @@ var core = {
             contextMenu.$menu.hide();
         });
 
+        util.$doc.on('click', '.stage-inner', function(){
+            let $this = $(event.target);
+            console.log($this);
+        });
 
     },
 
     handleFocusText(){
-        util.$doc.find('input, .innerHtml').on('focus', function(){
-            stageData.isFocusText = true;
-        }).on('blur',function(){
-            stageData.isFocusText = false;
-        });
+        util.$doc.find('input, .innerHtml')
+            .on('focus', function(){
+                stageData.isFocusText = true;
+            })
+            .on('blur',function(){
+                stageData.isFocusText = false;
+            });
     },
 
     clearCurUi(){
@@ -213,7 +219,6 @@ var core = {
         property.sync(pageData.style);
         property.sync(pageData.setting);
     },
-
 
     getById(id){
         let target = null, it;

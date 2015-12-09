@@ -1,4 +1,12 @@
-<% include header.ejs %>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title> express crud </title>
+    <link rel="stylesheet" href="/js/vendor/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/js/vendor/mu/mu.min.css">
+</head>
+<body>
 
     <div class="navbar">
         <nav class="navbar navbar-inverse">
@@ -16,16 +24,14 @@
                 <div class="list-group">
                     <a href="#" class="list-group-item active">管理</a>
                     <a href="#" class="list-group-item">统计</a>
-                    <a href="#" class="list-group-item">列表</a>
-                    <a href="#" class="list-group-item">教程</a>
+                    <!-- <a href="#" class="list-group-item">教程</a> -->
                     <a href="#" class="list-group-item">关于</a>
                 </div>
             </div>
             <div class="col-md-10">
                 <div class="block">
-                    <a href="javascript:;">新增专题</a>
+                    <a href="/add">新增专题</a>
                 </div>
-
                 <!--  页面列表  -->
                 <table class="table table-hover">
                     <caption>Optional table caption.</caption>
@@ -68,7 +74,6 @@
                             </a>
                         </li>
                         <li><a href="#">1</a></li>
-                        <li><a href="#">2</a></li>
                         <li>
                             <a href="#" aria-label="Next">
                                 <span aria-hidden="true">&raquo;</span>
@@ -80,11 +85,13 @@
         </div>
     </div>
 
-<script src="http://libs.baidu.com/jquery/1.9.1/jquery.min.js"></script>
+<script src="/js/vendor/jquery/jquery-1.9.1.min.js"></script>
+<script src="/js/vendor/bootstrap/js/bootstrap.min.js"></script>
+<script src="/js/vendor/mu/mu.latest.min.js"></script>
 <script>
 
     var CUR_DATA = {
-
+        username : '<%= username %>'
     };
     var demoData = {
         alias: 'new_demo',
@@ -95,11 +102,11 @@
         shareImage: 'http://www.sdfasd.jpg',
         shareTitle: 'title share',
         shareDesc: 'testst tesdsf',
-        content: JSON.stringify({})
     };
 
 </script>
 <script src="/js/index.js"></script>
 <script src="/js/api.js"></script>
 
-<% include footer.ejs %>
+</body>
+</html>

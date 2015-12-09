@@ -11,56 +11,70 @@ window.handle = handle;
 
 var core = {
     $page : $('#page'),
-    // 创建页面管理
-    createManager(){
-        this.$page.append('<div class="page-ul"></div>');
 
-        this.renderManager();
-
-        this.bindManager();
+    init(){
+        this._create();
+        this._createBtn();
+        this.bindPage();
     },
 
-    createOperation(){
+    // 创建页面管理
+    _create(){
+        this.$page.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
+
+        this._renderList();
+        this._bind();
+
+        this.$page.find('.page-ul-wrap').append('');
+
+    },
+
+    _createBtn(){
         let html = `<div class="page-operation">
-                        <button class="btn btn-default" data-role="add">新增</button>
-                        <button class="btn btn-default" data-role="remove">删除</button>
-                        <button class="btn btn-default" data-role="copy">复制</button>
-                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">保存为魔板</button>
+                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>
                     </div>`;
         this.$page.append(html);
+        let html_control = `<div class="page-control">
+                                <a class="btn btn-brand" data-role="add">添加</a>
+                                <a class="btn btn-brand" data-role="copy">复制</a>
+                                <a class="btn btn-default" data-role="remove">删除</a>
+                            </div>`;
+        this.$page.find('.page-ul-wrap').append(html_control);
     },
 
-    bindManager(){
-        util.$doc.on('click', '[data-role="add"]', () => {
-            handle.addPage();
-            history.push();
-            this.renderOne();
-            history.pushStep();
-        });
-        util.$doc.on('click', '[data-role="copy"]', () =>  {
-            handle.copyPage();
-            history.push();
-            this.renderOne();
-            history.pushStep();
-        });
-        util.$doc.on('click', '[data-role="remove"]', () => {
-            if(pageData.list.length === 1){
-                mu.util.alert('已不能再删除');
-                return;
-            }
-            handle.removePage();
-            history.remove();
-            this.renderOne();
-            history.renderHistory();
-        });
-        util.$doc.on('click', '[data-role="upload"]', () => {
-            let page = handle.getCurPage();
-            console.log(page);
-            console.log('%csync template with cloud', 'color: #f00;');
-        });
+    _bind(){
+        util.$doc
+            .on('click', '[data-role="add"]', () => {
+                handle.addPage();
+                history.push();
+                this.renderOne();
+                history.pushStep();
+            })
+            .on('click', '[data-role="copy"]', () =>  {
+                handle.copyPage();
+                history.push();
+                this.renderOne();
+                history.pushStep();
+            })
+            .on('click', '[data-role="remove"]', () => {
+                if(pageData.list.length === 1){
+                    mu.util.alert('已不能再删除');
+                    return;
+                }
+                handle.removePage();
+                history.remove();
+                this.renderOne();
+                history.renderHistory();
+            })
+            .on('click', '[data-role="upload"]', () => {
+                let page = handle.getCurPage();
+                console.log(page);
+                // post Delate;
+                console.log('%csync template with cloud', 'color: #f00;');
+            });
     },
 
-    renderManager(){
+    _renderList(){
         let html = ``;
         for(let i = 0; i < pageData.list.length; i++){
             html += `<div class="page-li">${i + 1}</div>`;
@@ -113,15 +127,9 @@ var core = {
     },
 
     renderOne(){
-        this.renderManager();
+        this._renderList();
         watchlist.render();
         render.renderPage();
-    },
-
-    init(){
-        this.createManager();
-        this.createOperation();
-        this.bindPage();
     }
 };
 

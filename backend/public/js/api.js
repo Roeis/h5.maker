@@ -28,18 +28,21 @@
                 console.log(data);
             });
         },
+
         updatePage: function(data){
             this._commonGet('/api/update', 'POST', data, function(data){
                 console.log(data);
             });
         },
+
         getPage: function(id){
             this._commonGet('/api/'+id, 'GET', {}, function(data){
                 console.log(data);
             });
         },
+        
         addTemplate: function(data){
-
+            // data
             this._commonGet('/api/template/add', 'POST', {
                 data: JSON.stringify(data)
             }, function(data){

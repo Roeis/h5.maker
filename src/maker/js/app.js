@@ -4,8 +4,6 @@ import ui from './ui';
 import page from './page';
 import stage from './stage';
 
-window.page = page;
-window.stage = stage;
 // 拿到data, 绑定数据渲染
 
 // 事件操作，数据绑定
