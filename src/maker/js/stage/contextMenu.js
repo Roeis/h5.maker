@@ -1,8 +1,9 @@
 'use strict';
 import _            from 'lodash';
 import util         from '../biz/util.js';
+import stageData    from '../data/stageData.js';
 import render       from '../page/render.js';
-import watchlist    from '../page/watchlist.js';
+import elemlist    from '../page/elemlist.js';
 import history      from '../stage/history.js';
 import operation    from './operation.js';
 
@@ -17,7 +18,7 @@ var core = {
      * @return {[type]} [description]
      */
     _createMenu(){
-        var html = `<div class="menu" id="contextMenu" style="display: none;">
+        let html = `<div class="menu" id="contextMenu" style="display: none;">
                         <ul class="list-unstyled">
                             <li data-role="add-elem">
                                 <span class="glyphicon glyphicon-plus"></span>
@@ -32,23 +33,23 @@ var core = {
                                 粘贴
                             </li>
                             <li data-role="remove-elem">
-                                <span class="glyphicon glyphicon-trash"></span> 删除
+                                <span class="glyphicon glyphicon-trash"></span>
+                                删除
                             </li>
                         </ul>
                     </div>`;
         this.$menu = $(html);
-        $('body').append(this.$menu);
+        util.$body.append(this.$menu);
     },
 
     _showContextmenu(event){
-        var left, top;
-        left = event.pageX - 20;
-        top = event.pageY - 10;
+        let left = event.pageX - 20,
+            top = event.pageY - 10;
 
         // handle when reach bottom
-        var target_height = this.$menu.height();
-        var offset = target_height + this.$menu.offset().top;
-        var window_height = $(window).height();
+        let target_height = this.$menu.height(),
+            offset = target_height + this.$menu.offset().top,
+            window_height = util.$window.height();
 
         if(offset >= window_height){
             top = window_height - target_height - 20;
@@ -83,40 +84,35 @@ var core = {
             }
         });
 
-        self.$menu.find('[data-role="add-elem"]').on('click', function(event){
+        this.$menu
+            .on('click', '[data-role="add-elem"]', function(event){
 
-            let offset = $device.offset(),
-                left = event.pageX - offset.left,
-                top = event.pageY - offset.top;
+                let offset = $device.offset(),
+                    left = event.pageX - offset.left,
+                    top = event.pageY - offset.top;
 
-            operation.addElem('element', 'base', function(elem){
-                self._resetPos(elem, left, top);
+                operation.addElem('element', 'base', function(elem){
+                    self._resetPos(elem, left, top);
+                });
+                self._callbackRender();
+                history.pushStep();
+            }).on('click', '[data-role="copy-elem"]', function(){
+                operation.copyElem();
+                self.$menu.hide();
+            }).on('click', '[data-role="paste-elem"]', function(event){
+                let offset = $device.offset(),
+                    left = event.pageX - offset.left,
+                    top = event.pageY - offset.top;
+                operation.pasteElem(function(clone){
+                    self._resetPos(clone, left, top);
+                });
+                self._callbackRender();
+                history.pushStep();
+            }).on('click', '[data-role="remove-elem"]', function(){
+                operation.removeElem();
+                self._callbackRender();
+                history.pushStep();
             });
-            self._callbackRender();
-            history.pushStep();
-        });
-
-        self.$menu.find('[data-role="copy-elem"]').on('click', function(){
-            operation.copyElem();
-            self._callbackRender();
-        });
-
-        self.$menu.find('[data-role="paste-elem"]').on('click', function(event){
-            let offset = $device.offset(),
-                left = event.pageX - offset.left,
-                top = event.pageY - offset.top;
-            operation.pasteElem(function(clone){
-                self._resetPos(clone, left, top);
-            });
-            self._callbackRender();
-            history.pushStep();
-        });
-
-        self.$menu.find('[data-role="remove-elem"]').on('click', function(){
-            operation.removeElem();
-            self._callbackRender();
-            history.pushStep();
-        });
     },
 
     _resetPos(obj, left, top){
@@ -129,8 +125,8 @@ var core = {
     },
 
     _callbackRender(){
-        watchlist.render();
-        render.renderPage();
+        elemlist.render();
+        render.renderHtmlPage(stageData.index);
         this.$menu.hide();
     }
 };

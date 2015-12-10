@@ -21,7 +21,7 @@ tasks.register('audio', {
     bind(){
         this.$audio.on('change.property', function(){
             stageData.curElem.extra.audio = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

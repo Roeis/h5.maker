@@ -21,7 +21,7 @@ tasks.register('width', {
     bind(){
         this.$width.on('change.property', function(){
             stageData.curElem.style.width = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

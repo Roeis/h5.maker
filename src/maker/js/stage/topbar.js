@@ -1,14 +1,15 @@
 'use strict';
 import _            from 'lodash';
 import util         from '../biz/util.js';
+import stageData    from '../data/stageData.js';
 import template     from '../template/data.js';
 import render       from '../page/render.js';
-import watchlist    from '../page/watchlist.js';
+import elemlist     from '../page/elemlist.js';
 import history      from '../stage/history.js';
 import operation    from './operation.js';
 
 var core = {
-    $toolBar : $('#toolBar'),
+    $topbar : $('#topBar'),
 
     init() {
         this._create();
@@ -22,7 +23,7 @@ var core = {
      * @return {[type]} [description]
      */
     _create(){
-        var html = `<div class="tool-bar">
+        var html = `<div class="top-bar">
                         <ul>`;
                 _.forEach(template, function(value, key){
                     html += `<li data-id="${value.id}">${value.cn}</li>`;
@@ -32,18 +33,18 @@ var core = {
                     </div>`;
 
         this.$elem = $(html);
-        this.$toolBar.append(this.$elem);
+        this.$topbar.append(this.$elem);
     },
 
     _createTabcont() {
-        let html = `<div class="tool-bar-cont">`;
+        let html = `<div class="top-bar-cont">`;
             _.forEach(template, function(value, key){
-                html += `<div class="tool-bar-cont-li cf" id="${value.id}"></div>`;
+                html += `<div class="top-bar-cont-li cf" id="${value.id}"></div>`;
             });
             html += `</div>`;
 
         this.$tabCont = $(html);
-        this.$toolBar.append(this.$tabCont);
+        this.$topbar.append(this.$tabCont);
     },
 
     _insertData(){
@@ -112,7 +113,7 @@ var core = {
     _bind() {
         var self = this;
 
-        util.$doc.on('click', '.tool-bar li', function(){
+        util.$doc.on('click', '.top-bar li', function(){
             let $this = $(this),
                 index = $this.index(),
                 id = $this.attr('data-id');
@@ -126,7 +127,7 @@ var core = {
 
         util.$doc.on('click', function(event){
             let $this = $(event.target),
-                isIn = $this.closest('#toolBar').length > 0;
+                isIn = $this.closest('#topBar').length > 0;
             if(!isIn){
                 self.hideTab();
             }
@@ -168,8 +169,8 @@ var core = {
     },
 
     _render(){
-        watchlist.render();
-        render.renderPage();
+        elemlist.render();
+        render.renderHtmlPage(stageData.index);
         history.pushStep();
     },
 

@@ -22,7 +22,7 @@ tasks.register('animation-delay', {
     bind(){
         this.$delay.on('change.property', function(){
             stageData.curElem.style['animation-delay'] = this.value + 's';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

@@ -24,36 +24,6 @@ var core = {
         };
         _.extend(this.events, event);
         // events[name](value);
-    },
-
-    init(){
-        this._create();
-        this._bind();
-    },
-
-    _create(){
-        let html = `<div class="edit-panel-tab cf">
-                        <div class="edit-panel-li active">属性</div>
-                        <div class="edit-panel-li">动画</div>
-                    </div>
-                    <div class="edit-panel-cont">
-                        <div class="edit-panel" id="stylePanel" style="display: block;"></div>
-                        <div class="edit-panel" id="animaPanel" style="display: none;"></div>
-                    </div>`;
-        let $el = $('#editPanel');
-        $el.html(html);
-
-        this.$tab = $el.find('.edit-panel-tab');
-        this.$cont = $el.find('.edit-panel-cont');
-    },
-
-    _bind(){
-        let self = this;
-        this.$tab.on('click', '.edit-panel-li', function(){
-            let index = $(this).index();
-            self.$tab.children().eq(index).addClass('active').siblings().removeClass('active');
-            self.$cont.children().eq(index).show().siblings().hide();
-        });
     }
 };
 

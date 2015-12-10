@@ -26,7 +26,7 @@ tasks.register('background-image', {
             switch (role) {
                 case 'elem':
                     stageData.curElem.child.style['background-image'] = 'url(' + this.value + ')';
-                    render.renderStep();
+                    render.logElemStep();
                     break;
                 case 'page':
                     pageData.list[stageData.index].style['background-image'] = 'url(' + this.value + ')';

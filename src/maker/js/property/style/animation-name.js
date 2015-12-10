@@ -33,7 +33,7 @@ tasks.register('animation-name', {
                 let name = $(this).data('value');
                 stageData.curElem.style.opacity = name === 'none' ? 1 : 0;
                 stageData.curElem.style['animation-name'] = name;
-                render.renderStep();
+                render.logElemStep();
             })
             .on('mouseenter mouseleave', '.anima', function(event){
                 let $this = $(this),

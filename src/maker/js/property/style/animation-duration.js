@@ -22,7 +22,7 @@ tasks.register('animation-duration', {
     bind(){
         this.$duration.on('change.property', function(){
             stageData.curElem.style['animation-duration'] = this.value + 's';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

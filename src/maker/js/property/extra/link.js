@@ -23,7 +23,7 @@ tasks.register('link', {
         this.$link.on('change.property', function(){
             // verify this.value
             stageData.curElem.extra.link = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

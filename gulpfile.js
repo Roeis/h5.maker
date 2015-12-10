@@ -8,7 +8,6 @@ require('./task/sass.js');
 require('./task/image.js');
 require('./task/clean.js');
 require('./task/copy.js');
-require('./task/revision.js');
 require('./task/webpackdev.js');
 
 

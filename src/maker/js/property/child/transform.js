@@ -22,14 +22,14 @@ tasks.register('transform', {
         /*
          * example:
          * bind event to change the property
-         * then call render.renderStep to log the step, which includes
+         * then call render.logElemStep to log the step, which includes
          * adding a step into history storage, and render the template
          * with the changed data
          */
         this.$target.on('change.input', function(){
 
             stageData.curElem.child.style.transform = 'rotate('+ this.value +'deg) translateZ(0)';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     /**

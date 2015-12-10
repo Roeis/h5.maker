@@ -44,7 +44,7 @@ tasks.register('font-size', {
                 oldValue = stageData.curElem.child.style['font-size'];
             if(oldValue !== value){
                 stageData.curElem.child.style['font-size'] = value + 'px';
-                render.renderStep();
+                render.logElemStep();
             }
         });
     },
@@ -59,7 +59,7 @@ tasks.register('font-size', {
                 oldValue = stageData.curElem.child.style['vertical-align'];
             if(oldValue !== value){
                 stageData.curElem.child.style['vertical-align'] = value;
-                render.renderStep();
+                render.logElemStep();
             }
         });
 
@@ -68,7 +68,7 @@ tasks.register('font-size', {
                 oldValue = stageData.curElem.child.style['text-align'];
             if(oldValue !== value){
                 stageData.curElem.child.style['text-align'] = value;
-                render.renderStep();
+                render.logElemStep();
             }
         });
         tasks.register('text-align', (value) => {

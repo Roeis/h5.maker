@@ -21,7 +21,7 @@ tasks.register('padding', {
     bind(){
         this.$padding.on('change.property', function(){
             stageData.curElem.child.style.padding = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

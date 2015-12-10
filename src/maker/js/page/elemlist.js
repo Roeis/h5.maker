@@ -4,12 +4,12 @@ import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
 
 var core = {
-    $el: $('#watchList'),
+    $el: $('#elemList'),
     render(){
         var data = pageData.list[stageData.index].elements,
             html = `<div class="elem-list">
                         <div class="title">
-                            
+
                         </div>
                         <ul>`;
             for (var i = 0; i < data.length; i++){

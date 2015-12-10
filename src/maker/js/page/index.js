@@ -5,9 +5,10 @@ import pageData     from '../data/pageData.js';
 import history      from '../stage/history.js';
 
 import render       from './render.js';
-import watchlist    from './watchlist.js';
-import manager      from './manager.js';
+import elemlist     from './elemlist.js';
+import pagelist  from './pagelist.js';
 
+window.render = render;
 var isSaving = false;
 var core = {
 
@@ -63,11 +64,11 @@ var core = {
 
                     // get Data
                     stageData.countID = pageData.setting.countID;
-                    manager.init();
-                    watchlist.init();
+                    pagelist.init();
+                    elemlist.init();
 
                     //渲染页面和管理页面, 包含了初始化页面滚动
-                    render.renderPage();
+                    render.renderHtmlPage(stageData.index);
                     history.initStatus();
                 }
             },
@@ -89,11 +90,12 @@ var core = {
 
         // 本地
         stageData.countID = pageData.setting.countID;
-        manager.init();
-        watchlist.init();
+        pagelist.init();
+        elemlist.init();
 
         //渲染页面和管理页面, 包含了初始化页面滚动
-        render.renderPage();
+        render.renderUi();
+
         history.initStatus();
 
         this._bind();
@@ -104,7 +106,7 @@ var core = {
             this.updatePage();
         });
         util.$doc.on('click', 'post-template', () => {
-            
+
         })
     }
 };

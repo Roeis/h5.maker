@@ -94,6 +94,11 @@ p {
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
   height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
 }
 .device .wrapper .page {
   height: 100%;
@@ -106,10 +111,7 @@ p {
 }
 .device .wrapper .page.cur:after {
   z-index: -1;
-  top: -2px;
-  left: -2px;
-  box-sizing: initial;
-  border-width: 2px;
+  border-width: 1px;
   border-style: dashed;
 }
 .device .wrapper .cont {
@@ -176,9 +178,9 @@ p {
   display: block;
 }
 
-.history {
+.status {
   position: absolute;
-  left: 20px;
+  left: 110px;
   bottom: 20px;
 }
 
@@ -213,14 +215,14 @@ p {
   width: 100%;
 }
 
-.tool-bar {
+.top-bar {
   position: absolute;
   left: 50%;
   top: 0;
   margin-left: -385px;
   background-color: #e1e0e9;
 }
-.tool-bar li {
+.top-bar li {
   position: relative;
   height: 40px;
   width: 80px;
@@ -228,10 +230,10 @@ p {
   text-align: center;
   float: left;
 }
-.tool-bar li:hover {
+.top-bar li:hover {
   background-color: #d0cfd8;
 }
-.tool-bar li.active:after {
+.top-bar li.active:after {
   position: absolute;
   content: '';
   width: 0px;
@@ -246,7 +248,7 @@ p {
           transform: rotate(-45deg);
 }
 
-.tool-bar-cont {
+.top-bar-cont {
   display: none;
   position: absolute;
   width: 800px;
@@ -256,7 +258,7 @@ p {
   z-index: 9;
   top: 40px;
 }
-.tool-bar-cont .tool-bar-cont-li {
+.top-bar-cont .top-bar-cont-li {
   position: relative;
   width: 100%;
   height: 100%;
@@ -266,12 +268,12 @@ p {
   padding: 50px 30px;
   overflow-y: scroll;
 }
-.tool-bar-cont .tool-elem {
+.top-bar-cont .tool-elem {
   width: 25%;
   float: left;
   margin-bottom: 20px;
 }
-.tool-bar-cont .tool-elem .tool-src {
+.top-bar-cont .tool-elem .tool-src {
   width: 80%;
   height: 100%;
   margin: 0 auto;
@@ -279,14 +281,14 @@ p {
   border: 1px solid #ddd;
   cursor: pointer;
 }
-.tool-bar-cont .tool-elem .tool-src .tool-pic {
+.top-bar-cont .tool-elem .tool-src .tool-pic {
   display: table-cell;
   vertical-align: middle;
 }
-.tool-bar-cont .tool-elem .tool-src:hover {
+.top-bar-cont .tool-elem .tool-src:hover {
   background-color: #eee;
 }
-.tool-bar-cont .tool-elem .tool-src img {
+.top-bar-cont .tool-elem .tool-src img {
   max-width: 100%;
 }
 
@@ -447,7 +449,7 @@ p {
   width: 70px;
   left: 20px;
   top: 20px;
-  bottom: 100px;
+  bottom: 20px;
   background-color: #e1e0e9;
   padding-bottom: 200px;
 }

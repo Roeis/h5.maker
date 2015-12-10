@@ -1,7 +1,6 @@
 module.exports = {
 
     caches: [],
-    cacheMax: 20,
 
     $curElem: null,
 

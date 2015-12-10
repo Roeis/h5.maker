@@ -21,7 +21,7 @@ tasks.register('height', {
     bind(){
         this.$height.on('change.property', function(){
             stageData.curElem.style.height = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

@@ -4,13 +4,13 @@ import _            from 'lodash';
 import util         from '../biz/util.js';
 import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
-import watchlist    from '../page/watchlist.js';
+import elemlist    from '../page/elemlist.js';
 import render       from '../page/render.js';
 import property     from '../property';
 
 import hotkey       from './hotkey.js';
 import contextMenu  from './contextMenu.js';
-import toolbar      from './toolbar.js';
+import topbar       from './topbar.js';
 import operation    from './operation.js';
 
 window.stageData = stageData;
@@ -18,10 +18,11 @@ window.stageData = stageData;
 var core = {
     init() {
 
-        hotkey.init();
         contextMenu.init();
-        toolbar.init();
+        hotkey.init();
         operation.init();
+        property.init();
+        topbar.init();
 
         this._bindEvent();
 
@@ -49,7 +50,6 @@ var core = {
                 id,
                 e = event || window.event;
 
-
             console.log('%cclick', 'color: #f50');
             // 选中元素时
             if(isEditable || isCurrent){
@@ -70,7 +70,7 @@ var core = {
                 stageData.curRole = 'elem';
             }else{
                 // stageData.index
-                $page = $('.page').eq(0);
+                $page = $('.page').eq(stageData.index);
                 stageData.curElems = [];
                 self.clearCurUi();
                 stageData.curRole = 'page';
@@ -83,7 +83,7 @@ var core = {
                 self.syncElem();
                 self.syncRole();
 
-                watchlist.renderStatus(id);
+                elemlist.renderStatus(id);
             }
 
             if($page){
@@ -93,11 +93,6 @@ var core = {
 
             contextMenu.$menu.hide();
         });
-
-        // util.$doc.on('click', '.stage-inner', function(){
-        //     let $this = $(event.target);
-        //     console.log($this);
-        // });
 
     },
 
@@ -138,7 +133,7 @@ var core = {
                     left: ui.position.left + 'px',
                     top: ui.position.top + 'px'
                 });
-                render.renderStep();
+                render.logElemStep();
             }
         });
 
@@ -155,7 +150,7 @@ var core = {
                     width: ui.size.width + 'px',
                     height: ui.size.height + 'px'
                 });
-                render.renderStep();
+                render.logElemStep();
             }
         });
     },
@@ -217,7 +212,6 @@ var core = {
 
     syncGlobal(){
         property.unSyncAll();
-        property.sync(pageData.style);
         property.sync(pageData.setting);
     },
 

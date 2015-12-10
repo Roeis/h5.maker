@@ -36,7 +36,7 @@ tasks.register('background-size', {
                     let sizeElem = stageData.curElem.child.style['background-size'];
                     if(sizeElem !== value){
                         stageData.curElem.child.style['background-size'] = value;
-                        render.renderStep();
+                        render.logElemStep();
                     }
                     break;
                 case 'page':

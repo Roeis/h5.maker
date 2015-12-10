@@ -25,7 +25,7 @@ tasks.register('vertical-align', {
                 oldValue = stageData.curElem.child.style['vertical-align'];
             if(oldValue !== value){
                 stageData.curElem.child.style['vertical-align'] = value;
-                render.renderStep();
+                render.logElemStep();
             }
         });
     },

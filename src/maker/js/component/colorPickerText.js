@@ -49,7 +49,7 @@ class Picker extends React.Component {
             color: rgba
         });
         stageData.curElem.child.style.color = rgba;
-        render.renderElem();
+        render.renderHtmlElem();
     }
 
     handleChangeComplete(){

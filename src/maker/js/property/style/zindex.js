@@ -21,7 +21,7 @@ tasks.register('z-index', {
     bind(){
         this.$zindex.on('change.property', function(){
             stageData.curElem.style['z-index'] = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

@@ -21,7 +21,7 @@ tasks.register('left', {
     bind(){
         this.$left.on('change.property', function(){
             stageData.curElem.style.left = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

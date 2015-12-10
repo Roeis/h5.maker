@@ -4,7 +4,7 @@ import key          from '../biz/key.js';
 import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
 import render       from '../page/render';
-import watchlist    from '../page/watchlist.js';
+import elemlist    from '../page/elemlist.js';
 import operation    from './operation.js';
 import history      from './history.js';
 
@@ -47,15 +47,14 @@ var core = {
         // 复制
         if(CTRL && C){
             operation.copyElem();
-            render.renderPage();
-            watchlist.render();
+            elemlist.render();
         }
 
         // 粘贴
         if(CTRL && V){
             operation.pasteElem();
-            render.renderPage();
-            watchlist.render();
+            render.renderHtmlPage(stageData.index);
+            elemlist.render();
         }
 
         // 保存
@@ -67,8 +66,8 @@ var core = {
         if(CTRL && Z){
             history.undo(function(data){
                 pageData.list[stageData.index] = _.cloneDeep(data);
-                render.renderPage();
-                watchlist.render();
+                render.renderHtmlPage(stageData.index);
+                elemlist.render();
             });
         }
 
@@ -76,8 +75,8 @@ var core = {
         if(CTRL && Y){
             history.redo(function(data){
                 pageData.list[stageData.index] = _.cloneDeep(data);
-                render.renderPage();
-                watchlist.render();
+                render.renderHtmlPage(stageData.index);
+                elemlist.render();
             });
         }
 
@@ -90,7 +89,7 @@ var core = {
             t = SHIFT && DOWN ? t + 9 : t;
             if(t !== top){
                 stageData.curElem.style.top = t + 'px';
-                render.renderStep();
+                render.logElemStep();
             }
         }
 
@@ -102,7 +101,7 @@ var core = {
             l = SHIFT && RIGHT ? l + 9 : l;
             if(l !== left){
                 stageData.curElem.style.left = l + 'px';
-                render.renderStep();
+                render.logElemStep();
             }
         }
     }

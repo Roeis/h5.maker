@@ -23,7 +23,7 @@ tasks.register('video', {
             //check this value if it's ok
             // do something
             stageData.curElem.extra.video = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

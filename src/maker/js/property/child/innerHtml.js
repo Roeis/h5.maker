@@ -28,7 +28,7 @@ tasks.register('innerHtml', {
             let html = stageData.curElem.child.innerHtml;
             if(html !== this.innerHTML){
                 stageData.curElem.child.innerHtml = this.innerHTML;
-                render.renderStep();
+                render.logElemStep();
             }
         });
     },

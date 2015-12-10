@@ -21,7 +21,7 @@ tasks.register('top', {
     bind(){
         this.$top.on('change.property', function(){
             stageData.curElem.style.top = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

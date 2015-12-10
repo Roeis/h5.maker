@@ -4,7 +4,12 @@ import stageData from '../data/stageData.js';
 import pageData  from '../data/pageData.js';
 
 var core = {
-
+    /**
+     * history is array , it includes each page's cache Data
+     * a cache has a cursor , max and data store current page's Data
+     * cursor controls the index of steps
+     *
+     */
     initStatus(){
         for(let i = 0; i < pageData.list.length; i++){
             this.push();
@@ -15,7 +20,7 @@ var core = {
     push(){
         stageData.caches.push({
             data: [],
-            cacheMax: 20,
+            max: 20,
             cursor: -1,
         });
     },
@@ -31,18 +36,21 @@ var core = {
         stageData.caches.splice(stageData.index, 1);
     },
 
+    /**
+     * operate in each cache
+     */
     addStep(step){
         let cache = stageData.caches[stageData.index];
 
         cache.data = cache.data.slice(0, cache.cursor + 1);
 
-        if(cache.data.length >= stageData.cacheMax){
+        if(cache.data.length >= stageData.max){
             cache.data.shift();
         }
         cache.data.push(step);
         cache.cursor = cache.data.length - 1;
 
-        this.renderHistory();
+        this.renderStatus();
     },
     /**
      * 游标
@@ -72,39 +80,29 @@ var core = {
 
     redo(callback){
         this._stepCallback(1, callback);
-        this.renderHistory();
+        this.renderStatus();
     },
 
     undo(callback){
         this._stepCallback(-1, callback);
-        this.renderHistory();
+        this.renderStatus();
     },
 
-    change(){
-
-    },
-
-    clear(){
-        // stageData.cache = [];
-        // stageData.cursor = -1;
-    },
-
-    container: document.getElementById('history'),
-
-    renderHistory(){
+    renderStatus(){
         let cache = stageData.caches[stageData.index];
-        let html = `<div class="history">
-                        <div class="total">
-                            steps: ${cache.data.length}
+
+        let html = `<div class="status">
+                        <div class="st-total">
+                            步数: ${cache.data.length}
                         </div>
-                        <div class="cursor">
-                            cursor: ${cache.cursor}
+                        <div class="st-cursor">
+                            游标: ${cache.cursor}
                         </div>
-                        <div class="page">
-                            page: ${stageData.index + 1}
+                        <div class="st-page">
+                            页码: ${stageData.index + 1}
                         </div>
                     </div>`;
-        this.container.innerHTML = html;
+        document.getElementById('status').innerHTML = html;
     },
     // 记录下当前页面的数据
     pushStep: function(){

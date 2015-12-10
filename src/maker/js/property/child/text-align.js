@@ -25,7 +25,7 @@ tasks.register('text-align', {
                 oldValue = stageData.curElem.child.style['text-align'];
             if(oldValue !== value){
                 stageData.curElem.child.style['text-align'] = value;
-                render.renderStep();
+                render.logElemStep();
             }
         });
     },

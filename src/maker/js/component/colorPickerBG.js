@@ -57,7 +57,7 @@ class Picker extends React.Component {
                 let bgcolor = stageData.curElem.child.style['background-color'];
                 if(bgcolor !== rgba){
                     stageData.curElem.child.style['background-color'] = rgba;
-                    render.renderElem();
+                    render.renderHtmlElem();
                 }
                 break;
             case 'page':

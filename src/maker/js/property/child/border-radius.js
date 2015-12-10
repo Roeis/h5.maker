@@ -21,7 +21,7 @@ tasks.register('border-radius', {
     bind(){
         this.$radius.on('change.property', function(){
             stageData.curElem.child.style['border-radius'] = this.value + 'px';
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

@@ -124,6 +124,124 @@ var data = {
                 'background-color': '#fff',
                 'background-size': 'auto 100%'
             }
+        },
+        {
+            elements: [
+                    {
+                        id: 'm_3',
+                        type: 'audio',
+                        extra: {
+                            link: 'template link 1',
+                            audio: 'audio link 1',
+                            video: '',
+                            analyze: 'analyze 1',
+                            jump: ''
+                        },
+                        child: {
+                            innerHtml: '<div class="test"></div>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'center',
+                                'vertical-align': 'center',
+                                'font-size': '15px',
+                                'color': '#333',
+                                'background-image': 'none',
+                                'background-color': '#f50',
+                                'background-size': '100% auto',
+                                'border-radius': '0px',
+                                'padding': 0
+                            }
+                        },
+                        style: {
+                            'left': '10px',
+                            'top': '200px',
+                            'width': '320px',
+                            'height': '100px',
+                            'z-index': 0,
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
+                        }
+                    },
+                    {
+                        id: 'm_4',
+                        type: 'link',
+                        extra: {
+                            link: 'template link 2',
+                            audio: 'audio link',
+                            video: 'video link',
+                            analyze: 'analyze link 2'
+                        },
+                        child: {
+                            innerHtml: '<p>testtsst sfds</p>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'center',
+                                'vertical-align': 'middle',
+                                'font-size': '15px',
+                                'color': '#f50',
+                                'border-radius': '0px',
+                                'background-color': '#fff',
+                                'background-image': 'none',
+                                'background-size': '100% auto',
+                                'padding': 0
+                            }
+                        },
+                        style: {
+                            'left': '20px',
+                            'top': 0,
+                            'width': '320px',
+                            'height': '100px',
+                            'z-index': 0,
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
+                        }
+                    },
+                    {
+                        id: 'm_5',
+                        type: 'default',
+                        extra: {
+                            link: 'template link 3',
+                            audio: 'audio link',
+                            video: 'video link',
+                            analyze: 'analyze link 23'
+                        },
+                        child: {
+                            innerHtml: '<p>testtsst sfds</p>',
+                            style: {
+                                'transform': 'rotate(0deg)',
+                                'text-align': 'left',
+                                'vertical-align': 'top',
+                                'font-size': '15px',
+                                'color': '#333',
+                                'border-radius': '10px',
+                                'padding': 0,
+                                'background-color': '#fff',
+                                'background-size': 'auto 100%',
+                                'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+                            }
+                        },
+                        style: {
+                            'left': '30px',
+                            'top': '400px',
+                            'width': '200px',
+                            'height': '50px',
+                            'z-index': 0,
+                            'animation-name': 'none',
+                            'animation-duration': '1s',
+                            'animation-delay': '1s',
+                            'opacity': 1
+                        }
+                    }
+                ],
+            style: {
+                'background-image': 'url()',
+                'background-color': '#fff',
+                'background-size': 'auto 100%'
+            }
         }
     ],
 
@@ -134,8 +252,8 @@ var data = {
     },
 
     setting: {
-        isLoop: false,
-        direction: 'vertical',
+        isLoop: true,
+        mode: 'vertical',
         audio: '',
         countID: 6,
         template: 'jump', // slider, commonPage, jump

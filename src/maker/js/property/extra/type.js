@@ -37,7 +37,7 @@ tasks.register('type', {
             //     default:
             //         break;
             // }
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

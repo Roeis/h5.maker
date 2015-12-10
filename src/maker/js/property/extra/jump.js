@@ -22,7 +22,7 @@ tasks.register('jump', {
     bind(){
         this.$jump.on('change.property', function(){
             stageData.curElem.extra.jump = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

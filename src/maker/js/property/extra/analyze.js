@@ -32,7 +32,7 @@ tasks.register('analyze', {
     bind(){
         this.$analyze.on('change.property', function(){
             stageData.curElem.extra.analyze = this.value;
-            render.renderStep();
+            render.logElemStep();
         });
     },
     callback(value){

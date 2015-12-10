@@ -75,7 +75,7 @@ var core = {
 
     horiCenterlize(){
         this._horiCenterlize();
-        render.renderStep();
+        render.logElemStep();
     },
 
     /**
@@ -91,7 +91,7 @@ var core = {
 
     vertCenterlize(){
         this._vertCenterlize();
-        render.renderStep();
+        render.logElemStep();
     },
 
     /**
@@ -100,7 +100,7 @@ var core = {
     centerlize(){
         this._vertCenterlize();
         this._horiCenterlize();
-        render.renderStep();
+        render.logElemStep();
     },
 
     /**
@@ -135,7 +135,7 @@ var core = {
      */
     autoAdjust(){
         this._autoAdjust();
-        render.renderStep();
+        render.logElemStep();
     },
 
     alignCallback(){
@@ -156,7 +156,7 @@ var core = {
     },
 
     turn3d(){
-        $('#stage').toggleClass('stage3D');
+        util.$stage.toggleClass('stage3D');
     },
 
 
@@ -169,11 +169,8 @@ var core = {
         this._bind();
     },
 
-    $el: $('#page'),
-
     _create(){
         let html = `<div class="quick-key">
-                        <p>&nbsp;</p>
                         <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>
                         <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>
                         <a class="btn btn-default" data-func="centerlize">全屏居中</a>
@@ -182,12 +179,13 @@ var core = {
                         <p>&nbsp;</p>
                         <a class="btn btn-default" data-func="turn3d">3D模式</a>
                     </div>`;
-        this.$el.append(html);
+        this.$el = $(html);
+        util.$helper.append(this.$el);
     },
 
     _bind(){
         let self = this;
-        this.$el.on('click', '.quick-key a', function(){
+        this.$el.on('click', 'a', function(){
             let func = $(this).data('func');
             self[func]();
         });
