@@ -32,6 +32,7 @@ var core = {
     _createBtn(){
         let html = `<div class="page-operation">
                         <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>
+                        <a class="btn btn-success post-save">save</a>
                     </div>`;
         this.$page.append(html);
         let html_control = `<div class="page-control">

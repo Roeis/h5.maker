@@ -3,7 +3,38 @@
 var PageModel = require('../model/page.js');
 var TemplateModel = require('../model/template.js');
 
+var core = {
+    filterPageData: function(data){
+        var updateKeys = [
+                'langs',
+                'title',
+                'description',
+                'shareImage',
+                'shareTitle',
+                'shareDesc',
+                'content',
+                'isPublish',
+                'isDeleted',
+            ],
+            editData = {};
 
+        for(var i = 0; i < updateKeys.length; i++){
+            var key = updateKeys[i];
+            if(data[key]){
+                editData[key] = data[key];
+            }
+        }
+
+        return editData;
+    },
+    handleError: function(res, err){
+        res.json({
+            Code: -2,
+            Message: 'error',
+            data: err
+        });
+    }
+};
 /**
  * 获取pageModel的列表
  */
@@ -26,25 +57,22 @@ module.exports = {
             .skip(startIndex)
             .exec(function(err, results){
                 if(err){
-                    return res.json({
-                        Code: -1,
-                        Message: 'err',
-                        data: err
-                    });
+                    core.handleError(res, err);
+                }else{
+                    PageModel.count()
+                        .exec(function(err, count){
+                            var pages = Math.ceil(count/size);
+                            res.json({
+                                Code: 0,
+                                Message: 'ok',
+                                data: {
+                                    list: results,
+                                    total: count,
+                                    pages: pages
+                                }
+                            })
+                        });
                 }
-                PageModel.count()
-                    .exec(function(err, count){
-                        var pages = Math.ceil(count/size);
-                        res.json({
-                            Code: 0,
-                            Message: 'ok',
-                            data: {
-                                list: results,
-                                total: count,
-                                pages: pages
-                            }
-                        })
-                    });
             });
     },
     addPage: function(req, res){
@@ -64,8 +92,9 @@ module.exports = {
 
                         if(collection.length !== 0){
                             res.json({
-                                message: 'repeated alias, please use anthor alias name',
-                                cn: '中文提示：别名重复，请更换别名'
+                                Code: -2,
+                                Message: 'repeated alias, please use anthor alias name',
+                                data: '中文提示：别名重复，请更换别名'
                             });
                         }else{
                             var page = new PageModel(data);
@@ -75,66 +104,76 @@ module.exports = {
 
                             // page.markModified('pages');
                             page.save(function(err, data){
-                                if(err){
-                                    return res.json(err);
+                                var out =  {
+                                    Code: err ? -2 : 0,
+                                    Message: err ? 'error' : 'Add Page OK',
+                                    data: err ? err : data
                                 }
-                                res.json(data);
+                                res.json(out);
                             });
                         }
                     },
                     function(err){
-                        res.json(err);
+                        core.handleError(res, err);
                     }
                 );
         }
     },
+    updateSetting: function(req, res){
+        
+    },
     updatePage: function(req, res){
-        var body = req.body;
-        var data = JSON.parse(body.data);
+        var body = req.body,
+            data = JSON.parse(body.data);
+
+        console.log('update', data);
         if(!req.user){
-            res.send('u has not logged in yet');
+            res.json({
+                Code: -1,
+                Message: 'u has not logged in yet',
+                data: null
+            });
         }else{
             // 先找到数据，判断是否登录用户是否为有权限的用户
-            PageModel.find({alias: data.alias}, function(err, collection){
+            PageModel.find({_id: data.id}, function(err, collection){
                 console.log(req.user.username, collection);
                 if(req.user.username !== collection[0].createUser){
                     res.json({
-                        message: 'sorry u have not the access to edit this page'
+                        Code: -2,
+                        Message: 'sorry u have not the access to edit this page',
+                        data: null
                     });
                 }else{
                     // 数据库更新详细的数据变更
                     console.log(data);
+                    var editData = core.filterPageData(data);
+                    editData.updateUser = req.user.username;
+                    editData.updateDate = Date.now();
 
                     PageModel.update(
-                        {alias: data.alias},
-                        {
-                            $set: {
-                                updateDate: Date.now(),
-                                isPublish: data.isPublish,
-                                title: data.title,
-                                content: data.content,
-                                langs: data.langs
-                            }
-                        },
+                        {_id: data.id},
+                        {$set: editData},
                         function(err, collection){
-                            if(err){
-                                res.json(err);
-                            }else{
-                                res.json({
-                                    message: 'update ok'
-                                });
+                            var out = {
+                                Code: err ? -2 : 0,
+                                Message: err ? 'error' : 'update successfully',
+                                data: err ? err : collection
                             }
+                            res.json(out);
                         });
                 }
             });
         }
     },
+
+
     getPage: function(req, res){
 
         if(!req.query.id){
             res.json({
-                Code: -1,
-                Message: 'please add query'
+                Code: -2,
+                Message: 'please add query',
+                data: null
             });
         }
 
@@ -153,10 +192,11 @@ module.exports = {
                     });
                 },
                 function(err){
-                    res.json(err);
+                    core.handleError(res, err);
                 }
             );
     },
+
     addTemplate: function(req, res){
         var body = req.body,
             data = JSON.parse(body.data);
@@ -167,17 +207,24 @@ module.exports = {
         console.log('data', data);
 
         if(!req.user){
-            res.send('u has not logged in yet');
+            res.json({
+                Code: -1,
+                Message: 'u has not logged in yet',
+                data: null
+            });
         }else{
             var template = new TemplateModel(data);
             template.save(function(err, data){
-                if(err){
-                    res.json(err);
-                }
-                res.json(data);
+                var out = {
+                        Code: err ? -2 : 0,
+                        Message: err ? 'error' : 'add ok',
+                        data: err ? null: data
+                    };
+                res.json(out);
             });
         }
     },
+
     getTemplateList: function(req, res){
         var query = req.query,
             size, index, startIndex;
@@ -195,25 +242,23 @@ module.exports = {
             .skip(startIndex)
             .exec(function(err, results){
                 if(err){
-                    return res.json({
-                        Code: -1,
-                        Message: 'err',
-                        data: err
-                    });
-                }
-                TemplateModel.count()
-                    .exec(function(err, count){
-                        var pages = Math.ceil(count/size);
-                        res.json({
-                            Code: 0,
-                            Message: 'ok',
-                            data: {
-                                list: results,
-                                total: count,
-                                pages: pages
-                            }
+                    core.handleError(res, err);
+                }else{
+                    TemplateModel
+                        .count()
+                        .exec(function(err, count){
+                            var pages = Math.ceil(count / size);
+                            res.json({
+                                Code: 0,
+                                Message: 'ok',
+                                data: {
+                                    list: results,
+                                    total: count,
+                                    pages: pages
+                                }
+                            });
                         });
-                    });
+                }
             });
     }
 

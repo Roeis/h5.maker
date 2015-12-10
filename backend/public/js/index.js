@@ -48,8 +48,8 @@
                                     '<td>'+ html_online +'</td>'+
                                     '<td>'+
                                         '<a href="'+ link +'" target="_blank" type="type" class="btn btn-default">编辑</a>'+
-                                        '<a href="javascript:;" type="type" class="btn btn-default">设置</a>'+
-                                        '<a href="javascript:;" type="type" class="btn btn-default">预览</a>'+
+                                        // '<a href="javascript:;" type="type" class="btn btn-default">设置</a>'+
+                                        // '<a href="javascript:;" type="type" class="btn btn-default">预览</a>'+
                                     '</td>'+
                                 '</tr>';
                     }
@@ -61,33 +61,6 @@
         _bind: function(){
 
         },
-
-        checkData: function(){
-            var data = {
-                alias: '',
-                langs: '',
-                title: '',
-                description: '',
-
-                shareImage: '',
-                shareTitle: '',
-                shareDesc: '',
-            };
-
-            var alias = this._validate(data.alias, 'string', {
-                error: '',
-            });
-        },
-
-        // get data for validation,
-        // data, type(string), msg(object)
-        //
-        _validate: function(data, type, msg){
-            return false;
-        },
-
-
-
 
     };
 

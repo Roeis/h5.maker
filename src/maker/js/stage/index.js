@@ -38,7 +38,7 @@ var core = {
     handleSingleClick(){
         let self = this;
         // 点击范围：在模拟设备的尺寸中
-        util.$doc.on('click', '.device', (event) => {
+        util.$doc.on('click', '.stage-inner', (event) => {
 
             let $this = $(event.target),
                 $parent = $this.closest('.editable'),
@@ -69,7 +69,8 @@ var core = {
                 }
                 stageData.curRole = 'elem';
             }else{
-                $page = $this.closest('.page');
+                // stageData.index
+                $page = $('.page').eq(0);
                 stageData.curElems = [];
                 self.clearCurUi();
                 stageData.curRole = 'page';
@@ -93,10 +94,10 @@ var core = {
             contextMenu.$menu.hide();
         });
 
-        util.$doc.on('click', '.stage-inner', function(){
-            let $this = $(event.target);
-            console.log($this);
-        });
+        // util.$doc.on('click', '.stage-inner', function(){
+        //     let $this = $(event.target);
+        //     console.log($this);
+        // });
 
     },
 

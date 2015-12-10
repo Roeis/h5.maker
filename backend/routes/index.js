@@ -10,6 +10,7 @@ var edit = require('./edit.js');
 
 // 首页
 router.get('/', home.index);
+router.get('/add', home.add);
 
 // 用户登录注册
 router.get('/register', user.getRegister);

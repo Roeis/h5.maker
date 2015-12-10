@@ -194,6 +194,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _bizUtilJs = __webpack_require__(12);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
 	var _dataStageDataJs = __webpack_require__(6);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -222,58 +226,79 @@
 	var core = {
 	
 	    // 更新数据
-	    updateData: function updateData() {
-	
+	    updatePage: function updatePage() {
+	        var self = this;
 	        if (isSaving) {
 	            mu.util.alert('还在保存中...');
 	            return;
 	        }
+	        _dataPageDataJs2['default'].setting.countID = _dataStageDataJs2['default'].countID;
+	        var postData = {
+	            id: self.id,
+	            content: JSON.stringify(_dataPageDataJs2['default'])
+	        };
 	        isSaving = true;
 	        $.ajax({
 	            url: '/api/update/',
 	            type: 'POST',
 	            data: {
-	                data: JSON.stringify(_dataPageDataJs2['default'])
+	                data: JSON.stringify(postData)
 	            },
-	            dataType: 'json',
 	            success: function success(data) {
 	                console.log(data);
 	                mu.util.alert('保存成功');
-	                isSaving = false;
 	            },
-	            error: function error(err) {
+	            complete: function complete(err) {
 	                isSaving = false;
 	            }
 	        });
 	    },
 	
 	    // 获取数据
-	    getInitData: function getInitData(callback) {
-	        var id = mu.util.getQueryString('id');
-	        if (!id) return;
+	    getInitData: function getInitData() {
+	        var self = this;
 	        mu.request.get({
 	            url: '/api/get',
 	            data: {
-	                id: id
+	                id: self.id
 	            },
 	            dataType: 'json',
 	            success: function success(data) {
 	                if (data.Code === 0) {
-	                    var _pageData = JSON.parse(data.data);
-	                    console.log(_pageData);
-	                    // get Data
+	                    var cloneData = JSON.parse(data.data);
+	                    console.log(cloneData);
 	
-	                    callback && callback(_pageData);
+	                    for (var key in cloneData) {
+	                        if (cloneData.hasOwnProperty(key)) {
+	                            _dataPageDataJs2['default'][key] = cloneData[key];
+	                        }
+	                    }
+	
+	                    // get Data
+	                    _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
+	                    _managerJs2['default'].init();
+	                    _watchlistJs2['default'].init();
+	
+	                    //渲染页面和管理页面, 包含了初始化页面滚动
+	                    _renderJs2['default'].renderPage();
+	                    _stageHistoryJs2['default'].initStatus();
 	                }
 	            },
-	            error: function error(err) {}
+	            complete: function complete() {}
 	        });
 	    },
 	
 	    init: function init() {
+	        // // 远程
+	        // this.id = mu.util.getQueryString('id');
+	        // if(!this.id) {
+	        //     mu.util.alert('please has a query');
+	        //     return;
+	        // }
+	        //
+	        // this.getInitData();
 	
-	        this.getInitData();
-	
+	        // 本地
 	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
 	        _managerJs2['default'].init();
 	        _watchlistJs2['default'].init();
@@ -281,6 +306,17 @@
 	        //渲染页面和管理页面, 包含了初始化页面滚动
 	        _renderJs2['default'].renderPage();
 	        _stageHistoryJs2['default'].initStatus();
+	
+	        this._bind();
+	    },
+	
+	    _bind: function _bind() {
+	        var _this = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
+	            _this.updatePage();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', 'post-template', function () {});
 	    }
 	};
 	
@@ -437,18 +473,23 @@
 	            'background-size': 'auto 100%'
 	        }
 	    }],
+	
 	    // generate by render function
-	    listHtml: [],
-	    style: {
-	        'background-image': 'none',
-	        'background-color': 'rgba(0,0,0,0)'
+	    output: {
+	        html: [],
+	        style: ''
 	    },
+	
 	    setting: {
 	        isLoop: false,
 	        direction: 'vertical',
 	        audio: '',
 	        countID: 6,
-	        template: 1
+	        template: 'jump', // slider, commonPage, jump
+	        style: {
+	            'background-image': 'none',
+	            'background-color': 'rgba(0,0,0,0)'
+	        }
 	    }
 	
 	};
@@ -13267,7 +13308,7 @@
 	    $el: $('#watchList'),
 	    render: function render() {
 	        var data = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements,
-	            html = '<div class="elem-list">\n                        <div class="title">\n                            当前图层\n                        </div>\n                        <ul>';
+	            html = '<div class="elem-list">\n                        <div class="title">\n                            \n                        </div>\n                        <ul>';
 	        for (var i = 0; i < data.length; i++) {
 	            html += '<li data-id="' + data[i].id + '">\n                            ' + data[i].id + '\n                        </li>';
 	        }
@@ -13355,7 +13396,7 @@
 	    },
 	
 	    _createBtn: function _createBtn() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>\n                    </div>';
+	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>\n                        <a class="btn btn-success post-save">save</a>\n                    </div>';
 	        this.$page.append(html);
 	        var html_control = '<div class="page-control">\n                                <a class="btn btn-brand" data-role="add">添加</a>\n                                <a class="btn btn-brand" data-role="copy">复制</a>\n                                <a class="btn btn-default" data-role="remove">删除</a>\n                            </div>';
 	        this.$page.find('.page-ul-wrap').append(html_control);
@@ -13605,7 +13646,7 @@
 	    handleSingleClick: function handleSingleClick() {
 	        var self = this;
 	        // 点击范围：在模拟设备的尺寸中
-	        _bizUtilJs2['default'].$doc.on('click', '.device', function (event) {
+	        _bizUtilJs2['default'].$doc.on('click', '.stage-inner', function (event) {
 	
 	            var $this = $(event.target),
 	                $parent = $this.closest('.editable'),
@@ -13635,7 +13676,8 @@
 	                }
 	                _dataStageDataJs2['default'].curRole = 'elem';
 	            } else {
-	                $page = $this.closest('.page');
+	                // stageData.index
+	                $page = $('.page').eq(0);
 	                _dataStageDataJs2['default'].curElems = [];
 	                self.clearCurUi();
 	                _dataStageDataJs2['default'].curRole = 'page';
@@ -13659,10 +13701,10 @@
 	            _contextMenuJs2['default'].$menu.hide();
 	        });
 	
-	        _bizUtilJs2['default'].$doc.on('click', '.stage-inner', function () {
-	            var $this = $(event.target);
-	            console.log($this);
-	        });
+	        // util.$doc.on('click', '.stage-inner', function(){
+	        //     let $this = $(event.target);
+	        //     console.log($this);
+	        // });
 	    },
 	
 	    handleFocusText: function handleFocusText() {

@@ -9,7 +9,7 @@ var core = {
         var data = pageData.list[stageData.index].elements,
             html = `<div class="elem-list">
                         <div class="title">
-                            当前图层
+                            
                         </div>
                         <ul>`;
             for (var i = 0; i < data.length; i++){

@@ -146,7 +146,7 @@ p {
 
 .qrcode-helper {
   position: absolute;
-  right: 570px;
+  right: 465px;
   bottom: 20px;
   font-size: 24px;
   z-index: 9;
@@ -287,7 +287,7 @@ p {
   background-color: #eee;
 }
 .tool-bar-cont .tool-elem .tool-src img {
-  width: 100%;
+  max-width: 100%;
 }
 
 .ppd {
@@ -444,10 +444,10 @@ p {
 
 .page-ul-wrap {
   position: absolute;
-  right: 450px;
-  top: 0;
-  width: 100px;
-  height: 100%;
+  width: 70px;
+  left: 20px;
+  top: 20px;
+  bottom: 100px;
   background-color: #e1e0e9;
   padding-bottom: 200px;
 }
@@ -508,20 +508,22 @@ p {
 
 .quick-key {
   position: absolute;
-  left: 50%;
+  right: 465px;
   top: 50%;
   margin-top: -270px;
-  margin-left: -35px;
   width: 90px;
+}
+.quick-key .btn {
+  width: 100%;
+  background-color: #e1e0e9;
+  border: none;
 }
 
 .elem-list {
   position: absolute;
-  left: 20px;
-  top: 50%;
+  left: 90px;
+  top: 20px;
   padding: 10px;
-  margin-top: -270px;
-  background-color: #e1e0e9;
   border-radius: 2px;
 }
 .elem-list .title {

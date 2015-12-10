@@ -126,18 +126,23 @@ var data = {
             }
         }
     ],
+
     // generate by render function
-    listHtml: [],
-    style: {
-        'background-image': 'none',
-        'background-color': 'rgba(0,0,0,0)'
+    output: {
+        html: [],
+        style: ''
     },
+
     setting: {
         isLoop: false,
         direction: 'vertical',
         audio: '',
         countID: 6,
-        template: 1,
+        template: 'jump', // slider, commonPage, jump
+        style: {
+            'background-image': 'none',
+            'background-color': 'rgba(0,0,0,0)'
+        }
     }
 
 };

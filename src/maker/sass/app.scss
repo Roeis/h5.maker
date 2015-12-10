@@ -168,7 +168,7 @@ $dark-bg: $bg - #0c0c0c;
 // helper
 .qrcode-helper{
     position: absolute;
-    right: 570px;
+    right: 465px;
     bottom: 20px;
     font-size: 24px;
     z-index: 9;
@@ -327,7 +327,7 @@ $dark-bg: $bg - #0c0c0c;
                 background-color: #eee;
             }
             img{
-                width: 100%;
+                max-width: 100%;
             }
         }
     }
@@ -506,10 +506,10 @@ $dark-bg: $bg - #0c0c0c;
 // 页面管理 | page management
 .page-ul-wrap{
     position: absolute;
-    right: 450px;
-    top: 0;
-    width: 100px;
-    height: 100%;
+    width: 70px;
+    left: 20px;
+    top: 20px;
+    bottom: 100px;
     background-color: $dark-bg;
     padding-bottom:200px;
 }
@@ -566,11 +566,15 @@ $dark-bg: $bg - #0c0c0c;
 }
 .quick-key{
     position: absolute;
-    left: 50%;
+    right: 465px;
     top: 50%;
     margin-top: -270px;
-    margin-left: 190px - 225px;
     width: 90px;
+    .btn{
+        width: 100%;
+        background-color: $dark-bg;
+        border: none;
+    }
 }
 
 
@@ -586,11 +590,9 @@ $dark-bg: $bg - #0c0c0c;
 // 查看元素状态
 .elem-list{
     position: absolute;
-    left: 20px;
-    top: 50%;
+    left: 90px;
+    top: 20px;
     padding: 10px;
-    margin-top: -270px;
-    background-color: $dark-bg;
     border-radius: 2px;
     .title{
         border-bottom: 1px solid $bg - #222;
