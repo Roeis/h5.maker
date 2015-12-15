@@ -44,7 +44,7 @@ var core = {
 
         cache.data = cache.data.slice(0, cache.cursor + 1);
 
-        if(cache.data.length >= stageData.max){
+        if(cache.data.length >= cache.max){
             cache.data.shift();
         }
         cache.data.push(step);

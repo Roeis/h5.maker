@@ -67,40 +67,38 @@
 	
 	var _stage2 = _interopRequireDefault(_stage);
 	
+	_stage2['default'].init();
+	_page2['default'].init();
+	_ui2['default'].init();
+	
 	// 拿到data, 绑定数据渲染
-	
+
 	// 事件操作，数据绑定
-	
+
 	// CRUD
 	// add          新增数据到DB
 	// update       更新
 	// delete       更新isDeleted字段，不做真实删除操作，filter出!isDeleted的数据
 	// find         查找，列表
-	
+
 	// 撤销，重做机制 -> 存放数组                                  ok
 	// eg: ['breakpoint html in 1', 'breakpoint html in 2']
 	// 操作数组，push, pop, 渲染html
-	
+
 	// 事件
 	// 多选: 将支持元素, 多元素对齐，水平对齐，垂直对齐
 	// 键盘: 快捷键                                               ok
-	
+
 	// 元素
 	// 旋转: 支持, element, plugin                                ok
 	// 模板
 	// 个性化
-	
+
 	// 公共组件: 上传音频，视频
-	
+
 	// 插件注册
-	
+
 	// 输出页: 等比显示，多模板支持（eg: 阅读报纸）
-	
-	_page2['default'].init();
-	
-	_ui2['default'].init();
-	
-	_stage2['default'].init();
 
 /***/ },
 /* 2 */
@@ -214,11 +212,11 @@
 	
 	var _renderJs2 = _interopRequireDefault(_renderJs);
 	
-	var _elemlistJs = __webpack_require__(267);
+	var _elemlistJs = __webpack_require__(13);
 	
 	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
 	
-	var _pagelistJs = __webpack_require__(270);
+	var _pagelistJs = __webpack_require__(14);
 	
 	var _pagelistJs2 = _interopRequireDefault(_pagelistJs);
 	
@@ -233,6 +231,8 @@
 	            mu.util.alert('还在保存中...');
 	            return;
 	        }
+	        // generate output html
+	        _renderJs2['default'].renderRelease();
 	        _dataPageDataJs2['default'].setting.countID = _dataStageDataJs2['default'].countID;
 	        var postData = {
 	            id: self.id,
@@ -252,6 +252,22 @@
 	            complete: function complete(err) {
 	                isSaving = false;
 	            }
+	        });
+	    },
+	
+	    addTemplate: function addTemplate(postData) {
+	        console.log(postData);
+	        $.ajax({
+	            url: '/api/template/add',
+	            type: 'POST',
+	            data: {
+	                data: JSON.stringify(postData)
+	            },
+	            success: function success(data) {
+	                console.log(data);
+	                mu.util.alert('上传成功');
+	            },
+	            complete: function complete(err) {}
 	        });
 	    },
 	
@@ -281,7 +297,7 @@
 	                    _elemlistJs2['default'].init();
 	
 	                    //渲染页面和管理页面, 包含了初始化页面滚动
-	                    _renderJs2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
+	                    _renderJs2['default'].renderUi();
 	                    _stageHistoryJs2['default'].initStatus();
 	                }
 	            },
@@ -290,24 +306,24 @@
 	    },
 	
 	    init: function init() {
-	        // // 远程
-	        // this.id = mu.util.getQueryString('id');
-	        // if(!this.id) {
-	        //     mu.util.alert('please has a query');
-	        //     return;
-	        // }
-	        //
-	        // this.getInitData();
+	        // 远程
+	        this.id = mu.util.getQueryString('id');
+	        if (!this.id) {
+	            mu.util.alert('please has a query');
+	            return;
+	        }
+	
+	        this.getInitData();
 	
 	        // 本地
-	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
-	        _pagelistJs2['default'].init();
-	        _elemlistJs2['default'].init();
-	
-	        //渲染页面和管理页面, 包含了初始化页面滚动
-	        _renderJs2['default'].renderUi();
-	
-	        _stageHistoryJs2['default'].initStatus();
+	        // stageData.countID = pageData.setting.countID;
+	        // pagelist.init();
+	        // elemlist.init();
+	        //
+	        // //渲染页面和管理页面, 包含了初始化页面滚动
+	        // render.renderUi();
+	        //
+	        // history.initStatus();
 	
 	        this._bind();
 	    },
@@ -318,7 +334,14 @@
 	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
 	            _this.updatePage();
 	        });
-	        _bizUtilJs2['default'].$doc.on('click', 'post-template', function () {});
+	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
+	            var postData = {
+	                name: 'test',
+	                pic: 'pic',
+	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
+	            };
+	            _this.addTemplate(postData);
+	        });
 	    }
 	};
 	
@@ -454,7 +477,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -489,7 +512,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -524,7 +547,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }],
@@ -567,7 +590,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -602,7 +625,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -637,7 +660,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }],
@@ -650,13 +673,13 @@
 	
 	    // generate by render function
 	    output: {
-	        html: [],
+	        html: '',
 	        style: ''
 	    },
 	
 	    setting: {
-	        isLoop: true,
-	        mode: 'vertical',
+	        isloop: true,
+	        direction: 'vertical',
 	        audio: '',
 	        countID: 6,
 	        template: 'jump', // slider, commonPage, jump
@@ -731,7 +754,7 @@
 	
 	        cache.data = cache.data.slice(0, cache.cursor + 1);
 	
-	        if (cache.data.length >= _dataStageDataJs2['default'].max) {
+	        if (cache.data.length >= cache.max) {
 	            cache.data.shift();
 	        }
 	        cache.data.push(step);
@@ -13186,13 +13209,13 @@
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _bizUtilJs = __webpack_require__(6);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
 	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _bizUtilJs = __webpack_require__(6);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
 	/**
 	 * in editor env, it render in inline-style,
@@ -13205,24 +13228,6 @@
 	    // ==========================================
 	    // 生产环境
 	    // ==========================================
-	    // 渲染前台页面正式DOM结构，区别于编辑器渲染
-	    _generateDom: function _generateDom(data) {
-	        var html = '<div class="page"><div class="cont">',
-	            style = '',
-	            childStyle = '';
-	        for (var i = 0; i < data.length; i++) {
-	            var it = data[i];
-	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
-	            style = '#' + it.id + '{' + this._generateStyle(it.style) + '}';
-	            childStyle = '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
-	
-	            console.log(style);
-	            console.log(childStyle);
-	        }
-	        html += '</div></div>';
-	
-	        return html;
-	    },
 	
 	    _toPercent: function _toPercent(key, value) {
 	        var val = parseInt(value, 10);
@@ -13261,17 +13266,42 @@
 	        return _bizUtilJs2['default'].flatStyle(style);
 	    },
 	
+	    // 渲染前台页面正式DOM结构，区别于编辑器渲染
+	    _generateOne: function _generateOne(data) {
+	        var html = '<div class="page"><div class="cont">',
+	            style = '';
+	        for (var i = 0; i < data.length; i++) {
+	            var it = data[i];
+	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
+	            style += '#' + it.id + '{' + this._generateStyle(it.style) + '}';
+	            style += '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
+	        }
+	
+	        html += '</div></div>';
+	
+	        return {
+	            html: html,
+	            style: style
+	        };
+	    },
+	
 	    /**
 	     * 生成 生产环境样式
 	     */
-	    renderRealse: function renderRealse() {
-	        var data = _dataPageDataJs2['default'].list,
-	            html = '';
-	        for (var i = 0; i < data.length; i++) {
-	            var it = data[i].elements;
-	            html += this._generateDom(it);
+	    renderRelease: function renderRelease() {
+	        var list = _dataPageDataJs2['default'].list,
+	            html = '',
+	            style = '';
+	        for (var i = 0; i < list.length; i++) {
+	            var it = list[i],
+	                output = this._generateOne(it.elements),
+	                pageStyle = '.page-' + i + '{' + _bizUtilJs2['default'].flatStyle(it.style) + '}';
+	            html += output.html;
+	            style += pageStyle + output.style;
 	        }
-	        console.log(html);
+	        style = '.wrapper{' + _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style) + '}' + style;
+	        _dataPageDataJs2['default'].output.html = html;
+	        _dataPageDataJs2['default'].output.style = style;
 	    },
 	
 	    // ==========================================
@@ -13391,9 +13421,283 @@
 	module.exports = core;
 
 /***/ },
-/* 13 */,
-/* 14 */,
-/* 15 */,
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var core = {
+	    $el: $('#elemList'),
+	    render: function render() {
+	        var data = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements,
+	            html = '<div class="elem-list">\n                        <div class="title">\n\n                        </div>\n                        <ul>';
+	        for (var i = 0; i < data.length; i++) {
+	            html += '<li data-id="' + data[i].id + '">\n                            ' + data[i].id + '\n                        </li>';
+	        }
+	        html += '</ul>\n                </div>';
+	        this.$el.html(html);
+	    },
+	
+	    bind: function bind() {
+	        var self = this;
+	        this.$el.on('click', 'li', function () {
+	            var $this = $(this),
+	                id = $this.attr('data-id');
+	            $('#' + id).trigger('click');
+	            self.renderStatus(id);
+	        });
+	    },
+	
+	    renderStatus: function renderStatus(id) {
+	        this.$el.find('li').removeClass('active').end().find('[data-id="' + id + '"]').addClass('active');
+	    },
+	
+	    init: function init() {
+	        this.render();
+	        this.bind();
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(6);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _stageHistoryJs = __webpack_require__(9);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _crudJs = __webpack_require__(15);
+	
+	var _crudJs2 = _interopRequireDefault(_crudJs);
+	
+	var _renderJs = __webpack_require__(12);
+	
+	var _renderJs2 = _interopRequireDefault(_renderJs);
+	
+	var _elemlistJs = __webpack_require__(13);
+	
+	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
+	
+	window.crud = _crudJs2['default'];
+	
+	var core = {
+	
+	    init: function init() {
+	        // 创建侧边页码列表
+	        this._create();
+	        _renderJs2['default'].renderPageList();
+	        this._bindPageList();
+	
+	        // 添加CRUD
+	        this._createCRUD();
+	        this._bindCRUD();
+	    },
+	
+	    // 创建页面管理
+	    _create: function _create() {
+	        _bizUtilJs2['default'].$pagelist.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
+	    },
+	
+	    _createCRUD: function _createCRUD() {
+	        var html = '<div class="page-operation">\n                        <a class="btn btn-default post-add-template" title="同步至云端，由管理员审核">上传魔板</a>\n                        <a class="btn btn-success post-save">save</a>\n                    </div>';
+	        _bizUtilJs2['default'].$pagelist.append(html);
+	        var html_control = '<div class="page-control">\n                                <a class="btn btn-brand" data-role="add">添加</a>\n                                <a class="btn btn-brand" data-role="copy">复制</a>\n                                <a class="btn btn-default" data-role="remove">删除</a>\n                            </div>';
+	        _bizUtilJs2['default'].$pagelist.find('.page-ul-wrap').append(html_control);
+	    },
+	
+	    _bindCRUD: function _bindCRUD() {
+	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
+	            _crudJs2['default'].addPage();
+	            _stageHistoryJs2['default'].push();
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
+	            _stageHistoryJs2['default'].pushStep();
+	        }).on('click', '[data-role="copy"]', function () {
+	            _crudJs2['default'].copyPage();
+	            _stageHistoryJs2['default'].push();
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
+	            _stageHistoryJs2['default'].pushStep();
+	        }).on('click', '[data-role="remove"]', function () {
+	            if (_dataPageDataJs2['default'].list.length === 1) {
+	                mu.util.alert('已不能再删除');
+	                return;
+	            }
+	            _crudJs2['default'].removePage();
+	            _stageHistoryJs2['default'].remove();
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
+	            _stageHistoryJs2['default'].renderStatus();
+	        });
+	    },
+	
+	    _bindPageList: function _bindPageList() {
+	        var old_index = undefined,
+	            new_index = undefined,
+	            self = this;
+	
+	        // 页面排序
+	        _bizUtilJs2['default'].$pagelist.find('.page-ul').sortable({
+	            containment: 'parent',
+	            items: '.page-li',
+	            placeholder: 'ui-tip',
+	            start: function start(event, ui) {
+	                old_index = $(ui.item).index();
+	            },
+	            stop: function stop(event, ui) {
+	                new_index = $(ui.item).index();
+	
+	                if (old_index !== new_index) {
+	                    _crudJs2['default'].swapPage(old_index, new_index);
+	                    _stageHistoryJs2['default'].swap(old_index, new_index);
+	
+	                    _renderJs2['default'].renderUi();
+	                    _renderJs2['default'].renderPageList();
+	                    _elemlistJs2['default'].render();
+	                    _stageHistoryJs2['default'].renderStatus();
+	                }
+	            }
+	        });
+	
+	        // 页面跳转
+	        _bizUtilJs2['default'].$pagelist.on('click', '.page-li', function () {
+	            var index = $(this).index(),
+	                cache = _dataStageDataJs2['default'].caches[index];
+	            if (index === _dataStageDataJs2['default'].index || _renderJs2['default'].slider.isAnimating) return;
+	            _dataStageDataJs2['default'].index = index;
+	            _renderJs2['default'].renderPageList(index);
+	            _renderJs2['default'].renderHtmlPage(index);
+	            _renderJs2['default'].slider.jump(index);
+	            // push 初始状态
+	            if (cache.cursor === -1) {
+	                _stageHistoryJs2['default'].pushStep();
+	            } else {
+	                _stageHistoryJs2['default'].renderStatus();
+	            }
+	            _elemlistJs2['default'].render();
+	        });
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(10);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var core = {
+	    //得到当前显示页面内容，保存到数组,
+	    //增加空白分页
+	    addPage: function addPage() {
+	
+	        _dataPageDataJs2['default'].list.push({
+	            elements: [],
+	            style: {
+	                'background-image': 'none',
+	                'background-color': 'rgba(0,0,0,0)',
+	                'background-size': 'auto 100%'
+	            }
+	        });
+	
+	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
+	    },
+	
+	    copyPage: function copyPage() {
+	
+	        // clone the current page data
+	        // plus the global countID on the id of each element
+	        var copy = _lodash2['default'].cloneDeep(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index]);
+	        _lodash2['default'].forEach(copy.elements, function (value, key) {
+	            _dataStageDataJs2['default'].countID++;
+	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
+	        });
+	
+	        _dataPageDataJs2['default'].list.push(copy);
+	
+	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
+	    },
+	
+	    //删除当前分页
+	    removePage: function removePage() {
+	        _dataPageDataJs2['default'].list.splice(_dataStageDataJs2['default'].index, 1);
+	        //note: pageData.length has minused one
+	        var length = _dataPageDataJs2['default'].list.length;
+	        _dataStageDataJs2['default'].index = _dataStageDataJs2['default'].index === length ? length - 1 : _dataStageDataJs2['default'].index;
+	    },
+	
+	    //交换页面顺序
+	    swapPage: function swapPage(oldIndex, newIndex) {
+	
+	        var temp = _dataPageDataJs2['default'].list[oldIndex];
+	
+	        _dataPageDataJs2['default'].list.splice(oldIndex, 1);
+	        _dataPageDataJs2['default'].list.splice(newIndex, 0, temp);
+	
+	        _dataStageDataJs2['default'].index = newIndex;
+	    },
+	
+	    getCurPage: function getCurPage() {
+	        return _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index];
+	    }
+	
+	};
+	
+	module.exports = core;
+
+/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -13417,7 +13721,7 @@
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageElemlistJs = __webpack_require__(267);
+	var _pageElemlistJs = __webpack_require__(13);
 	
 	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
@@ -13429,23 +13733,24 @@
 	
 	var _property2 = _interopRequireDefault(_property);
 	
-	var _hotkeyJs = __webpack_require__(254);
+	var _hotkeyJs = __webpack_require__(257);
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _contextMenuJs = __webpack_require__(265);
+	var _contextMenuJs = __webpack_require__(268);
 	
 	var _contextMenuJs2 = _interopRequireDefault(_contextMenuJs);
 	
-	var _topbarJs = __webpack_require__(268);
+	var _topbarJs = __webpack_require__(269);
 	
 	var _topbarJs2 = _interopRequireDefault(_topbarJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
 	window.stageData = _dataStageDataJs2['default'];
+	window.pageData = _dataPageDataJs2['default'];
 	
 	var core = {
 	    init: function init() {
@@ -13453,8 +13758,8 @@
 	        _contextMenuJs2['default'].init();
 	        _hotkeyJs2['default'].init();
 	        _operationJs2['default'].init();
-	        _property2['default'].init();
 	        _topbarJs2['default'].init();
+	        _property2['default'].init();
 	
 	        this._bindEvent();
 	    },
@@ -13498,13 +13803,11 @@
 	                    _dataStageDataJs2['default'].curElem = self.getById(id);
 	                    self.clearCurUi();
 	                }
-	                _dataStageDataJs2['default'].curRole = 'elem';
 	            } else {
 	                // stageData.index
 	                $page = $('.page').eq(_dataStageDataJs2['default'].index);
 	                _dataStageDataJs2['default'].curElems = [];
 	                self.clearCurUi();
-	                _dataStageDataJs2['default'].curRole = 'page';
 	            }
 	
 	            // 选中当前元素
@@ -13512,7 +13815,7 @@
 	                $temp.addClass('cur');
 	                self.intoEditable($temp);
 	                self.syncElem();
-	                self.syncRole();
+	                self.syncElemRole();
 	
 	                _pageElemlistJs2['default'].renderStatus(id);
 	            }
@@ -13527,7 +13830,7 @@
 	    },
 	
 	    handleFocusText: function handleFocusText() {
-	        _bizUtilJs2['default'].$doc.find('input, .innerHtml').on('focus', function () {
+	        _bizUtilJs2['default'].$doc.find('input, .ql-editor').on('focus', function () {
 	            _dataStageDataJs2['default'].isFocusText = true;
 	        }).on('blur', function () {
 	            _dataStageDataJs2['default'].isFocusText = false;
@@ -13596,7 +13899,7 @@
 	        });
 	    },
 	
-	    syncRole: function syncRole() {
+	    syncElemRole: function syncElemRole() {
 	        var curElem = _dataStageDataJs2['default'].curElem;
 	        // style, child.innerHtml, child.style, extra
 	        // syncValue('link', curElem.extra.link);
@@ -13621,6 +13924,7 @@
 	
 	    syncElem: function syncElem() {
 	        var curElem = _dataStageDataJs2['default'].curElem;
+	        _dataStageDataJs2['default'].curRole = 'elem';
 	        _property2['default'].unSyncAll();
 	        _property2['default'].sync(curElem.style);
 	        _property2['default'].sync(curElem.child.style);
@@ -13630,13 +13934,9 @@
 	
 	    syncPage: function syncPage() {
 	        var pageStyle = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style;
+	        _dataStageDataJs2['default'].curRole = 'page';
 	        _property2['default'].unSyncAll();
 	        _property2['default'].sync(pageStyle);
-	    },
-	
-	    syncGlobal: function syncGlobal() {
-	        _property2['default'].unSyncAll();
-	        _property2['default'].sync(_dataPageDataJs2['default'].setting);
 	    },
 	
 	    getById: function getById(id) {
@@ -13654,7 +13954,7 @@
 	    }
 	
 	};
-	
+	window.stage = core;
 	module.exports = core;
 
 /***/ },
@@ -13683,7 +13983,9 @@
 	// child style
 	'child/innerHtml', 'child/color', 'child/transform', 'child/font-size', 'child/text-align', 'child/vertical-align', 'child/background-color', 'child/background-image', 'child/background-size', 'child/border-radius', 'child/padding',
 	// elem style
-	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-name'];
+	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-name',
+	// global
+	'setting/direction', 'setting/template', 'setting/isloop'];
 	
 	var core = {
 	
@@ -13844,14 +14146,17 @@
 		"./extra/type.js": 243,
 		"./extra/video.js": 244,
 		"./index.js": 17,
-		"./style/animation-delay.js": 245,
-		"./style/animation-duration.js": 246,
-		"./style/animation-name.js": 247,
-		"./style/height.js": 249,
-		"./style/left.js": 250,
-		"./style/top.js": 251,
-		"./style/width.js": 252,
-		"./style/zindex.js": 253,
+		"./setting/direction.js": 245,
+		"./setting/isloop.js": 246,
+		"./setting/template.js": 247,
+		"./style/animation-delay.js": 248,
+		"./style/animation-duration.js": 249,
+		"./style/animation-name.js": 250,
+		"./style/height.js": 252,
+		"./style/left.js": 253,
+		"./style/top.js": 254,
+		"./style/width.js": 255,
+		"./style/zindex.js": 256,
 		"./task.js": 19,
 		"./tasks.js": 18
 	};
@@ -33606,10 +33911,15 @@
 	                    var bgcolorPage = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style['background-color'];
 	                    if (bgcolorPage !== rgba) {
 	                        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style['background-color'] = rgba;
-	                        _pageRenderJs2['default'].logPageStep();
+	                        _pageRenderJs2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
 	                    }
 	                    break;
 	                case 'global':
+	                    var bgcolorGlobal = _dataPageDataJs2['default'].setting.style['background-color'];
+	                    if (bgcolorGlobal !== rgba) {
+	                        _dataPageDataJs2['default'].setting.style['background-color'] = rgba;
+	                        _bizUtilJs2['default'].$wrapper.attr('style', _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style));
+	                    }
 	                    break;
 	                default:
 	                    break;
@@ -33619,7 +33929,9 @@
 	    }, {
 	        key: 'handleChangeComplete',
 	        value: function handleChangeComplete() {
-	            _stageHistoryJs2['default'].pushStep();
+	            if (_dataStageDataJs2['default'].curRole !== 'global') {
+	                _stageHistoryJs2['default'].pushStep();
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -39366,6 +39678,10 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _bizUtilJs = __webpack_require__(6);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
 	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -39389,6 +39705,7 @@
 	        this.$image = this.$el.find('[data-role="bg-image"]');
 	    },
 	    bind: function bind() {
+	
 	        this.$image.on('change.property', function () {
 	            var role = _dataStageDataJs2['default'].curRole;
 	
@@ -39402,6 +39719,8 @@
 	                    _pageRenderJs2['default'].logPageStep();
 	                    break;
 	                case 'global':
+	                    _dataPageDataJs2['default'].setting.style['background-image'] = 'url(' + this.value + ')';
+	                    _bizUtilJs2['default'].$wrapper.attr('style', _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style));
 	                    break;
 	                default:
 	                    break;
@@ -39801,14 +40120,26 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('innerHtml', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf">\n                            <a class="codeMirror"></a>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor" contenteditable="true"></div>\n                        <textarea class="codeOrigin" id="codeOrigin"></textarea>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group edit-text-editor">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf" id="textEditorBar">\n                            <span class="ql-format-group">\n                                <select title="Size" class="ql-size">\n                                    <option value="12px">12</option>\n                                    <option value="14px">14</option>\n                                    <option value="16px">16</option>\n                                    <option value="18px">18</option>\n                                    <option value="24px">24</option>\n                                    <option value="32px">32</option>\n                                    <option value="36px">36</option>\n                                    <option value="48px">48</option>\n                                </select>\n\n                                <span title="Bold" class="ql-format-button ql-bold"></span>\n                                <span title="Italic" class="ql-format-button ql-italic"></span>\n                                <span title="Underline" class="ql-format-button ql-underline"></span>\n                                <span title="Strikethrough" class="ql-format-button ql-strike"></span>\n\n                                <select title="Text Color" class="ql-color">\n                                    <option value="rgb(0, 0, 0)" label="rgb(0, 0, 0)" selected></option>\n                                    <option value="rgb(230, 0, 0)" label="rgb(230, 0, 0)"></option>\n                                    <option value="rgb(255, 153, 0)" label="rgb(255, 153, 0)"></option>\n                                    <option value="rgb(255, 255, 0)" label="rgb(255, 255, 0)"></option>\n                                    <option value="rgb(0, 138, 0)" label="rgb(0, 138, 0)"></option>\n                                    <option value="rgb(0, 102, 204)" label="rgb(0, 102, 204)"></option>\n                                </select>\n                                <select title="Background Color" class="ql-background">\n                                    <option value="rgb(61, 20, 102)" label="rgb(61, 20, 102)"></option>\n                                </select>\n\n                                <select title="Text Alignment" class="ql-align">\n                                    <option value="left" label="Left" selected></option>\n                                    <option value="center" label="Center"></option>\n                                    <option value="right" label="Right"></option>\n                                    <option value="justify" label="Justify"></option>\n                                </select>\n                            </span>\n                            <span class="ql-format-group">\n                                <span title="Link" class="ql-format-button ql-link"></span>\n                                <span title="Image" class="ql-format-button ql-image"></span>\n                            </span>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor"></div>\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
-	        this.$text = this.$el.find('.innerHtml');
+	        this.editor = new Quill('#textEditor', {
+	            styles: false,
+	            modules: {
+	                'toolbar': { container: '#textEditorBar' },
+	                'link-tooltip': true,
+	                'image-tooltip': true
+	            },
+	            theme: 'snow'
+	        });
+	        this.editor.on('text-change', function (delta, source) {
+	            console.log(source);
+	            console.log(delta);
+	        });
 	        // this.$code = this.$el.find('.codeOrigin');
 	    },
 	    bind: function bind() {
-	        this.$text.on('blur', function () {
+	        this.$el.find('.ql-editor').on('blur', function () {
 	            var html = _dataStageDataJs2['default'].curElem.child.innerHtml;
 	            if (html !== this.innerHTML) {
 	                _dataStageDataJs2['default'].curElem.child.innerHtml = this.innerHTML;
@@ -39818,8 +40149,8 @@
 	    },
 	    callback: function callback(value) {
 	        this.$el.show();
-	        this.$text.html(value);
-	        // this.editor.setValue(value);
+	        // this.$text.html(value);
+	        this.editor.setHTML(value);
 	    }
 	});
 
@@ -40022,7 +40353,7 @@
 	        placeholder: '输入统计事件名'
 	    }
 	};
-	var langs = 'en';
+	var langs = 'cn';
 	_tasksJs2['default'].register('analyze', {
 	    html: '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-4">\n                    ' + text[langs].name + '\n                </div>\n                <div class="col-md-8">\n                    <input placeholder="' + text[langs].placeholder + '" class="form-control" data-role="analyze">\n                </div>\n            </div>\n        </div>',
 	    target: '#stylePanel',
@@ -40255,6 +40586,105 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('direction', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        滑动方向\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="direction">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$element = this.$el.find('[data-role="direction"]');
+	    },
+	    bind: function bind() {
+	        this.$element.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.mode = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$element.val(value);
+	    }
+	});
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('isloop', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        循环模式\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="isloop">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$element = this.$el.find('[data-role="isloop"]');
+	    },
+	    bind: function bind() {
+	        this.$element.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.isloop = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$element.val(value);
+	    }
+	});
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('template', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        模板类型\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="template">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$template = this.$el.find('[data-role="template"]');
+	    },
+	    bind: function bind() {
+	        this.$template.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.template = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$template.val(value);
+	    }
+	});
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
 	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
@@ -40288,7 +40718,7 @@
 	});
 
 /***/ },
-/* 246 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40328,7 +40758,7 @@
 	});
 
 /***/ },
-/* 247 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40343,7 +40773,7 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _bizAnimasJs = __webpack_require__(248);
+	var _bizAnimasJs = __webpack_require__(251);
 	
 	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
 	
@@ -40354,7 +40784,7 @@
 	var html = '<div class="edit-group">\n        <div class="row animation-name">\n        ';
 	for (var key in _bizAnimasJs2['default']) {
 	    if (_bizAnimasJs2['default'].hasOwnProperty(key)) {
-	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n            </div>\n            ';
+	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                <div class="' + key + '">\n                    <span>' + _bizAnimasJs2['default'][key].cn + '</span>\n                </div>\n            </div>';
 	    }
 	}
 	html += '\n        </div>\n    </div>';
@@ -40392,7 +40822,7 @@
 	});
 
 /***/ },
-/* 248 */
+/* 251 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40575,7 +41005,7 @@
 	module.exports = animas;
 
 /***/ },
-/* 249 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40614,7 +41044,7 @@
 	});
 
 /***/ },
-/* 250 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40653,7 +41083,7 @@
 	});
 
 /***/ },
-/* 251 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40692,7 +41122,7 @@
 	});
 
 /***/ },
-/* 252 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40731,7 +41161,7 @@
 	});
 
 /***/ },
-/* 253 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40769,7 +41199,7 @@
 	});
 
 /***/ },
-/* 254 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40780,7 +41210,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizKeyJs = __webpack_require__(255);
+	var _bizKeyJs = __webpack_require__(258);
 	
 	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
 	
@@ -40796,11 +41226,11 @@
 	
 	var _pageRender2 = _interopRequireDefault(_pageRender);
 	
-	var _pageElemlistJs = __webpack_require__(267);
+	var _pageElemlistJs = __webpack_require__(13);
 	
 	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -40910,7 +41340,7 @@
 	module.exports = core;
 
 /***/ },
-/* 255 */
+/* 258 */
 /***/ function(module, exports) {
 
 	// 键盘
@@ -40964,7 +41394,7 @@
 	};
 
 /***/ },
-/* 256 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -40987,13 +41417,17 @@
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _templateDataJs = __webpack_require__(257);
+	var _templateDataJs = __webpack_require__(260);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
 	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _property = __webpack_require__(17);
+	
+	var _property2 = _interopRequireDefault(_property);
 	
 	/**
 	 *
@@ -41031,8 +41465,13 @@
 	    },
 	
 	    removeElem: function removeElem() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
 	            index = _lodash2['default'].findIndex(current.elements, { id: _dataStageDataJs2['default'].curElem.id });
+	
 	        current.elements.splice(index, 1);
 	    },
 	
@@ -41041,6 +41480,10 @@
 	    },
 	
 	    pasteElem: function pasteElem(callback) {
+	        if (!_dataStageDataJs2['default'].clone) {
+	            mu.util.alert('找不到可复制的对象');
+	            return;
+	        }
 	        var clone = _lodash2['default'].cloneDeep(_dataStageDataJs2['default'].clone);
 	        _dataStageDataJs2['default'].countID++;
 	        clone.id = 'm_' + _dataStageDataJs2['default'].countID;
@@ -41049,6 +41492,9 @@
 	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(clone);
 	    },
 	
+	    //================================
+	    // 操作元素
+	    //================================
 	    /**
 	     * 水平居中
 	     */
@@ -41061,6 +41507,10 @@
 	    },
 	
 	    horiCenterlize: function horiCenterlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._horiCenterlize();
 	        _pageRenderJs2['default'].logElemStep();
 	    },
@@ -41077,14 +41527,20 @@
 	    },
 	
 	    vertCenterlize: function vertCenterlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._vertCenterlize();
 	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
-	    /**
-	     * 居中
-	     */
+	    // DEPRECATED
 	    centerlize: function centerlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._vertCenterlize();
 	        this._horiCenterlize();
 	        _pageRenderJs2['default'].logElemStep();
@@ -41121,30 +41577,26 @@
 	     * 自动修正尺寸，趋向于10的倍数
 	     */
 	    autoAdjust: function autoAdjust() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._autoAdjust();
 	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
 	    alignCallback: function alignCallback() {},
 	
-	    align: function align(direction) {
-	        switch (direction) {
-	            case 'up':
-	                break;
-	            case 'down':
-	                break;
-	            case 'right':
-	                break;
-	            case 'left':
-	                break;
-	        }
-	    },
-	
 	    turn3d: function turn3d() {
 	        _bizUtilJs2['default'].$stage.toggleClass('stage3D');
 	    },
 	
-	    setting: function setting() {},
+	    setGlobal: function setGlobal() {
+	        _dataStageDataJs2['default'].curRole = 'global';
+	        _property2['default'].unSyncAll();
+	        _property2['default'].sync(_dataPageDataJs2['default'].setting);
+	        _property2['default'].sync(_dataPageDataJs2['default'].setting.style);
+	    },
 	
 	    init: function init() {
 	        this._create();
@@ -41152,7 +41604,7 @@
 	    },
 	
 	    _create: function _create() {
-	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-func="centerlize">全屏居中</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="autoAdjust">自动修正</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="turn3d">3D模式</a>\n                    </div>';
+	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-func="setGlobal">全局设置</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="autoAdjust">自动修正</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="turn3d">3D模式</a>\n                    </div>';
 	        this.$el = $(html);
 	        _bizUtilJs2['default'].$helper.append(this.$el);
 	    },
@@ -41170,27 +41622,27 @@
 	module.exports = core;
 
 /***/ },
-/* 257 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
 	var files = ['elements', 'templates', 'resources', 'apis'];
 	
 	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(259)("./" + files[i] + '.js');
+	    __webpack_require__(262)("./" + files[i] + '.js');
 	}
 	
 	module.exports = _listJs2['default'].data;
 
 /***/ },
-/* 258 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41215,17 +41667,17 @@
 	};
 
 /***/ },
-/* 259 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./apis.js": 260,
-		"./baseElem.js": 261,
-		"./data.js": 257,
-		"./elements.js": 262,
-		"./list.js": 258,
-		"./resources.js": 263,
-		"./templates.js": 264
+		"./apis.js": 263,
+		"./baseElem.js": 264,
+		"./data.js": 260,
+		"./elements.js": 265,
+		"./list.js": 261,
+		"./resources.js": 266,
+		"./templates.js": 267
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -41238,11 +41690,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 259;
+	webpackContext.id = 262;
 
 
 /***/ },
-/* 260 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41253,11 +41705,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41268,7 +41720,7 @@
 	});
 
 /***/ },
-/* 261 */
+/* 264 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41312,7 +41764,7 @@
 	};
 
 /***/ },
-/* 262 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41323,11 +41775,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41683,7 +42135,7 @@
 	};
 
 /***/ },
-/* 263 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41694,11 +42146,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41709,7 +42161,7 @@
 	});
 
 /***/ },
-/* 264 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41720,11 +42172,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
-	
-	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
-	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41997,7 +42445,7 @@
 	};
 
 /***/ },
-/* 265 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42020,7 +42468,7 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _pageElemlistJs = __webpack_require__(267);
+	var _pageElemlistJs = __webpack_require__(13);
 	
 	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
@@ -42028,7 +42476,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -42139,58 +42587,7 @@
 	module.exports = core;
 
 /***/ },
-/* 266 */,
-/* 267 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _dataPageDataJs = __webpack_require__(8);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _dataStageDataJs = __webpack_require__(7);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var core = {
-	    $el: $('#elemList'),
-	    render: function render() {
-	        var data = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements,
-	            html = '<div class="elem-list">\n                        <div class="title">\n\n                        </div>\n                        <ul>';
-	        for (var i = 0; i < data.length; i++) {
-	            html += '<li data-id="' + data[i].id + '">\n                            ' + data[i].id + '\n                        </li>';
-	        }
-	        html += '</ul>\n                </div>';
-	        this.$el.html(html);
-	    },
-	
-	    bind: function bind() {
-	        var self = this;
-	        this.$el.on('click', 'li', function () {
-	            var $this = $(this),
-	                id = $this.attr('data-id');
-	            $('#' + id).trigger('click');
-	            self.renderStatus(id);
-	        });
-	    },
-	
-	    renderStatus: function renderStatus(id) {
-	        this.$el.find('li').removeClass('active').end().find('[data-id="' + id + '"]').addClass('active');
-	    },
-	
-	    init: function init() {
-	        this.render();
-	        this.bind();
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42209,7 +42606,7 @@
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _templateDataJs = __webpack_require__(257);
+	var _templateDataJs = __webpack_require__(260);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
@@ -42217,7 +42614,7 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _pageElemlistJs = __webpack_require__(267);
+	var _pageElemlistJs = __webpack_require__(13);
 	
 	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
@@ -42225,7 +42622,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -42269,29 +42666,61 @@
 	    _insertData: function _insertData() {
 	        var self = this;
 	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
-	            var id = value.id,
-	                html = self._getExtraDom(key);
-	            // 默认循环魔板列表中的数据
-	            _lodash2['default'].forEach(value.list, function (c_value, c_key) {
-	                html += '\n                            <div class="tool-elem">\n                                <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                    <div class="tool-pic">\n                                        <img src="' + c_value.pic + '">\n                                    </div>\n                                </div>\n                            </div>\n                        ';
-	            });
-	
-	            self.$tabCont.find('#' + id).append(html);
-	            // 执行操作不适用循环的那些Tab
+	            var html = self._getExtraDom(key);
+	            html += self._insertTemplateHtml(value.list, key);
+	            self.$tabCont.find('#' + value.id).append(html);
+	            // 除了循环，需要额外操作的那些Tab
 	            self._bindExtra(value, key);
 	        });
 	    },
 	
+	    _insertTemplateHtml: function _insertTemplateHtml(data, key) {
+	        var html = '';
+	        // 默认循环魔板列表中的数据
+	        _lodash2['default'].forEach(data, function (c_value, c_key) {
+	            html += '<div class="tool-elem">\n                            <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                <div class="tool-pic">\n                                    <img src="' + c_value.pic + '">\n                                </div>\n                            </div>\n                        </div>';
+	        });
+	        return html;
+	    },
+	
 	    _bindExtra: function _bindExtra(value, key) {
+	        var self = this;
+	        console.log(value, key);
 	        switch (key) {
 	            case 'resource':
-	                console.log('get ajax request');
+	                // console.log('get ajax request');
 	                /**
 	                 * here need a api
 	                 * 要做一个接口，查找每月或一个query的素材数据
 	                 * 绑定一个加载更多的事件
 	                 */
 	                this.$tabCont.find('#' + value.id).append('get resources from lastest month latest year');
+	                break;
+	            case 'template':
+	                console.log('get ajax request');
+	                $.ajax({
+	                    url: '/api/template/list' + '?v=' + Math.random(),
+	                    type: 'GET',
+	                    data: {
+	                        pageIndex: 1,
+	                        pageSize: 10
+	                    },
+	                    success: function success(data) {
+	                        if (data.Code === 0) {
+	                            var it = data.data.list,
+	                                html = '';
+	                            for (var i = 0; i < it.length; i++) {
+	                                var tmpl = {};
+	                                tmpl[it[i].id] = it[i];
+	                                html += '<div class="tool-elem">\n                                                <div class="tool-src" data-id="' + it[i].id + '" data-category="' + key + '">\n                                                    <div class="tool-pic">\n                                                        <span>' + it[i].name + '</span>\n                                                        <img src="' + it[i].pic + '">\n                                                    </div>\n                                                </div>\n                                            </div>';
+	                                _lodash2['default'].extend(value.list, tmpl);
+	                            }
+	                            self.$tabCont.find('#' + value.id).append(html);
+	                            console.log(data);
+	                        }
+	                    },
+	                    complete: function complete(err) {}
+	                });
 	                break;
 	            default:
 	                break;
@@ -42379,238 +42808,6 @@
 	        this.$elem.find('li').removeClass('active');
 	    }
 	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 269 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(10);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _dataPageDataJs = __webpack_require__(8);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _dataStageDataJs = __webpack_require__(7);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var core = {
-	    //得到当前显示页面内容，保存到数组,
-	    //增加空白分页
-	    addPage: function addPage() {
-	
-	        _dataPageDataJs2['default'].list.push({
-	            elements: [],
-	            style: {
-	                'background-image': 'none',
-	                'background-color': 'rgba(0,0,0,0)',
-	                'background-size': 'auto 100%'
-	            }
-	        });
-	
-	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
-	    },
-	
-	    copyPage: function copyPage() {
-	
-	        // clone the current page data
-	        // plus the global countID on the id of each element
-	        var copy = _lodash2['default'].cloneDeep(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index]);
-	        _lodash2['default'].forEach(copy.elements, function (value, key) {
-	            _dataStageDataJs2['default'].countID++;
-	            value.id = 'm_' + _dataStageDataJs2['default'].countID;
-	        });
-	
-	        _dataPageDataJs2['default'].list.push(copy);
-	
-	        _dataStageDataJs2['default'].index = _dataPageDataJs2['default'].list.length - 1;
-	    },
-	
-	    //删除当前分页
-	    removePage: function removePage() {
-	        _dataPageDataJs2['default'].list.splice(_dataStageDataJs2['default'].index, 1);
-	        //note: pageData.length has minused one
-	        var length = _dataPageDataJs2['default'].list.length;
-	        _dataStageDataJs2['default'].index = _dataStageDataJs2['default'].index === length ? length - 1 : _dataStageDataJs2['default'].index;
-	    },
-	
-	    //交换页面顺序
-	    swapPage: function swapPage(oldIndex, newIndex) {
-	
-	        var temp = _dataPageDataJs2['default'].list[oldIndex];
-	
-	        _dataPageDataJs2['default'].list.splice(oldIndex, 1);
-	        _dataPageDataJs2['default'].list.splice(newIndex, 0, temp);
-	
-	        _dataStageDataJs2['default'].index = newIndex;
-	    },
-	
-	    getCurPage: function getCurPage() {
-	        return _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index];
-	    }
-	
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 270 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(6);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _dataPageDataJs = __webpack_require__(8);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _dataStageDataJs = __webpack_require__(7);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _stageHistoryJs = __webpack_require__(9);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var _crudJs = __webpack_require__(269);
-	
-	var _crudJs2 = _interopRequireDefault(_crudJs);
-	
-	var _renderJs = __webpack_require__(12);
-	
-	var _renderJs2 = _interopRequireDefault(_renderJs);
-	
-	var _elemlistJs = __webpack_require__(267);
-	
-	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
-	
-	window.crud = _crudJs2['default'];
-	
-	var core = {
-	
-	    init: function init() {
-	        // 创建侧边页码列表
-	        this._create();
-	        _renderJs2['default'].renderPageList();
-	        this._bindPageList();
-	
-	        // 添加CRUD
-	        this._createCRUD();
-	        this._bindCRUD();
-	    },
-	
-	    // 创建页面管理
-	    _create: function _create() {
-	        _bizUtilJs2['default'].$pagelist.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
-	    },
-	
-	    _createCRUD: function _createCRUD() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>\n                        <a class="btn btn-success post-save">save</a>\n                    </div>';
-	        _bizUtilJs2['default'].$pagelist.append(html);
-	        var html_control = '<div class="page-control">\n                                <a class="btn btn-brand" data-role="add">添加</a>\n                                <a class="btn btn-brand" data-role="copy">复制</a>\n                                <a class="btn btn-default" data-role="remove">删除</a>\n                            </div>';
-	        _bizUtilJs2['default'].$pagelist.find('.page-ul-wrap').append(html_control);
-	    },
-	
-	    _bindCRUD: function _bindCRUD() {
-	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
-	            _crudJs2['default'].addPage();
-	            _stageHistoryJs2['default'].push();
-	
-	            _renderJs2['default'].renderUi();
-	            _renderJs2['default'].renderPageList();
-	            _elemlistJs2['default'].render();
-	
-	            _stageHistoryJs2['default'].pushStep();
-	        }).on('click', '[data-role="copy"]', function () {
-	            _crudJs2['default'].copyPage();
-	            _stageHistoryJs2['default'].push();
-	
-	            _renderJs2['default'].renderUi();
-	            _renderJs2['default'].renderPageList();
-	            _elemlistJs2['default'].render();
-	
-	            _stageHistoryJs2['default'].pushStep();
-	        }).on('click', '[data-role="remove"]', function () {
-	            if (_dataPageDataJs2['default'].list.length === 1) {
-	                mu.util.alert('已不能再删除');
-	                return;
-	            }
-	            _crudJs2['default'].removePage();
-	            _stageHistoryJs2['default'].remove();
-	
-	            _renderJs2['default'].renderUi();
-	            _renderJs2['default'].renderPageList();
-	            _elemlistJs2['default'].render();
-	
-	            _stageHistoryJs2['default'].renderStatus();
-	        }).on('click', '[data-role="upload"]', function () {
-	            var page = _crudJs2['default'].getCurPage();
-	
-	            console.log(page);
-	            console.log('%csync template with cloud', 'color: #f00;');
-	        });
-	    },
-	
-	    _bindPageList: function _bindPageList() {
-	        var old_index = undefined,
-	            new_index = undefined,
-	            self = this;
-	
-	        // 页面排序
-	        _bizUtilJs2['default'].$pagelist.find('.page-ul').sortable({
-	            containment: 'parent',
-	            items: '.page-li',
-	            placeholder: 'ui-tip',
-	            start: function start(event, ui) {
-	                old_index = $(ui.item).index();
-	            },
-	            stop: function stop(event, ui) {
-	                new_index = $(ui.item).index();
-	
-	                if (old_index !== new_index) {
-	                    _crudJs2['default'].swapPage(old_index, new_index);
-	                    _stageHistoryJs2['default'].swap(old_index, new_index);
-	
-	                    _renderJs2['default'].renderUi();
-	                    _renderJs2['default'].renderPageList();
-	                    _elemlistJs2['default'].render();
-	                    _stageHistoryJs2['default'].renderStatus();
-	                }
-	            }
-	        });
-	
-	        // 页面跳转
-	        _bizUtilJs2['default'].$pagelist.on('click', '.page-li', function () {
-	            var index = $(this).index(),
-	                cache = _dataStageDataJs2['default'].caches[index];
-	            if (index === _dataStageDataJs2['default'].index || _renderJs2['default'].slider.isAnimating) return;
-	            _dataStageDataJs2['default'].index = index;
-	            _renderJs2['default'].renderPageList(index);
-	            _renderJs2['default'].renderHtmlPage(index);
-	            _renderJs2['default'].slider.jump(index);
-	            // push 初始状态
-	            if (cache.cursor === -1) {
-	                _stageHistoryJs2['default'].pushStep();
-	            } else {
-	                _stageHistoryJs2['default'].renderStatus();
-	            }
-	            _elemlistJs2['default'].render();
-	        });
-	    }
 	};
 	
 	module.exports = core;

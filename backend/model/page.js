@@ -8,9 +8,9 @@ var settingSchema = new mongoose.Schema({
     title: {type: String, required: true},
     description: {type: String, required: true},
 
-    shareImage: {type: String, required: true},
-    shareTitle: {type: String, required: true},
-    shareDesc: {type: String, required: true},
+    shareImage: {type: String},
+    shareTitle: {type: String},
+    shareDesc: {type: String},
     content: {type: String, required: true},
     isPublish: {type: Boolean, default: false},
     isDeleted: {type: Boolean, default: false},

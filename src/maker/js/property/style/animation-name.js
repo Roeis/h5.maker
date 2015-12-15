@@ -11,9 +11,10 @@ var html = `<div class="edit-group">
 for (var key in animas){
     if (animas.hasOwnProperty(key)) {
     html += `<div class="anima anima-${key}" data-opacity="${animas[key].opacity}" data-value="${key}">
-                <div class="${key}">${animas[key].cn}</div>
-            </div>
-            `;
+                <div class="${key}">
+                    <span>${animas[key].cn}</span>
+                </div>
+            </div>`;
     }
 }
 html += `

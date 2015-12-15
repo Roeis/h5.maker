@@ -6,8 +6,8 @@ var pageSchema = new mongoose.Schema({
     name: {type: String, required: true},
     pic: {type: String, required: true},
     src: {},
-    isPassed: {type: Boolean},
-    isDeleted: {type: Boolean},
+    isPassed: {type: Boolean, default:false},
+    isDeleted: {type: Boolean, default: false},
 
     createDate: {type: String, default: Date.now, required: true}
 

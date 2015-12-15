@@ -4,6 +4,10 @@ import ui from './ui';
 import page from './page';
 import stage from './stage';
 
+stage.init();
+page.init();
+ui.init();
+
 // 拿到data, 绑定数据渲染
 
 // 事件操作，数据绑定
@@ -32,9 +36,3 @@ import stage from './stage';
 // 插件注册
 
 // 输出页: 等比显示，多模板支持（eg: 阅读报纸）
-
-page.init();
-
-ui.init();
-
-stage.init();

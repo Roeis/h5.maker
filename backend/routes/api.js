@@ -1,5 +1,6 @@
 'use strict';
 
+var _ = require('lodash');
 var PageModel = require('../model/page.js');
 var TemplateModel = require('../model/template.js');
 
@@ -119,9 +120,8 @@ module.exports = {
                 );
         }
     },
-    updateSetting: function(req, res){
-        
-    },
+
+
     updatePage: function(req, res){
         var body = req.body,
             data = JSON.parse(body.data);
@@ -197,12 +197,13 @@ module.exports = {
             );
     },
 
+    /*
+     * 添加模板
+     */
     addTemplate: function(req, res){
         var body = req.body,
             data = JSON.parse(body.data);
-
-        //jsonParse again
-        data = JSON.parse(data.data);
+        console.log(data);
 
         console.log('data', data);
 
@@ -214,6 +215,8 @@ module.exports = {
             });
         }else{
             var template = new TemplateModel(data);
+            template.author = req.user.username;
+
             template.save(function(err, data){
                 var out = {
                         Code: err ? -2 : 0,
@@ -244,6 +247,16 @@ module.exports = {
                 if(err){
                     core.handleError(res, err);
                 }else{
+                    var clone = [];
+                    _.forEach(results, function(value, key){
+                        clone.push({
+                            id: value._id,
+                            author: value.author,
+                            name: value.name,
+                            pic: value.pic,
+                            src: JSON.parse(value.src)
+                        });
+                    });
                     TemplateModel
                         .count()
                         .exec(function(err, count){
@@ -252,7 +265,7 @@ module.exports = {
                                 Code: 0,
                                 Message: 'ok',
                                 data: {
-                                    list: results,
+                                    list: clone,
                                     total: count,
                                     pages: pages
                                 }

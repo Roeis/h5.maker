@@ -1,7 +1,6 @@
 'use strict';
 
 import _            from 'lodash';
-import baseElem     from './baseElem.js';
 import List         from './list.js';
 
 var template = List.register('template', {

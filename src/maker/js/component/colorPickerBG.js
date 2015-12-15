@@ -64,10 +64,15 @@ class Picker extends React.Component {
                 let bgcolorPage = pageData.list[stageData.index].style['background-color'];
                 if(bgcolorPage !== rgba){
                     pageData.list[stageData.index].style['background-color'] = rgba;
-                    render.logPageStep();
+                    render.renderHtmlPage(stageData.index);
                 }
                 break;
             case 'global':
+                let bgcolorGlobal = pageData.setting.style['background-color'];
+                if(bgcolorGlobal !== rgba){
+                    pageData.setting.style['background-color'] = rgba;
+                    util.$wrapper.attr('style', util.flatStyle(pageData.setting.style));
+                }
                 break;
             default:
                 break;
@@ -76,7 +81,9 @@ class Picker extends React.Component {
     }
 
     handleChangeComplete(){
-        history.pushStep();
+        if(stageData.curRole !== 'global'){
+            history.pushStep();
+        }
     }
 
     render(){

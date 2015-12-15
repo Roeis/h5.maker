@@ -50,37 +50,76 @@ var core = {
     _insertData(){
         let self = this;
         _.forEach(template, function(value, key){
-            let id = value.id,
-                html = self._getExtraDom(key);
-            // 默认循环魔板列表中的数据
-            _.forEach(value.list, function(c_value, c_key){
-                html += `
-                            <div class="tool-elem">
-                                <div class="tool-src" data-id="${c_key}" data-category="${key}">
-                                    <div class="tool-pic">
-                                        <img src="${c_value.pic}">
-                                    </div>
-                                </div>
-                            </div>
-                        `;
-            });
-
-            self.$tabCont.find('#'+id).append(html);
-            // 执行操作不适用循环的那些Tab
+            let html = self._getExtraDom(key);
+            html += self._insertTemplateHtml(value.list, key);
+            self.$tabCont.find('#'+ value.id).append(html);
+            // 除了循环，需要额外操作的那些Tab
             self._bindExtra(value, key);
         });
     },
 
+    _insertTemplateHtml(data, key){
+        var html = ``;
+        // 默认循环魔板列表中的数据
+        _.forEach(data, function(c_value, c_key){
+            html += `<div class="tool-elem">
+                            <div class="tool-src" data-id="${c_key}" data-category="${key}">
+                                <div class="tool-pic">
+                                    <img src="${c_value.pic}">
+                                </div>
+                            </div>
+                        </div>`;
+        });
+        return html;
+    },
+
     _bindExtra(value, key){
+        var self = this;
+        console.log(value, key);
         switch(key){
             case 'resource':
-                console.log('get ajax request');
+                // console.log('get ajax request');
                 /**
                  * here need a api
                  * 要做一个接口，查找每月或一个query的素材数据
                  * 绑定一个加载更多的事件
                  */
                 this.$tabCont.find('#' + value.id).append('get resources from lastest month latest year');
+                break;
+            case 'template':
+                console.log('get ajax request');
+                $.ajax({
+                    url: '/api/template/list' + '?v='+Math.random(),
+                    type: 'GET',
+                    data: {
+                        pageIndex: 1,
+                        pageSize: 10
+                    },
+                    success: function(data){
+                        if(data.Code === 0){
+                            let it = data.data.list,
+                                html = ``;
+                            for(let i = 0; i < it.length; i++){
+                                let tmpl = {};
+                                tmpl[it[i].id] = it[i];
+                                html += `<div class="tool-elem">
+                                                <div class="tool-src" data-id="${it[i].id}" data-category="${key}">
+                                                    <div class="tool-pic">
+                                                        <span>${it[i].name}</span>
+                                                        <img src="${it[i].pic}">
+                                                    </div>
+                                                </div>
+                                            </div>`;
+                                _.extend(value.list, tmpl);
+                            }
+                            self.$tabCont.find('#'+ value.id).append(html);
+                            console.log(data);
+                        }
+                    },
+                    complete: function(err){
+
+                    }
+                });
                 break;
             default:
                 break;

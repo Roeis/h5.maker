@@ -94,6 +94,11 @@ p {
   -webkit-transform-style: preserve-3d;
           transform-style: preserve-3d;
   height: 100%;
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: hidden;
 }
 .device .wrapper .page {
   height: 100%;
@@ -106,10 +111,7 @@ p {
 }
 .device .wrapper .page.cur:after {
   z-index: -1;
-  top: -2px;
-  left: -2px;
-  box-sizing: initial;
-  border-width: 2px;
+  border-width: 1px;
   border-style: dashed;
 }
 .device .wrapper .cont {
@@ -146,7 +148,7 @@ p {
 
 .qrcode-helper {
   position: absolute;
-  right: 570px;
+  right: 465px;
   bottom: 20px;
   font-size: 24px;
   z-index: 9;
@@ -176,9 +178,9 @@ p {
   display: block;
 }
 
-.history {
+.status {
   position: absolute;
-  left: 20px;
+  left: 110px;
   bottom: 20px;
 }
 
@@ -213,14 +215,14 @@ p {
   width: 100%;
 }
 
-.tool-bar {
+.top-bar {
   position: absolute;
   left: 50%;
   top: 0;
   margin-left: -385px;
   background-color: #e1e0e9;
 }
-.tool-bar li {
+.top-bar li {
   position: relative;
   height: 40px;
   width: 80px;
@@ -228,10 +230,10 @@ p {
   text-align: center;
   float: left;
 }
-.tool-bar li:hover {
+.top-bar li:hover {
   background-color: #d0cfd8;
 }
-.tool-bar li.active:after {
+.top-bar li.active:after {
   position: absolute;
   content: '';
   width: 0px;
@@ -246,7 +248,7 @@ p {
           transform: rotate(-45deg);
 }
 
-.tool-bar-cont {
+.top-bar-cont {
   display: none;
   position: absolute;
   width: 800px;
@@ -256,7 +258,7 @@ p {
   z-index: 9;
   top: 40px;
 }
-.tool-bar-cont .tool-bar-cont-li {
+.top-bar-cont .top-bar-cont-li {
   position: relative;
   width: 100%;
   height: 100%;
@@ -266,12 +268,12 @@ p {
   padding: 50px 30px;
   overflow-y: scroll;
 }
-.tool-bar-cont .tool-elem {
+.top-bar-cont .tool-elem {
   width: 25%;
   float: left;
   margin-bottom: 20px;
 }
-.tool-bar-cont .tool-elem .tool-src {
+.top-bar-cont .tool-elem .tool-src {
   width: 80%;
   height: 100%;
   margin: 0 auto;
@@ -279,15 +281,15 @@ p {
   border: 1px solid #ddd;
   cursor: pointer;
 }
-.tool-bar-cont .tool-elem .tool-src .tool-pic {
+.top-bar-cont .tool-elem .tool-src .tool-pic {
   display: table-cell;
   vertical-align: middle;
 }
-.tool-bar-cont .tool-elem .tool-src:hover {
+.top-bar-cont .tool-elem .tool-src:hover {
   background-color: #eee;
 }
-.tool-bar-cont .tool-elem .tool-src img {
-  width: 100%;
+.top-bar-cont .tool-elem .tool-src img {
+  max-width: 100%;
 }
 
 .ppd {
@@ -308,9 +310,6 @@ p {
 .edit-group {
   background-color: #fff;
   padding: 20px 10px 0;
-}
-.edit-group:hover {
-  background-color: #fbfbfb;
 }
 .edit-group:last-child .row {
   border-bottom: none;
@@ -399,7 +398,7 @@ p {
   height: 60px;
   margin: 10px;
   box-shadow: 0 0 0 1px #eee;
-  background-color: #f8f8f8;
+  background-color: #fff;
   float: left;
   font-size: 1rem;
   cursor: pointer;
@@ -415,12 +414,17 @@ p {
 }
 .anima div {
   position: absolute;
-  width: 40px;
-  height: 40px;
-  left: 10px;
-  top: 10px;
+  display: table;
+  width: 50px;
+  height: 50px;
+  left: 5px;
+  top: 5px;
   line-height: 20px;
-  background-color: #fff;
+  background-color: #f8f8f8;
+}
+.anima div span {
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .colorpicker {
@@ -428,11 +432,15 @@ p {
   background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
 }
 
+.edit-text-editor {
+  background-color: #fbfbfb;
+}
+
 .innerHtml {
   padding: 10px;
   border: 1px solid #ddd;
-  border-radius: 3px;
   outline: none;
+  background-color: #fff;
 }
 .innerHtml img {
   max-width: 100%;
@@ -444,10 +452,10 @@ p {
 
 .page-ul-wrap {
   position: absolute;
-  right: 450px;
-  top: 0;
-  width: 100px;
-  height: 100%;
+  width: 70px;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
   background-color: #e1e0e9;
   padding-bottom: 200px;
 }
@@ -508,20 +516,22 @@ p {
 
 .quick-key {
   position: absolute;
-  left: 50%;
+  right: 465px;
   top: 50%;
   margin-top: -270px;
-  margin-left: -35px;
   width: 90px;
+}
+.quick-key .btn {
+  width: 100%;
+  background-color: #e1e0e9;
+  border: none;
 }
 
 .elem-list {
   position: absolute;
-  left: 20px;
-  top: 50%;
+  left: 90px;
+  top: 20px;
   padding: 10px;
-  margin-top: -270px;
-  background-color: #e1e0e9;
   border-radius: 2px;
 }
 .elem-list .title {
@@ -581,6 +591,24 @@ p {
   bottom: 0;
   left: 0;
   border: 1px dashed #F50;
+}
+
+.ql-container {
+  overflow: initial !important;
+}
+
+.ql-image-tooltip .preview {
+  height: 100px !important;
+}
+
+.ql-editor {
+  min-height: 100px !important;
+}
+
+.ql-toolbar {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-bottom: none;
 }
 
 .ui-resizable-nw,

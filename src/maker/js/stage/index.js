@@ -14,6 +14,7 @@ import topbar       from './topbar.js';
 import operation    from './operation.js';
 
 window.stageData = stageData;
+window.pageData = pageData;
 
 var core = {
     init() {
@@ -21,8 +22,8 @@ var core = {
         contextMenu.init();
         hotkey.init();
         operation.init();
-        property.init();
         topbar.init();
+        property.init();
 
         this._bindEvent();
 
@@ -67,13 +68,11 @@ var core = {
                     stageData.curElem = self.getById(id);
                     self.clearCurUi();
                 }
-                stageData.curRole = 'elem';
             }else{
                 // stageData.index
                 $page = $('.page').eq(stageData.index);
                 stageData.curElems = [];
                 self.clearCurUi();
-                stageData.curRole = 'page';
             }
 
             // 选中当前元素
@@ -81,7 +80,7 @@ var core = {
                 $temp.addClass('cur');
                 self.intoEditable($temp);
                 self.syncElem();
-                self.syncRole();
+                self.syncElemRole();
 
                 elemlist.renderStatus(id);
             }
@@ -97,7 +96,7 @@ var core = {
     },
 
     handleFocusText(){
-        util.$doc.find('input, .innerHtml')
+        util.$doc.find('input, .ql-editor')
             .on('focus', function(){
                 stageData.isFocusText = true;
             })
@@ -172,7 +171,7 @@ var core = {
         });
     },
 
-    syncRole(){
+    syncElemRole(){
         let curElem = stageData.curElem;
         // style, child.innerHtml, child.style, extra
         // syncValue('link', curElem.extra.link);
@@ -197,6 +196,7 @@ var core = {
 
     syncElem(){
         let curElem = stageData.curElem;
+        stageData.curRole = 'elem';
         property.unSyncAll();
         property.sync(curElem.style);
         property.sync(curElem.child.style);
@@ -206,13 +206,9 @@ var core = {
 
     syncPage(){
         let pageStyle = pageData.list[stageData.index].style;
+        stageData.curRole = 'page';
         property.unSyncAll();
         property.sync(pageStyle);
-    },
-
-    syncGlobal(){
-        property.unSyncAll();
-        property.sync(pageData.setting);
     },
 
     getById(id){
@@ -229,5 +225,5 @@ var core = {
     },
 
 };
-
+window.stage = core;
 module.exports = core;

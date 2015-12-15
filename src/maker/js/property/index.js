@@ -33,17 +33,21 @@ var files = [
     'style/animation-duration',
     'style/animation-delay',
     'style/animation-name',
+    // global
+    'setting/direction',
+    'setting/template',
+    'setting/isloop'
 ];
 
 var core = {
-    
+
     init(){
         this._create();
         this._bind();
 
         //加载和注册属性的事件和DOM
         for(let i = 0; i < files.length; i++){
-            require('./'+files[i]+ '.js');
+            require('./' + files[i] + '.js');
         }
         this.$inputs = this.$el.find('.edit-group');
     },

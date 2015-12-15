@@ -2,8 +2,8 @@
 import _            from 'lodash';
 import pageData     from '../data/pageData.js';
 import stageData    from '../data/stageData.js';
-import util         from '../biz/util.js';
 import history      from '../stage/history.js';
+import util         from '../biz/util.js';
 /**
  * in editor env, it render in inline-style,
  * in realease env, DOM and Style will be seperated,
@@ -15,28 +15,6 @@ var core = {
     // ==========================================
     // 生产环境
     // ==========================================
-    // 渲染前台页面正式DOM结构，区别于编辑器渲染
-    _generateDom(data) {
-        let html = `<div class="page"><div class="cont">`,
-            style = '',
-            childStyle = '';
-        for(let i = 0; i < data.length; i++){
-            let it = data[i];
-                html += `<div class="elem" id="${it.id}" data-role="${it.type}">
-                            <div class="inner">
-                                ${it.child.innerHtml}
-                            </div>
-                        </div>`;
-                style = '#'+ it.id + '{' + this._generateStyle(it.style) + '}';
-                childStyle = '#'+ it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
-
-                console.log(style);
-                console.log(childStyle);
-            }
-        html += `</div></div>`;
-
-        return html;
-    },
 
     _toPercent(key, value){
         let val = parseInt(value, 10);
@@ -85,17 +63,47 @@ var core = {
         return util.flatStyle(style);
     },
 
+    // 渲染前台页面正式DOM结构，区别于编辑器渲染
+    _generateOne(data) {
+        let html = `<div class="page"><div class="cont">`,
+            style = '';
+        for(let i = 0; i < data.length; i++){
+            let it = data[i];
+                html += `<div class="elem" id="${it.id}" data-role="${it.type}">
+                            <div class="inner">
+                                ${it.child.innerHtml}
+                            </div>
+                        </div>`;
+                style += '#'+ it.id + '{' + this._generateStyle(it.style) + '}';
+                style += '#'+ it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
+            }
+
+        html += `</div></div>`;
+
+        return {
+            html: html,
+            style: style
+        };
+    },
+
     /**
      * 生成 生产环境样式
      */
-    renderRealse(){
-        let data = pageData.list,
-            html = '';
-        for(let i = 0; i < data.length; i++){
-            let it  = data[i].elements;
-            html += this._generateDom(it);
+    renderRelease(){
+        let list = pageData.list,
+            html = '',
+            style = '';
+        for(let i = 0; i < list.length; i++){
+            let it = list[i],
+                output = this._generateOne(it.elements),
+                pageStyle = '.page-' + i + '{' + util.flatStyle(it.style) + '}';
+            html += output.html;
+            style += pageStyle + output.style;
         }
-        console.log(html);
+        style = '.wrapper{' + util.flatStyle(pageData.setting.style) + '}' + style;
+        pageData.output.html = html;
+        pageData.output.style = style;
+
     },
 
 
@@ -218,7 +226,7 @@ var core = {
         history.pushStep();
 
         util.$stage.trigger('click');
-    }
+    },
 
 };
 

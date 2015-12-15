@@ -67,40 +67,38 @@
 	
 	var _stage2 = _interopRequireDefault(_stage);
 	
+	_stage2['default'].init();
+	_page2['default'].init();
+	_ui2['default'].init();
+	
 	// 拿到data, 绑定数据渲染
-	
+
 	// 事件操作，数据绑定
-	
+
 	// CRUD
 	// add          新增数据到DB
 	// update       更新
 	// delete       更新isDeleted字段，不做真实删除操作，filter出!isDeleted的数据
 	// find         查找，列表
-	
+
 	// 撤销，重做机制 -> 存放数组                                  ok
 	// eg: ['breakpoint html in 1', 'breakpoint html in 2']
 	// 操作数组，push, pop, 渲染html
-	
+
 	// 事件
 	// 多选: 将支持元素, 多元素对齐，水平对齐，垂直对齐
 	// 键盘: 快捷键                                               ok
-	
+
 	// 元素
 	// 旋转: 支持, element, plugin                                ok
 	// 模板
 	// 个性化
-	
+
 	// 公共组件: 上传音频，视频
-	
+
 	// 插件注册
-	
+
 	// 输出页: 等比显示，多模板支持（eg: 阅读报纸）
-	
-	_page2['default'].init();
-	
-	_ui2['default'].init();
-	
-	_stage2['default'].init();
 
 /***/ },
 /* 2 */
@@ -194,34 +192,35 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _renderJs = __webpack_require__(11);
+	var _renderJs = __webpack_require__(12);
 	
 	var _renderJs2 = _interopRequireDefault(_renderJs);
 	
-	var _watchlistJs = __webpack_require__(13);
+	var _elemlistJs = __webpack_require__(13);
 	
-	var _watchlistJs2 = _interopRequireDefault(_watchlistJs);
+	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
 	
-	var _managerJs = __webpack_require__(14);
+	var _pagelistJs = __webpack_require__(14);
 	
-	var _managerJs2 = _interopRequireDefault(_managerJs);
+	var _pagelistJs2 = _interopRequireDefault(_pagelistJs);
 	
+	window.render = _renderJs2['default'];
 	var isSaving = false;
 	var core = {
 	
@@ -232,6 +231,9 @@
 	            mu.util.alert('还在保存中...');
 	            return;
 	        }
+	        // generate output html
+	        _renderJs2['default'].renderRelease();
+	        _dataPageDataJs2['default'].setting.countID = _dataStageDataJs2['default'].countID;
 	        var postData = {
 	            id: self.id,
 	            content: JSON.stringify(_dataPageDataJs2['default'])
@@ -253,6 +255,22 @@
 	        });
 	    },
 	
+	    addTemplate: function addTemplate(postData) {
+	        console.log(postData);
+	        $.ajax({
+	            url: '/api/template/add',
+	            type: 'POST',
+	            data: {
+	                data: JSON.stringify(postData)
+	            },
+	            success: function success(data) {
+	                console.log(data);
+	                mu.util.alert('上传成功');
+	            },
+	            complete: function complete(err) {}
+	        });
+	    },
+	
 	    // 获取数据
 	    getInitData: function getInitData() {
 	        var self = this;
@@ -266,19 +284,20 @@
 	                if (data.Code === 0) {
 	                    var cloneData = JSON.parse(data.data);
 	                    console.log(cloneData);
+	
 	                    for (var key in cloneData) {
 	                        if (cloneData.hasOwnProperty(key)) {
 	                            _dataPageDataJs2['default'][key] = cloneData[key];
 	                        }
 	                    }
+	
 	                    // get Data
-	                    //
 	                    _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
-	                    _managerJs2['default'].init();
-	                    _watchlistJs2['default'].init();
+	                    _pagelistJs2['default'].init();
+	                    _elemlistJs2['default'].init();
 	
 	                    //渲染页面和管理页面, 包含了初始化页面滚动
-	                    _renderJs2['default'].renderPage();
+	                    _renderJs2['default'].renderUi();
 	                    _stageHistoryJs2['default'].initStatus();
 	                }
 	            },
@@ -298,11 +317,12 @@
 	
 	        // 本地
 	        // stageData.countID = pageData.setting.countID;
-	        // manager.init();
-	        // watchlist.init();
+	        // pagelist.init();
+	        // elemlist.init();
 	        //
 	        // //渲染页面和管理页面, 包含了初始化页面滚动
-	        // render.renderPage();
+	        // render.renderUi();
+	        //
 	        // history.initStatus();
 	
 	        this._bind();
@@ -313,6 +333,14 @@
 	
 	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
 	            _this.updatePage();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
+	            var postData = {
+	                name: 'test',
+	                pic: 'pic',
+	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
+	            };
+	            _this.addTemplate(postData);
 	        });
 	    }
 	};
@@ -326,9 +354,68 @@
 	'use strict';
 	
 	module.exports = {
+	    SCREEN_WIDTH: 360,
+	    SCREEN_HEIGHT: 540,
+	
+	    tofixed10: function tofixed10(value) {
+	        var delta = value % 10,
+	            base = value / 10;
+	        return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
+	    },
+	
+	    rgba: function rgba(color) {
+	        var rgba = [];
+	        for (var key in color) {
+	            if (color.hasOwnProperty(key)) {
+	                rgba.push(color[key]);
+	            }
+	        }
+	        return 'rgba(' + rgba.join(',') + ')';
+	    },
+	
+	    // DEPRECATED
+	    _insertStyle: function _insertStyle(styleSheet, styleID) {
+	
+	        var style = document.createElement('style');
+	        var doc = document.head;
+	        style.id = styleID;
+	        doc.appendChild(style);
+	
+	        style.appendChild(document.createTextNode(styleSheet));
+	    },
+	
+	    percentValue: function percentValue(value, standard) {
+	        return (value / standard * 100).toFixed(0) + '%';
+	    },
+	
+	    //渲染
+	    flatStyle: function flatStyle(obj) {
+	
+	        var str = _.map(obj, function (value, key) {
+	            return key + ':' + value + ';';
+	        }).join('');
+	
+	        return str;
+	    },
+	    $doc: $(document),
+	    $body: $('body'),
+	    $window: $(window),
+	    $wrapper: $('.wrapper'),
+	    $pagelist: $('#pageList'),
+	    $property: $('#property'),
+	    $helper: $('#helper'),
+	    $stage: $('#stage')
+	};
+
+/***/ },
+/* 7 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	module.exports = {
 	
 	    caches: [],
-	    cacheMax: 20,
 	
 	    $curElem: null,
 	
@@ -345,7 +432,7 @@
 	};
 
 /***/ },
-/* 7 */
+/* 8 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -390,7 +477,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -425,7 +512,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }, {
@@ -460,7 +547,7 @@
 	                'z-index': 0,
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
-	                'animation-delay': '1s',
+	                'animation-delay': '0s',
 	                'opacity': 1
 	            }
 	        }],
@@ -469,19 +556,137 @@
 	            'background-color': '#fff',
 	            'background-size': 'auto 100%'
 	        }
+	    }, {
+	        elements: [{
+	            id: 'm_3',
+	            type: 'audio',
+	            extra: {
+	                link: 'template link 1',
+	                audio: 'audio link 1',
+	                video: '',
+	                analyze: 'analyze 1',
+	                jump: ''
+	            },
+	            child: {
+	                innerHtml: '<div class="test"></div>',
+	                style: {
+	                    'transform': 'rotate(0deg)',
+	                    'text-align': 'center',
+	                    'vertical-align': 'center',
+	                    'font-size': '15px',
+	                    'color': '#333',
+	                    'background-image': 'none',
+	                    'background-color': '#f50',
+	                    'background-size': '100% auto',
+	                    'border-radius': '0px',
+	                    'padding': 0
+	                }
+	            },
+	            style: {
+	                'left': '10px',
+	                'top': '200px',
+	                'width': '320px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '0s',
+	                'opacity': 1
+	            }
+	        }, {
+	            id: 'm_4',
+	            type: 'link',
+	            extra: {
+	                link: 'template link 2',
+	                audio: 'audio link',
+	                video: 'video link',
+	                analyze: 'analyze link 2'
+	            },
+	            child: {
+	                innerHtml: '<p>testtsst sfds</p>',
+	                style: {
+	                    'transform': 'rotate(0deg)',
+	                    'text-align': 'center',
+	                    'vertical-align': 'middle',
+	                    'font-size': '15px',
+	                    'color': '#f50',
+	                    'border-radius': '0px',
+	                    'background-color': '#fff',
+	                    'background-image': 'none',
+	                    'background-size': '100% auto',
+	                    'padding': 0
+	                }
+	            },
+	            style: {
+	                'left': '20px',
+	                'top': 0,
+	                'width': '320px',
+	                'height': '100px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '0s',
+	                'opacity': 1
+	            }
+	        }, {
+	            id: 'm_5',
+	            type: 'default',
+	            extra: {
+	                link: 'template link 3',
+	                audio: 'audio link',
+	                video: 'video link',
+	                analyze: 'analyze link 23'
+	            },
+	            child: {
+	                innerHtml: '<p>testtsst sfds</p>',
+	                style: {
+	                    'transform': 'rotate(0deg)',
+	                    'text-align': 'left',
+	                    'vertical-align': 'top',
+	                    'font-size': '15px',
+	                    'color': '#333',
+	                    'border-radius': '10px',
+	                    'padding': 0,
+	                    'background-color': '#fff',
+	                    'background-size': 'auto 100%',
+	                    'background-image': 'url(http://www.hujiang.com/2010/images/default2015/logo.png)'
+	                }
+	            },
+	            style: {
+	                'left': '30px',
+	                'top': '400px',
+	                'width': '200px',
+	                'height': '50px',
+	                'z-index': 0,
+	                'animation-name': 'none',
+	                'animation-duration': '1s',
+	                'animation-delay': '0s',
+	                'opacity': 1
+	            }
+	        }],
+	        style: {
+	            'background-image': 'url()',
+	            'background-color': '#fff',
+	            'background-size': 'auto 100%'
+	        }
 	    }],
+	
 	    // generate by render function
-	    listHtml: [],
-	    style: {
-	        'background-image': 'none',
-	        'background-color': 'rgba(0,0,0,0)'
+	    output: {
+	        html: '',
+	        style: ''
 	    },
+	
 	    setting: {
-	        isLoop: false,
+	        isloop: true,
 	        direction: 'vertical',
 	        audio: '',
 	        countID: 6,
-	        template: 1
+	        template: 'jump', // slider, commonPage, jump
+	        style: {
+	            'background-image': 'none',
+	            'background-color': 'rgba(0,0,0,0)'
+	        }
 	    }
 	
 	};
@@ -489,27 +694,32 @@
 	module.exports = data;
 
 /***/ },
-/* 8 */
+/* 9 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
 	var core = {
-	
+	    /**
+	     * history is array , it includes each page's cache Data
+	     * a cache has a cursor , max and data store current page's Data
+	     * cursor controls the index of steps
+	     *
+	     */
 	    initStatus: function initStatus() {
 	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
 	            this.push();
@@ -520,7 +730,7 @@
 	    push: function push() {
 	        _dataStageDataJs2['default'].caches.push({
 	            data: [],
-	            cacheMax: 20,
+	            max: 20,
 	            cursor: -1
 	        });
 	    },
@@ -536,18 +746,21 @@
 	        _dataStageDataJs2['default'].caches.splice(_dataStageDataJs2['default'].index, 1);
 	    },
 	
+	    /**
+	     * operate in each cache
+	     */
 	    addStep: function addStep(step) {
 	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index];
 	
 	        cache.data = cache.data.slice(0, cache.cursor + 1);
 	
-	        if (cache.data.length >= _dataStageDataJs2['default'].cacheMax) {
+	        if (cache.data.length >= cache.max) {
 	            cache.data.shift();
 	        }
 	        cache.data.push(step);
 	        cache.cursor = cache.data.length - 1;
 	
-	        this.renderHistory();
+	        this.renderStatus();
 	    },
 	    /**
 	     * 游标
@@ -577,27 +790,19 @@
 	
 	    redo: function redo(callback) {
 	        this._stepCallback(1, callback);
-	        this.renderHistory();
+	        this.renderStatus();
 	    },
 	
 	    undo: function undo(callback) {
 	        this._stepCallback(-1, callback);
-	        this.renderHistory();
+	        this.renderStatus();
 	    },
 	
-	    change: function change() {},
-	
-	    clear: function clear() {
-	        // stageData.cache = [];
-	        // stageData.cursor = -1;
-	    },
-	
-	    container: document.getElementById('history'),
-	
-	    renderHistory: function renderHistory() {
+	    renderStatus: function renderStatus() {
 	        var cache = _dataStageDataJs2['default'].caches[_dataStageDataJs2['default'].index];
-	        var html = '<div class="history">\n                        <div class="total">\n                            steps: ' + cache.data.length + '\n                        </div>\n                        <div class="cursor">\n                            cursor: ' + cache.cursor + '\n                        </div>\n                        <div class="page">\n                            page: ' + (_dataStageDataJs2['default'].index + 1) + '\n                        </div>\n                    </div>';
-	        this.container.innerHTML = html;
+	
+	        var html = '<div class="status">\n                        <div class="st-total">\n                            步数: ' + cache.data.length + '\n                        </div>\n                        <div class="st-cursor">\n                            游标: ' + cache.cursor + '\n                        </div>\n                        <div class="st-page">\n                            页码: ' + (_dataStageDataJs2['default'].index + 1) + '\n                        </div>\n                    </div>';
+	        document.getElementById('status').innerHTML = html;
 	    },
 	    // 记录下当前页面的数据
 	    pushStep: function pushStep() {
@@ -611,7 +816,7 @@
 	module.exports = core;
 
 /***/ },
-/* 9 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -12966,10 +13171,10 @@
 	  }
 	}.call(this));
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module), (function() { return this; }())))
 
 /***/ },
-/* 10 */
+/* 11 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -12985,69 +13190,44 @@
 
 
 /***/ },
-/* 11 */
+/* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _bizUtilJs = __webpack_require__(12);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
+	var _bizUtilJs = __webpack_require__(6);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	/**
+	 * in editor env, it render in inline-style,
+	 * in realease env, DOM and Style will be seperated,
+	 * Style will be put into a style tag in head
+	 * elements map style with their id
+	 */
 	var core = {
-	    /**
-	     * in editor env, it render in inline-style,
-	     * in realease env, DOM and Style will be seperated,
-	     * Style will be put into a style tag in head
-	     * elements map style with their id
-	     */
 	
-	    // 渲染前台页面正式DOM结构，区别于编辑器渲染
-	    _generateDom: function _generateDom(data) {
-	        var html = '\n            <div class="page">\n                <div class="cont">\n                ';
-	        var style = '',
-	            childStyle = '';
-	        for (var i = 0; i < data.length; i++) {
-	            var it = data[i];
-	            html += '\n                    <div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                        <div class="inner">\n                            ' + it.child.innerHtml + '\n                        </div>\n                    </div>\n                    ';
-	            style = '#' + it.id + '{' + this._generateStyle(it.style) + '}';
-	            childStyle = '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
-	
-	            console.log(style);
-	            console.log(childStyle);
-	        }
-	        html += '\n                </div>\n            </div>\n            ';
-	
-	        return html;
-	    },
-	
-	    renderRealse: function renderRealse() {
-	        var data = _dataPageDataJs2['default'].list,
-	            html = '';
-	        for (var i = 0; i < data.length; i++) {
-	            var it = data[i].elements;
-	            html += this._generateDom(it);
-	        }
-	        console.log(html);
-	    },
+	    // ==========================================
+	    // 生产环境
+	    // ==========================================
 	
 	    _toPercent: function _toPercent(key, value) {
 	        var val = parseInt(value, 10);
@@ -13069,16 +13249,15 @@
 	
 	        style = _lodash2['default'].cloneDeep(style);
 	
+	        // 处理宽高位置
 	        for (var i = 0; i < needReCaculate.length; i++) {
 	            var value = style[needReCaculate[i]];
 	            if (value) {
 	                style[needReCaculate[i]] = this._toPercent(needReCaculate[i], value);
 	            }
 	        }
-	        //处理宽高位置
-	
+	        // 处理webkit 前缀
 	        for (var i = 0; i < needPrefix.length; i++) {
-	            // 处理webkit 前缀
 	            if (style[needPrefix[i]]) {
 	                style['-webkit-' + needPrefix[i]] = style[needPrefix[i]];
 	            }
@@ -13087,13 +13266,111 @@
 	        return _bizUtilJs2['default'].flatStyle(style);
 	    },
 	
-	    // 渲染单页，当前
-	    renderPage: function renderPage() {
+	    // 渲染前台页面正式DOM结构，区别于编辑器渲染
+	    _generateOne: function _generateOne(data) {
+	        var html = '<div class="page"><div class="cont">',
+	            style = '';
+	        for (var i = 0; i < data.length; i++) {
+	            var it = data[i];
+	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
+	            style += '#' + it.id + '{' + this._generateStyle(it.style) + '}';
+	            style += '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
+	        }
 	
-	        var idx = _dataStageDataJs2['default'].index,
-	            data = _dataPageDataJs2['default'].list[idx],
+	        html += '</div></div>';
+	
+	        return {
+	            html: html,
+	            style: style
+	        };
+	    },
+	
+	    /**
+	     * 生成 生产环境样式
+	     */
+	    renderRelease: function renderRelease() {
+	        var list = _dataPageDataJs2['default'].list,
 	            html = '',
-	            pageStyle = _bizUtilJs2['default'].flatStyle(data.style);
+	            style = '';
+	        for (var i = 0; i < list.length; i++) {
+	            var it = list[i],
+	                output = this._generateOne(it.elements),
+	                pageStyle = '.page-' + i + '{' + _bizUtilJs2['default'].flatStyle(it.style) + '}';
+	            html += output.html;
+	            style += pageStyle + output.style;
+	        }
+	        style = '.wrapper{' + _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style) + '}' + style;
+	        _dataPageDataJs2['default'].output.html = html;
+	        _dataPageDataJs2['default'].output.style = style;
+	    },
+	
+	    // ==========================================
+	    // 编辑环境
+	    // ==========================================
+	
+	    _listLoop: function _listLoop(callback) {
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            callback(i);
+	        }
+	    },
+	
+	    renderUi: function renderUi() {
+	        this.resetPageHtml();
+	        this.resetPageUi();
+	    },
+	    //
+	    resetPageHtml: function resetPageHtml() {
+	        var html = '',
+	            self = this;
+	        this._listLoop(function (i) {
+	            html += '<div class="page"></div>';
+	        });
+	
+	        _bizUtilJs2['default'].$wrapper.html(html);
+	        this.$page = _bizUtilJs2['default'].$wrapper.find('.page');
+	
+	        this._listLoop(function (i) {
+	            self.renderHtmlPage(i);
+	        });
+	    },
+	
+	    resetPageUi: function resetPageUi() {
+	        var self = this,
+	            mode = _dataPageDataJs2['default'].setting.mode,
+	            isLoop = _dataPageDataJs2['default'].setting.isLoop;
+	
+	        this.slider = new MuPage('.page', {
+	            isLoop: isLoop,
+	            pageStart: _dataStageDataJs2['default'].index,
+	            mode: mode,
+	            beforeSlide: function beforeSlide($pagein, $pageout) {},
+	            afterSlide: function afterSlide($pagein, $pageout, index) {
+	
+	                _bizUtilJs2['default'].$stage.trigger('click');
+	            }
+	        });
+	        _bizUtilJs2['default'].$stage.trigger('click');
+	    },
+	
+	    renderPageList: function renderPageList(idx) {
+	        var html = '';
+	        idx = idx || _dataStageDataJs2['default'].index;
+	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
+	            var active = i === idx ? 'active' : '';
+	            html += '<div class="page-li ' + active + '">' + (i + 1) + '</div>';
+	        }
+	        html += '</div>';
+	
+	        _bizUtilJs2['default'].$pagelist.find('.page-ul').html(html);
+	    },
+	
+	    // 渲染单页，当前
+	    renderHtmlPage: function renderHtmlPage(idx) {
+	
+	        var data = _dataPageDataJs2['default'].list[idx],
+	            $page = this.$page.eq(idx),
+	            pageStyle = _bizUtilJs2['default'].flatStyle(data.style),
+	            html = '<div class="cont">';
 	
 	        for (var i = 0; i < data.elements.length; i++) {
 	            var it = data.elements[i],
@@ -13102,28 +13379,30 @@
 	
 	            html += '<div class="editable" id="' + it.id + '" style="' + style + '">\n                        <div class="inner" style="' + childStyle + '">\n                            ' + it.child.innerHtml + '\n                        </div>\n                    </div>';
 	        }
+	        html += '</div>';
 	
-	        $('.page').eq(0).attr('style', pageStyle).find('.cont').html(html);
+	        $page.html(html).attr('style', pageStyle);
 	    },
+	
 	    /**
 	     * 渲染单个元素，避免整页动画重渲染
 	     */
-	    renderElem: function renderElem() {
+	    renderHtmlElem: function renderHtmlElem() {
 	        var it = _dataStageDataJs2['default'].curElem,
-	            $target = $('#' + it.id),
+	            $elem = $('#' + it.id),
 	            style = _bizUtilJs2['default'].flatStyle(it.style),
-	            childStyle = _bizUtilJs2['default'].flatStyle(it.child.style);
+	            childStyle = _bizUtilJs2['default'].flatStyle(it.child.style),
+	            html = '<div class="inner" style="' + childStyle + '">\n                        ' + it.child.innerHtml + '\n                    </div>';
 	
-	        $target.attr('style', style);
-	        $target.html('<div class="inner" style="' + childStyle + '">\n                        ' + it.child.innerHtml + '\n                    </div>');
+	        $elem.attr('style', style);
+	        $elem.html(html);
 	    },
 	
 	    /**
 	     * 渲染数量减少为当前元素，历史记录为当前页面
 	     */
-	    renderStep: function renderStep() {
-	        this.renderElem();
-	        // this.renderPage();
+	    logElemStep: function logElemStep() {
+	        this.renderHtmlElem();
 	        _stageHistoryJs2['default'].pushStep();
 	        if (_dataStageDataJs2['default'].curElem) {
 	            $('#' + _dataStageDataJs2['default'].curElem.id).trigger('click');
@@ -13131,154 +13410,15 @@
 	    },
 	
 	    logPageStep: function logPageStep() {
-	        this.renderPage();
+	        this.renderHtmlPage(_dataStageDataJs2['default'].index);
 	        _stageHistoryJs2['default'].pushStep();
 	
-	        $('.device').trigger('click');
+	        _bizUtilJs2['default'].$stage.trigger('click');
 	    }
 	
 	};
 	
 	module.exports = core;
-
-/***/ },
-/* 12 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	module.exports = {
-	    $doc: $(document),
-	    SCREEN_WIDTH: 360,
-	    SCREEN_HEIGHT: 540,
-	
-	    tofixed10: function tofixed10(value) {
-	        var delta = value % 10,
-	            base = value / 10;
-	        return delta > 5 ? Math.ceil(base) * 10 : Math.floor(base) * 10;
-	    },
-	
-	    rgba: function rgba(color) {
-	        var rgba = [];
-	        for (var key in color) {
-	            if (color.hasOwnProperty(key)) {
-	                rgba.push(color[key]);
-	            }
-	        }
-	        return 'rgba(' + rgba.join(',') + ')';
-	    },
-	
-	    // DEPRECATED
-	    _insertStyle: function _insertStyle(styleSheet, styleID) {
-	
-	        var style = document.createElement('style');
-	        var doc = document.head;
-	        style.id = styleID;
-	        doc.appendChild(style);
-	
-	        style.appendChild(document.createTextNode(styleSheet));
-	    },
-	    // DEPRECATED
-	    _renderStyle: function _renderStyle() {
-	        // let stylesheet = '';
-	        // for(let i = 0; i < pageData.list.length; i++){
-	        //     for(let j = 0; j < pageData.list[i].elements.length; j++){
-	        //         let it = pageData.list[i].elements[j];
-	        //         let style = this.stringifyStyle(it);
-	        //         stylesheet += style;
-	        //     }
-	        // }
-	        // this.insertStyle(stylesheet, 'maker');
-	    },
-	
-	    percentValue: function percentValue(value, standard) {
-	        return (value / standard * 100).toFixed(0) + '%';
-	    },
-	
-	    //渲染
-	    flatStyle: function flatStyle(obj) {
-	
-	        var str = _.map(obj, function (value, key) {
-	            return key + ':' + value + ';';
-	        }).join('');
-	
-	        return str;
-	    },
-	
-	    /**
-	     * 获取querystring
-	     * @param  {String} name
-	     * @return {String}
-	     */
-	    getQueryString: function getQueryString(name) {
-	        var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i'),
-	            r = window.location.search.substr(1).match(reg);
-	
-	        if (r !== null) return window.unescape(r[2]);
-	        return null;
-	    },
-	
-	    /**
-	     * encode 内容
-	     * @param  {string} str
-	     */
-	    htmlEncode: function htmlEncode(str) {
-	        var div = document.createElement('div'),
-	            text = document.createTextNode(str);
-	        div.appendChild(text);
-	        return div.innerHTML;
-	    },
-	    /**
-	     * decode 内容
-	     * @param  {string} str
-	     */
-	    htmlDecode: function htmlDecode(str) {
-	        var div = document.createElement('div');
-	        div.innerHTML = str;
-	        return div.innerText;
-	    },
-	
-	    /**
-	     * 获取元素的类型
-	     * @param  {any} o 目标对象
-	     * @return {string}   'string', 'object', 'number' etc;
-	     */
-	    getType: function getType(obj) {
-	        return Object.prototype.toString.call(obj).slice(8, -1).toLowerCase();
-	    },
-	
-	    isNumber: function isNumber(obj) {
-	        return this.getType(obj) === 'number';
-	    },
-	    isObject: function isObject(obj) {
-	        return this.getType(obj) === 'object';
-	    },
-	    isFunction: function isFunction(obj) {
-	        return this.getType(obj) === 'function';
-	    },
-	    isArray: function isArray(obj) {
-	        return this.getType(obj) === 'array';
-	    },
-	    isString: function isString(obj) {
-	        return this.getType(obj) === 'string';
-	    },
-	
-	    /**
-	     * 动态加载样式
-	     * @param  {String} url 样式URL
-	     * @return
-	     */
-	    requireCss: function requireCss(url) {
-	        var node = document.createElement('link'),
-	            head = document.getElementsByTagName('head');
-	
-	        node.type = 'text/css';
-	        node.rel = 'stylesheet';
-	        node.href = url;
-	        head = head.length ? head[0] : document.documentElement;
-	        head.appendChild(node);
-	    }
-	};
 
 /***/ },
 /* 13 */
@@ -13288,19 +13428,19 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
 	var core = {
-	    $el: $('#watchList'),
+	    $el: $('#elemList'),
 	    render: function render() {
 	        var data = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements,
-	            html = '<div class="elem-list">\n                        <div class="title">\n                            当前图层\n                        </div>\n                        <ul>';
+	            html = '<div class="elem-list">\n                        <div class="title">\n\n                        </div>\n                        <ul>';
 	        for (var i = 0; i < data.length; i++) {
 	            html += '<li data-id="' + data[i].id + '">\n                            ' + data[i].id + '\n                        </li>';
 	        }
@@ -13338,109 +13478,103 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _handleJs = __webpack_require__(15);
-	
-	var _handleJs2 = _interopRequireDefault(_handleJs);
-	
-	var _renderJs = __webpack_require__(11);
-	
-	var _renderJs2 = _interopRequireDefault(_renderJs);
-	
-	var _watchlistJs = __webpack_require__(13);
-	
-	var _watchlistJs2 = _interopRequireDefault(_watchlistJs);
-	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	window.handle = _handleJs2['default'];
+	var _crudJs = __webpack_require__(15);
+	
+	var _crudJs2 = _interopRequireDefault(_crudJs);
+	
+	var _renderJs = __webpack_require__(12);
+	
+	var _renderJs2 = _interopRequireDefault(_renderJs);
+	
+	var _elemlistJs = __webpack_require__(13);
+	
+	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
+	
+	window.crud = _crudJs2['default'];
 	
 	var core = {
-	    $page: $('#page'),
 	
 	    init: function init() {
+	        // 创建侧边页码列表
 	        this._create();
-	        this._createBtn();
-	        this.bindPage();
+	        _renderJs2['default'].renderPageList();
+	        this._bindPageList();
+	
+	        // 添加CRUD
+	        this._createCRUD();
+	        this._bindCRUD();
 	    },
 	
 	    // 创建页面管理
 	    _create: function _create() {
-	        this.$page.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
-	
-	        this._renderList();
-	        this._bind();
-	
-	        this.$page.find('.page-ul-wrap').append('');
+	        _bizUtilJs2['default'].$pagelist.append('<div class="page-ul-wrap"><div class="page-ul"></div></div>');
 	    },
 	
-	    _createBtn: function _createBtn() {
-	        var html = '<div class="page-operation">\n                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>\n                        <a class="btn btn-success post-save">save</a>\n                    </div>';
-	        this.$page.append(html);
+	    _createCRUD: function _createCRUD() {
+	        var html = '<div class="page-operation">\n                        <a class="btn btn-default post-add-template" title="同步至云端，由管理员审核">上传魔板</a>\n                        <a class="btn btn-success post-save">save</a>\n                    </div>';
+	        _bizUtilJs2['default'].$pagelist.append(html);
 	        var html_control = '<div class="page-control">\n                                <a class="btn btn-brand" data-role="add">添加</a>\n                                <a class="btn btn-brand" data-role="copy">复制</a>\n                                <a class="btn btn-default" data-role="remove">删除</a>\n                            </div>';
-	        this.$page.find('.page-ul-wrap').append(html_control);
+	        _bizUtilJs2['default'].$pagelist.find('.page-ul-wrap').append(html_control);
 	    },
 	
-	    _bind: function _bind() {
-	        var _this = this;
-	
+	    _bindCRUD: function _bindCRUD() {
 	        _bizUtilJs2['default'].$doc.on('click', '[data-role="add"]', function () {
-	            _handleJs2['default'].addPage();
+	            _crudJs2['default'].addPage();
 	            _stageHistoryJs2['default'].push();
-	            _this.renderOne();
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
 	            _stageHistoryJs2['default'].pushStep();
 	        }).on('click', '[data-role="copy"]', function () {
-	            _handleJs2['default'].copyPage();
+	            _crudJs2['default'].copyPage();
 	            _stageHistoryJs2['default'].push();
-	            _this.renderOne();
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
 	            _stageHistoryJs2['default'].pushStep();
 	        }).on('click', '[data-role="remove"]', function () {
 	            if (_dataPageDataJs2['default'].list.length === 1) {
 	                mu.util.alert('已不能再删除');
 	                return;
 	            }
-	            _handleJs2['default'].removePage();
+	            _crudJs2['default'].removePage();
 	            _stageHistoryJs2['default'].remove();
-	            _this.renderOne();
-	            _stageHistoryJs2['default'].renderHistory();
-	        }).on('click', '[data-role="upload"]', function () {
-	            var page = _handleJs2['default'].getCurPage();
-	            console.log(page);
-	            // post Delate;
-	            console.log('%csync template with cloud', 'color: #f00;');
+	
+	            _renderJs2['default'].renderUi();
+	            _renderJs2['default'].renderPageList();
+	            _elemlistJs2['default'].render();
+	
+	            _stageHistoryJs2['default'].renderStatus();
 	        });
 	    },
 	
-	    _renderList: function _renderList() {
-	        var html = '';
-	        for (var i = 0; i < _dataPageDataJs2['default'].list.length; i++) {
-	            html += '<div class="page-li">' + (i + 1) + '</div>';
-	        }
-	        html += '</div>';
-	        this.$page.find('.page-ul').html(html);
-	        this.$page.find('.page-ul').children().eq(_dataStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
-	    },
-	
-	    bindPage: function bindPage() {
+	    _bindPageList: function _bindPageList() {
 	        var old_index = undefined,
 	            new_index = undefined,
 	            self = this;
 	
 	        // 页面排序
-	        self.$page.find('.page-ul').sortable({
+	        _bizUtilJs2['default'].$pagelist.find('.page-ul').sortable({
 	            containment: 'parent',
 	            items: '.page-li',
 	            placeholder: 'ui-tip',
@@ -13451,33 +13585,34 @@
 	                new_index = $(ui.item).index();
 	
 	                if (old_index !== new_index) {
-	                    _handleJs2['default'].swapPage(old_index, new_index);
+	                    _crudJs2['default'].swapPage(old_index, new_index);
 	                    _stageHistoryJs2['default'].swap(old_index, new_index);
-	                    self.renderOne();
+	
+	                    _renderJs2['default'].renderUi();
+	                    _renderJs2['default'].renderPageList();
+	                    _elemlistJs2['default'].render();
+	                    _stageHistoryJs2['default'].renderStatus();
 	                }
 	            }
 	        });
 	
 	        // 页面跳转
-	        self.$page.on('click', '.page-li', function () {
+	        _bizUtilJs2['default'].$pagelist.on('click', '.page-li', function () {
 	            var index = $(this).index(),
 	                cache = _dataStageDataJs2['default'].caches[index];
-	            if (index === _dataStageDataJs2['default'].index) return;
+	            if (index === _dataStageDataJs2['default'].index || _renderJs2['default'].slider.isAnimating) return;
 	            _dataStageDataJs2['default'].index = index;
-	            self.$page.find('.page-ul').children().eq(_dataStageDataJs2['default'].index).addClass('active').siblings().removeClass('active');
-	
-	            _renderJs2['default'].renderPage();
-	
+	            _renderJs2['default'].renderPageList(index);
+	            _renderJs2['default'].renderHtmlPage(index);
+	            _renderJs2['default'].slider.jump(index);
 	            // push 初始状态
-	            cache.cursor === -1 ? _stageHistoryJs2['default'].pushStep() : _stageHistoryJs2['default'].renderHistory();
-	            _watchlistJs2['default'].render();
+	            if (cache.cursor === -1) {
+	                _stageHistoryJs2['default'].pushStep();
+	            } else {
+	                _stageHistoryJs2['default'].renderStatus();
+	            }
+	            _elemlistJs2['default'].render();
 	        });
-	    },
-	
-	    renderOne: function renderOne() {
-	        this._renderList();
-	        _watchlistJs2['default'].render();
-	        _renderJs2['default'].renderPage();
 	    }
 	};
 	
@@ -13491,15 +13626,15 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
@@ -13570,27 +13705,27 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageWatchlistJs = __webpack_require__(13);
+	var _pageElemlistJs = __webpack_require__(13);
 	
-	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -13598,31 +13733,33 @@
 	
 	var _property2 = _interopRequireDefault(_property);
 	
-	var _hotkeyJs = __webpack_require__(254);
+	var _hotkeyJs = __webpack_require__(257);
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _contextMenuJs = __webpack_require__(265);
+	var _contextMenuJs = __webpack_require__(268);
 	
 	var _contextMenuJs2 = _interopRequireDefault(_contextMenuJs);
 	
-	var _toolbarJs = __webpack_require__(266);
+	var _topbarJs = __webpack_require__(269);
 	
-	var _toolbarJs2 = _interopRequireDefault(_toolbarJs);
+	var _topbarJs2 = _interopRequireDefault(_topbarJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
 	window.stageData = _dataStageDataJs2['default'];
+	window.pageData = _dataPageDataJs2['default'];
 	
 	var core = {
 	    init: function init() {
 	
-	        _hotkeyJs2['default'].init();
 	        _contextMenuJs2['default'].init();
-	        _toolbarJs2['default'].init();
+	        _hotkeyJs2['default'].init();
 	        _operationJs2['default'].init();
+	        _topbarJs2['default'].init();
+	        _property2['default'].init();
 	
 	        this._bindEvent();
 	    },
@@ -13638,7 +13775,7 @@
 	    handleSingleClick: function handleSingleClick() {
 	        var self = this;
 	        // 点击范围：在模拟设备的尺寸中
-	        _bizUtilJs2['default'].$doc.on('click', '.device', function (event) {
+	        _bizUtilJs2['default'].$doc.on('click', '.stage-inner', function (event) {
 	
 	            var $this = $(event.target),
 	                $parent = $this.closest('.editable'),
@@ -13666,12 +13803,11 @@
 	                    _dataStageDataJs2['default'].curElem = self.getById(id);
 	                    self.clearCurUi();
 	                }
-	                _dataStageDataJs2['default'].curRole = 'elem';
 	            } else {
-	                $page = $this.closest('.page');
+	                // stageData.index
+	                $page = $('.page').eq(_dataStageDataJs2['default'].index);
 	                _dataStageDataJs2['default'].curElems = [];
 	                self.clearCurUi();
-	                _dataStageDataJs2['default'].curRole = 'page';
 	            }
 	
 	            // 选中当前元素
@@ -13679,9 +13815,9 @@
 	                $temp.addClass('cur');
 	                self.intoEditable($temp);
 	                self.syncElem();
-	                self.syncRole();
+	                self.syncElemRole();
 	
-	                _pageWatchlistJs2['default'].renderStatus(id);
+	                _pageElemlistJs2['default'].renderStatus(id);
 	            }
 	
 	            if ($page) {
@@ -13691,15 +13827,10 @@
 	
 	            _contextMenuJs2['default'].$menu.hide();
 	        });
-	
-	        _bizUtilJs2['default'].$doc.on('click', '.stage-inner', function () {
-	            var $this = $(event.target);
-	            console.log($this);
-	        });
 	    },
 	
 	    handleFocusText: function handleFocusText() {
-	        _bizUtilJs2['default'].$doc.find('input, .innerHtml').on('focus', function () {
+	        _bizUtilJs2['default'].$doc.find('input, .ql-editor').on('focus', function () {
 	            _dataStageDataJs2['default'].isFocusText = true;
 	        }).on('blur', function () {
 	            _dataStageDataJs2['default'].isFocusText = false;
@@ -13730,7 +13861,7 @@
 	                    left: ui.position.left + 'px',
 	                    top: ui.position.top + 'px'
 	                });
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	
@@ -13746,7 +13877,7 @@
 	                    width: ui.size.width + 'px',
 	                    height: ui.size.height + 'px'
 	                });
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	    },
@@ -13768,7 +13899,7 @@
 	        });
 	    },
 	
-	    syncRole: function syncRole() {
+	    syncElemRole: function syncElemRole() {
 	        var curElem = _dataStageDataJs2['default'].curElem;
 	        // style, child.innerHtml, child.style, extra
 	        // syncValue('link', curElem.extra.link);
@@ -13793,6 +13924,7 @@
 	
 	    syncElem: function syncElem() {
 	        var curElem = _dataStageDataJs2['default'].curElem;
+	        _dataStageDataJs2['default'].curRole = 'elem';
 	        _property2['default'].unSyncAll();
 	        _property2['default'].sync(curElem.style);
 	        _property2['default'].sync(curElem.child.style);
@@ -13802,14 +13934,9 @@
 	
 	    syncPage: function syncPage() {
 	        var pageStyle = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style;
+	        _dataStageDataJs2['default'].curRole = 'page';
 	        _property2['default'].unSyncAll();
 	        _property2['default'].sync(pageStyle);
-	    },
-	
-	    syncGlobal: function syncGlobal() {
-	        _property2['default'].unSyncAll();
-	        _property2['default'].sync(_dataPageDataJs2['default'].style);
-	        _property2['default'].sync(_dataPageDataJs2['default'].setting);
 	    },
 	
 	    getById: function getById(id) {
@@ -13827,7 +13954,7 @@
 	    }
 	
 	};
-	
+	window.stage = core;
 	module.exports = core;
 
 /***/ },
@@ -13838,11 +13965,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -13850,42 +13977,63 @@
 	
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	_tasksJs2['default'].init();
-	
 	var files = [
 	// character
 	'extra/type', 'extra/link', 'extra/audio', 'extra/video', 'extra/analyze', 'extra/jump',
 	// child style
 	'child/innerHtml', 'child/color', 'child/transform', 'child/font-size', 'child/text-align', 'child/vertical-align', 'child/background-color', 'child/background-image', 'child/background-size', 'child/border-radius', 'child/padding',
 	// elem style
-	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-name'];
-	
-	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(20)("./" + files[i] + '.js');
-	}
+	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-name',
+	// global
+	'setting/direction', 'setting/template', 'setting/isloop'];
 	
 	var core = {
-	    // 同步样式数据
-	    sync: function sync(obj) {
-	        _lodash2['default'].forEach(obj, function (value, key) {
-	            if (!_bizUtilJs2['default'].isObject(value)) {
-	                core.syncValue(key, value);
-	            }
+	
+	    init: function init() {
+	        this._create();
+	        this._bind();
+	
+	        //加载和注册属性的事件和DOM
+	        for (var i = 0; i < files.length; i++) {
+	            __webpack_require__(20)("./" + files[i] + '.js');
+	        }
+	        this.$inputs = this.$el.find('.edit-group');
+	    },
+	
+	    _create: function _create() {
+	        var html = '<div class="edit-panel-tab cf">\n                        <div class="edit-panel-li active">属性</div>\n                        <div class="edit-panel-li">动画</div>\n                    </div>\n                    <div class="edit-panel-cont">\n                        <div class="edit-panel" id="stylePanel" style="display: block;"></div>\n                        <div class="edit-panel" id="animaPanel" style="display: none;"></div>\n                    </div>';
+	        this.$el = _bizUtilJs2['default'].$property.html(html);
+	
+	        this.$tab = this.$el.find('.edit-panel-tab');
+	        this.$cont = this.$el.find('.edit-panel-cont');
+	    },
+	
+	    _bind: function _bind() {
+	        var self = this;
+	        this.$tab.on('click', '.edit-panel-li', function () {
+	            var index = $(this).index();
+	            self.$tab.children().eq(index).addClass('active').siblings().removeClass('active');
+	            self.$cont.children().eq(index).show().siblings().hide();
 	        });
 	    },
 	
-	    //
+	    sync: function sync(obj) {
+	        var _this = this;
+	
+	        _lodash2['default'].forEach(obj, function (value, key) {
+	            _this.syncValue(key, value);
+	        });
+	    },
+	
+	    // 同步样式数据
 	    syncValue: function syncValue(key, value) {
-	        if (!_tasksJs2['default'].events[key]) {
-	            return;
+	        if (_tasksJs2['default'].events[key]) {
+	            _tasksJs2['default'].events[key](value);
 	        }
-	        _tasksJs2['default'].events[key](value);
 	    },
 	
 	    unSyncAll: function unSyncAll() {
-	
-	        // console.log(tasks);
-	        $('.edit-group').hide();
+	        this.$inputs.hide();
 	    }
 	};
 	
@@ -13899,7 +14047,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
@@ -13930,29 +14078,6 @@
 	        };
 	        _lodash2['default'].extend(this.events, event);
 	        // events[name](value);
-	    },
-	
-	    init: function init() {
-	        this._create();
-	        this._bind();
-	    },
-	
-	    _create: function _create() {
-	        var html = '<div class="edit-panel-tab cf">\n                        <div class="edit-panel-li active">属性</div>\n                        <div class="edit-panel-li">动画</div>\n                    </div>\n                    <div class="edit-panel-cont">\n                        <div class="edit-panel" id="stylePanel" style="display: block;"></div>\n                        <div class="edit-panel" id="animaPanel" style="display: none;"></div>\n                    </div>';
-	        var $el = $('#editPanel');
-	        $el.html(html);
-	
-	        this.$tab = $el.find('.edit-panel-tab');
-	        this.$cont = $el.find('.edit-panel-cont');
-	    },
-	
-	    _bind: function _bind() {
-	        var self = this;
-	        this.$tab.on('click', '.edit-panel-li', function () {
-	            var index = $(this).index();
-	            self.$tab.children().eq(index).addClass('active').siblings().removeClass('active');
-	            self.$cont.children().eq(index).show().siblings().hide();
-	        });
 	    }
 	};
 	
@@ -14021,14 +14146,17 @@
 		"./extra/type.js": 243,
 		"./extra/video.js": 244,
 		"./index.js": 17,
-		"./style/animation-delay.js": 245,
-		"./style/animation-duration.js": 246,
-		"./style/animation-name.js": 247,
-		"./style/height.js": 249,
-		"./style/left.js": 250,
-		"./style/top.js": 251,
-		"./style/width.js": 252,
-		"./style/zindex.js": 253,
+		"./setting/direction.js": 245,
+		"./setting/isloop.js": 246,
+		"./setting/template.js": 247,
+		"./style/animation-delay.js": 248,
+		"./style/animation-duration.js": 249,
+		"./style/animation-name.js": 250,
+		"./style/height.js": 252,
+		"./style/left.js": 253,
+		"./style/top.js": 254,
+		"./style/width.js": 255,
+		"./style/zindex.js": 256,
 		"./task.js": 19,
 		"./tasks.js": 18
 	};
@@ -14062,7 +14190,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -33695,23 +33823,23 @@
 	
 	var _reactColor2 = _interopRequireDefault(_reactColor);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -33776,17 +33904,22 @@
 	                    var bgcolor = _dataStageDataJs2['default'].curElem.child.style['background-color'];
 	                    if (bgcolor !== rgba) {
 	                        _dataStageDataJs2['default'].curElem.child.style['background-color'] = rgba;
-	                        _pageRenderJs2['default'].renderElem();
+	                        _pageRenderJs2['default'].renderHtmlElem();
 	                    }
 	                    break;
 	                case 'page':
 	                    var bgcolorPage = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style['background-color'];
 	                    if (bgcolorPage !== rgba) {
 	                        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style['background-color'] = rgba;
-	                        _pageRenderJs2['default'].logPageStep();
+	                        _pageRenderJs2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
 	                    }
 	                    break;
 	                case 'global':
+	                    var bgcolorGlobal = _dataPageDataJs2['default'].setting.style['background-color'];
+	                    if (bgcolorGlobal !== rgba) {
+	                        _dataPageDataJs2['default'].setting.style['background-color'] = rgba;
+	                        _bizUtilJs2['default'].$wrapper.attr('style', _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style));
+	                    }
 	                    break;
 	                default:
 	                    break;
@@ -33796,7 +33929,9 @@
 	    }, {
 	        key: 'handleChangeComplete',
 	        value: function handleChangeComplete() {
-	            _stageHistoryJs2['default'].pushStep();
+	            if (_dataStageDataJs2['default'].curRole !== 'global') {
+	                _stageHistoryJs2['default'].pushStep();
+	            }
 	        }
 	    }, {
 	        key: 'render',
@@ -33866,7 +34001,7 @@
 	var React = __webpack_require__(22);
 	var ReactCSS = __webpack_require__(183);
 	var merge = __webpack_require__(189);
-	var _ = __webpack_require__(9);
+	var _ = __webpack_require__(10);
 	var color = __webpack_require__(191);
 	
 	var Photoshop = __webpack_require__(193);
@@ -34082,13 +34217,13 @@
 /* 185 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";var _,checkClassStructure,combine;_=__webpack_require__(9),checkClassStructure=__webpack_require__(186),combine=__webpack_require__(187),module.exports=function(s){var e,c,n,r,t,i,o,u,l;if(combine=__webpack_require__(187),c=[],null==this.classes)throw console.warn("Define this.classes on `"+this.constructor.name+"`");checkClassStructure(this.classes()),e=function(s){return function(e,n){return null!=s.classes()[e]?c.push(s.classes()[e]):e&&(null!=n?n.warn:void 0)===!0?console.warn("The `"+e+"` css class does not exist on `"+s.constructor.name+"`"):void 0}}(this),e("default"),o=this.props;for(i in o)l=o[i],_.isObject(l)||(l===!0?(e(i),e(i+"-true")):e(l?i+"-"+l:i+"-false"));for(t in s)n=s[t],n===!0&&e(t,{warn:!0});return e("public"),r={},(null!=(u=this.context)?u.mixins:void 0)&&(r=this.context.mixins),combine(c,r)};
+	"use strict";var _,checkClassStructure,combine;_=__webpack_require__(10),checkClassStructure=__webpack_require__(186),combine=__webpack_require__(187),module.exports=function(s){var e,c,n,r,t,i,o,u,l;if(combine=__webpack_require__(187),c=[],null==this.classes)throw console.warn("Define this.classes on `"+this.constructor.name+"`");checkClassStructure(this.classes()),e=function(s){return function(e,n){return null!=s.classes()[e]?c.push(s.classes()[e]):e&&(null!=n?n.warn:void 0)===!0?console.warn("The `"+e+"` css class does not exist on `"+s.constructor.name+"`"):void 0}}(this),e("default"),o=this.props;for(i in o)l=o[i],_.isObject(l)||(l===!0?(e(i),e(i+"-true")):e(l?i+"-"+l:i+"-false"));for(t in s)n=s[t],n===!0&&e(t,{warn:!0});return e("public"),r={},(null!=(u=this.context)?u.mixins:void 0)&&(r=this.context.mixins),combine(c,r)};
 
 /***/ },
 /* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var _;_=__webpack_require__(9),module.exports=function(e){var o,s,t,n,r;r=[];for(o in e)n=e[o],r.push(_.isObject(n)?function(){var e;e=[];for(t in n)s=n[t],e.push(_.isObject(s)?void 0:console.warn("Make sure the value of the element `"+o+"` is an object of css. You passed it `"+n+"`"));return e}():console.warn("Make sure the value of `"+o+"` is an object of html elements. You passed it `"+n+"`"));return r};
+	var _;_=__webpack_require__(10),module.exports=function(e){var o,s,t,n,r;r=[];for(o in e)n=e[o],r.push(_.isObject(n)?function(){var e;e=[];for(t in n)s=n[t],e.push(_.isObject(s)?void 0:console.warn("Make sure the value of the element `"+o+"` is an object of css. You passed it `"+n+"`"));return e}():console.warn("Make sure the value of `"+o+"` is an object of html elements. You passed it `"+n+"`"));return r};
 
 /***/ },
 /* 187 */
@@ -34100,7 +34235,7 @@
 /* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";var _,merge;merge=__webpack_require__(189),_=__webpack_require__(9),module.exports=function(e){return _.isObject(e)&&!_.isArray(e)?e:1===e.length?e[0]:merge.recursive.apply(this,e)};
+	"use strict";var _,merge;merge=__webpack_require__(189),_=__webpack_require__(10),module.exports=function(e){return _.isObject(e)&&!_.isArray(e)?e:1===e.length?e[0]:merge.recursive.apply(this,e)};
 
 /***/ },
 /* 189 */
@@ -34281,13 +34416,13 @@
 		}
 	
 	})(typeof module === 'object' && module && typeof module.exports === 'object' && module.exports);
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(11)(module)))
 
 /***/ },
 /* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
-	"use strict";var _,localProps,merge,transform;_=__webpack_require__(9),merge=__webpack_require__(189),localProps={borderRadius:function(r){return null!=r?{msBorderRadius:r,MozBorderRadius:r,OBorderRadius:r,WebkitBorderRadius:r,borderRadius:r}:void 0},boxShadow:function(r){return null!=r?{msBoxShadow:r,MozBoxShadow:r,OBoxShadow:r,WebkitBoxShadow:r,boxShadow:r}:void 0},userSelect:function(r){return null!=r?{WebkitTouchCallout:r,KhtmlUserSelect:r,MozUserSelect:r,msUserSelect:r,WebkitUserSelect:r,userSelect:r}:void 0},flex:function(r){return null!=r?{WebkitBoxFlex:r,MozBoxFlex:r,WebkitFlex:r,msFlex:r,flex:r}:void 0},flexBasis:function(r){return null!=r?{WebkitFlexBasis:r,flexBasis:r}:void 0},justifyContent:function(r){return null!=r?{WebkitJustifyContent:r,justifyContent:r}:void 0},transition:function(r){return null!=r?{msTransition:r,MozTransition:r,OTransition:r,WebkitTransition:r,transition:r}:void 0},transform:function(r){return null!=r?{msTransform:r,MozTransform:r,OTransform:r,WebkitTransform:r,transform:r}:void 0},Absolute:function(r){var o,e;return null!=r?(o=r.split(" "),e={position:"absolute",top:o[0],right:o[1],bottom:o[2],left:o[3]}):void 0},Extend:function(r,o){return o[r]?o[r]:void 0}},transform=function(r,o,e){var t,n,i,s,u,l,a;n=merge(o,localProps),l={};for(u in r)if(a=r[u],_.isObject(a)&&!_.isArray(a))l[u]=transform(a,o,r);else if(null!=n[u]){i=n[u](a,e);for(t in i)s=i[t],l[t]=s}else l[u]=a;return l},module.exports=function(r,o,e){return transform(r,o,e)};
+	"use strict";var _,localProps,merge,transform;_=__webpack_require__(10),merge=__webpack_require__(189),localProps={borderRadius:function(r){return null!=r?{msBorderRadius:r,MozBorderRadius:r,OBorderRadius:r,WebkitBorderRadius:r,borderRadius:r}:void 0},boxShadow:function(r){return null!=r?{msBoxShadow:r,MozBoxShadow:r,OBoxShadow:r,WebkitBoxShadow:r,boxShadow:r}:void 0},userSelect:function(r){return null!=r?{WebkitTouchCallout:r,KhtmlUserSelect:r,MozUserSelect:r,msUserSelect:r,WebkitUserSelect:r,userSelect:r}:void 0},flex:function(r){return null!=r?{WebkitBoxFlex:r,MozBoxFlex:r,WebkitFlex:r,msFlex:r,flex:r}:void 0},flexBasis:function(r){return null!=r?{WebkitFlexBasis:r,flexBasis:r}:void 0},justifyContent:function(r){return null!=r?{WebkitJustifyContent:r,justifyContent:r}:void 0},transition:function(r){return null!=r?{msTransition:r,MozTransition:r,OTransition:r,WebkitTransition:r,transition:r}:void 0},transform:function(r){return null!=r?{msTransform:r,MozTransform:r,OTransform:r,WebkitTransform:r,transform:r}:void 0},Absolute:function(r){var o,e;return null!=r?(o=r.split(" "),e={position:"absolute",top:o[0],right:o[1],bottom:o[2],left:o[3]}):void 0},Extend:function(r,o){return o[r]?o[r]:void 0}},transform=function(r,o,e){var t,n,i,s,u,l,a;n=merge(o,localProps),l={};for(u in r)if(a=r[u],_.isObject(a)&&!_.isArray(a))l[u]=transform(a,o,r);else if(null!=n[u]){i=n[u](a,e);for(t in i)s=i[t],l[t]=s}else l[u]=a;return l},module.exports=function(r,o,e){return transform(r,o,e)};
 
 /***/ },
 /* 191 */
@@ -36349,7 +36484,7 @@
 	
 	var React = __webpack_require__(22);
 	var ReactCSS = __webpack_require__(183);
-	var _ = __webpack_require__(9);
+	var _ = __webpack_require__(10);
 	
 	var Saturation = (function (_ReactCSS$Component) {
 	  _inherits(Saturation, _ReactCSS$Component);
@@ -38173,7 +38308,7 @@
 	
 	var React = __webpack_require__(22);
 	var ReactCSS = __webpack_require__(183);
-	var _ = __webpack_require__(9);
+	var _ = __webpack_require__(10);
 	
 	var Tab = __webpack_require__(216);
 	var Link = __webpack_require__(217);
@@ -38515,7 +38650,7 @@
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
 	var React = __webpack_require__(22);
-	var _ = __webpack_require__(9);
+	var _ = __webpack_require__(10);
 	
 	var Link = (function (_React$Component) {
 	  _inherits(Link, _React$Component);
@@ -39543,15 +39678,19 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(6);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39566,19 +39705,22 @@
 	        this.$image = this.$el.find('[data-role="bg-image"]');
 	    },
 	    bind: function bind() {
+	
 	        this.$image.on('change.property', function () {
 	            var role = _dataStageDataJs2['default'].curRole;
 	
 	            switch (role) {
 	                case 'elem':
 	                    _dataStageDataJs2['default'].curElem.child.style['background-image'] = 'url(' + this.value + ')';
-	                    _pageRenderJs2['default'].renderStep();
+	                    _pageRenderJs2['default'].logElemStep();
 	                    break;
 	                case 'page':
 	                    _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].style['background-image'] = 'url(' + this.value + ')';
 	                    _pageRenderJs2['default'].logPageStep();
 	                    break;
 	                case 'global':
+	                    _dataPageDataJs2['default'].setting.style['background-image'] = 'url(' + this.value + ')';
+	                    _bizUtilJs2['default'].$wrapper.attr('style', _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style));
 	                    break;
 	                default:
 	                    break;
@@ -39604,15 +39746,15 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39636,7 +39778,7 @@
 	                    var sizeElem = _dataStageDataJs2['default'].curElem.child.style['background-size'];
 	                    if (sizeElem !== value) {
 	                        _dataStageDataJs2['default'].curElem.child.style['background-size'] = value;
-	                        _pageRenderJs2['default'].renderStep();
+	                        _pageRenderJs2['default'].logElemStep();
 	                    }
 	                    break;
 	                case 'page':
@@ -39668,11 +39810,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39689,7 +39831,7 @@
 	    bind: function bind() {
 	        this.$radius.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.child.style['border-radius'] = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -39715,7 +39857,7 @@
 	
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39761,19 +39903,19 @@
 	
 	var _reactColor2 = _interopRequireDefault(_reactColor);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -39831,7 +39973,7 @@
 	                color: rgba
 	            });
 	            _dataStageDataJs2['default'].curElem.child.style.color = rgba;
-	            _pageRenderJs2['default'].renderElem();
+	            _pageRenderJs2['default'].renderHtmlElem();
 	        }
 	    }, {
 	        key: 'handleChangeComplete',
@@ -39888,11 +40030,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39917,7 +40059,7 @@
 	                oldValue = _dataStageDataJs2['default'].curElem.child.style['font-size'];
 	            if (oldValue !== value) {
 	                _dataStageDataJs2['default'].curElem.child.style['font-size'] = value + 'px';
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	    },
@@ -39933,7 +40075,7 @@
 	                oldValue = _dataStageDataJs2['default'].curElem.child.style['vertical-align'];
 	            if (oldValue !== value) {
 	                _dataStageDataJs2['default'].curElem.child.style['vertical-align'] = value;
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	
@@ -39942,7 +40084,7 @@
 	                oldValue = _dataStageDataJs2['default'].curElem.child.style['text-align'];
 	            if (oldValue !== value) {
 	                _dataStageDataJs2['default'].curElem.child.style['text-align'] = value;
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	        _tasksJs2['default'].register('text-align', function (value) {
@@ -39965,11 +40107,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -39978,25 +40120,37 @@
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
 	_tasksJs2['default'].register('innerHtml', {
-	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf">\n                            <a class="codeMirror"></a>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor" contenteditable="true"></div>\n                        <textarea class="codeOrigin" id="codeOrigin"></textarea>\n                    </div>\n                </div>\n            </div>',
+	    html: '<div class="edit-group edit-text-editor">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="cf" id="textEditorBar">\n                            <span class="ql-format-group">\n                                <select title="Size" class="ql-size">\n                                    <option value="12px">12</option>\n                                    <option value="14px">14</option>\n                                    <option value="16px">16</option>\n                                    <option value="18px">18</option>\n                                    <option value="24px">24</option>\n                                    <option value="32px">32</option>\n                                    <option value="36px">36</option>\n                                    <option value="48px">48</option>\n                                </select>\n\n                                <span title="Bold" class="ql-format-button ql-bold"></span>\n                                <span title="Italic" class="ql-format-button ql-italic"></span>\n                                <span title="Underline" class="ql-format-button ql-underline"></span>\n                                <span title="Strikethrough" class="ql-format-button ql-strike"></span>\n\n                                <select title="Text Color" class="ql-color">\n                                    <option value="rgb(0, 0, 0)" label="rgb(0, 0, 0)" selected></option>\n                                    <option value="rgb(230, 0, 0)" label="rgb(230, 0, 0)"></option>\n                                    <option value="rgb(255, 153, 0)" label="rgb(255, 153, 0)"></option>\n                                    <option value="rgb(255, 255, 0)" label="rgb(255, 255, 0)"></option>\n                                    <option value="rgb(0, 138, 0)" label="rgb(0, 138, 0)"></option>\n                                    <option value="rgb(0, 102, 204)" label="rgb(0, 102, 204)"></option>\n                                </select>\n                                <select title="Background Color" class="ql-background">\n                                    <option value="rgb(61, 20, 102)" label="rgb(61, 20, 102)"></option>\n                                </select>\n\n                                <select title="Text Alignment" class="ql-align">\n                                    <option value="left" label="Left" selected></option>\n                                    <option value="center" label="Center"></option>\n                                    <option value="right" label="Right"></option>\n                                    <option value="justify" label="Justify"></option>\n                                </select>\n                            </span>\n                            <span class="ql-format-group">\n                                <span title="Link" class="ql-format-button ql-link"></span>\n                                <span title="Image" class="ql-format-button ql-image"></span>\n                            </span>\n                        </div>\n                    </div>\n                    <div class="col-md-12">\n                        <div class="innerHtml" id="textEditor"></div>\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
-	        this.$text = this.$el.find('.innerHtml');
+	        this.editor = new Quill('#textEditor', {
+	            styles: false,
+	            modules: {
+	                'toolbar': { container: '#textEditorBar' },
+	                'link-tooltip': true,
+	                'image-tooltip': true
+	            },
+	            theme: 'snow'
+	        });
+	        this.editor.on('text-change', function (delta, source) {
+	            console.log(source);
+	            console.log(delta);
+	        });
 	        // this.$code = this.$el.find('.codeOrigin');
 	    },
 	    bind: function bind() {
-	        this.$text.on('blur', function () {
+	        this.$el.find('.ql-editor').on('blur', function () {
 	            var html = _dataStageDataJs2['default'].curElem.child.innerHtml;
 	            if (html !== this.innerHTML) {
 	                _dataStageDataJs2['default'].curElem.child.innerHtml = this.innerHTML;
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	    },
 	    callback: function callback(value) {
 	        this.$el.show();
-	        this.$text.html(value);
-	        // this.editor.setValue(value);
+	        // this.$text.html(value);
+	        this.editor.setHTML(value);
 	    }
 	});
 
@@ -40008,11 +40162,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40029,7 +40183,7 @@
 	    bind: function bind() {
 	        this.$padding.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.child.style.padding = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40047,11 +40201,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40069,7 +40223,7 @@
 	                oldValue = _dataStageDataJs2['default'].curElem.child.style['text-align'];
 	            if (oldValue !== value) {
 	                _dataStageDataJs2['default'].curElem.child.style['text-align'] = value;
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	    },
@@ -40086,11 +40240,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40108,14 +40262,14 @@
 	        /*
 	         * example:
 	         * bind event to change the property
-	         * then call render.renderStep to log the step, which includes
+	         * then call render.logElemStep to log the step, which includes
 	         * adding a step into history storage, and render the template
 	         * with the changed data
 	         */
 	        this.$target.on('change.input', function () {
 	
 	            _dataStageDataJs2['default'].curElem.child.style.transform = 'rotate(' + this.value + 'deg) translateZ(0)';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    /**
@@ -40138,11 +40292,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40160,7 +40314,7 @@
 	                oldValue = _dataStageDataJs2['default'].curElem.child.style['vertical-align'];
 	            if (oldValue !== value) {
 	                _dataStageDataJs2['default'].curElem.child.style['vertical-align'] = value;
-	                _pageRenderJs2['default'].renderStep();
+	                _pageRenderJs2['default'].logElemStep();
 	            }
 	        });
 	    },
@@ -40177,11 +40331,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40199,7 +40353,7 @@
 	        placeholder: '输入统计事件名'
 	    }
 	};
-	var langs = 'en';
+	var langs = 'cn';
 	_tasksJs2['default'].register('analyze', {
 	    html: '<div class="edit-group">\n            <div class="row">\n                <div class="col-md-4">\n                    ' + text[langs].name + '\n                </div>\n                <div class="col-md-8">\n                    <input placeholder="' + text[langs].placeholder + '" class="form-control" data-role="analyze">\n                </div>\n            </div>\n        </div>',
 	    target: '#stylePanel',
@@ -40209,7 +40363,7 @@
 	    bind: function bind() {
 	        this.$analyze.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.extra.analyze = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40226,11 +40380,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40247,7 +40401,7 @@
 	    bind: function bind() {
 	        this.$audio.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.extra.audio = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40264,11 +40418,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40286,7 +40440,7 @@
 	    bind: function bind() {
 	        this.$jump.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.extra.jump = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40303,11 +40457,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40325,7 +40479,7 @@
 	        this.$link.on('change.property', function () {
 	            // verify this.value
 	            _dataStageDataJs2['default'].curElem.extra.link = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40342,11 +40496,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40375,7 +40529,7 @@
 	            //     default:
 	            //         break;
 	            // }
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40392,11 +40546,11 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40415,7 +40569,7 @@
 	            //check this value if it's ok
 	            // do something
 	            _dataStageDataJs2['default'].curElem.extra.video = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40432,11 +40586,110 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('direction', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        滑动方向\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="direction">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$element = this.$el.find('[data-role="direction"]');
+	    },
+	    bind: function bind() {
+	        this.$element.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.mode = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$element.val(value);
+	    }
+	});
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('isloop', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        循环模式\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="isloop">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$element = this.$el.find('[data-role="isloop"]');
+	    },
+	    bind: function bind() {
+	        this.$element.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.isloop = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$element.val(value);
+	    }
+	});
+
+/***/ },
+/* 247 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	_tasksJs2['default'].register('template', {
+	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        模板类型\n                    </div>\n                    <div class="col-md-8">\n                        <input class="form-control" data-role="template">\n                    </div>\n                </div>\n            </div>',
+	    target: '#stylePanel',
+	    init: function init() {
+	        this.$template = this.$el.find('[data-role="template"]');
+	    },
+	    bind: function bind() {
+	        this.$template.on('change.property', function () {
+	            _dataPageDataJs2['default'].setting.template = this.value;
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        this.$template.val(value);
+	    }
+	});
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40454,7 +40707,7 @@
 	    bind: function bind() {
 	        this.$delay.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style['animation-delay'] = this.value + 's';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40465,18 +40718,18 @@
 	});
 
 /***/ },
-/* 246 */
+/* 249 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40494,7 +40747,7 @@
 	    bind: function bind() {
 	        this.$duration.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style['animation-duration'] = this.value + 's';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40505,22 +40758,22 @@
 	});
 
 /***/ },
-/* 247 */
+/* 250 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _bizAnimasJs = __webpack_require__(248);
+	var _bizAnimasJs = __webpack_require__(251);
 	
 	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
 	
@@ -40531,7 +40784,7 @@
 	var html = '<div class="edit-group">\n        <div class="row animation-name">\n        ';
 	for (var key in _bizAnimasJs2['default']) {
 	    if (_bizAnimasJs2['default'].hasOwnProperty(key)) {
-	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                <div class="' + key + '">' + _bizAnimasJs2['default'][key].cn + '</div>\n            </div>\n            ';
+	        html += '<div class="anima anima-' + key + '" data-opacity="' + _bizAnimasJs2['default'][key].opacity + '" data-value="' + key + '">\n                <div class="' + key + '">\n                    <span>' + _bizAnimasJs2['default'][key].cn + '</span>\n                </div>\n            </div>';
 	    }
 	}
 	html += '\n        </div>\n    </div>';
@@ -40548,7 +40801,7 @@
 	            var name = $(this).data('value');
 	            _dataStageDataJs2['default'].curElem.style.opacity = name === 'none' ? 1 : 0;
 	            _dataStageDataJs2['default'].curElem.style['animation-name'] = name;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        }).on('mouseenter mouseleave', '.anima', function (event) {
 	            var $this = $(this),
 	                $target = $this.find('div');
@@ -40569,7 +40822,7 @@
 	});
 
 /***/ },
-/* 248 */
+/* 251 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40752,18 +41005,18 @@
 	module.exports = animas;
 
 /***/ },
-/* 249 */
+/* 252 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40780,7 +41033,7 @@
 	    bind: function bind() {
 	        this.$height.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style.height = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40791,18 +41044,18 @@
 	});
 
 /***/ },
-/* 250 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40819,7 +41072,7 @@
 	    bind: function bind() {
 	        this.$left.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style.left = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40830,18 +41083,18 @@
 	});
 
 /***/ },
-/* 251 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40858,7 +41111,7 @@
 	    bind: function bind() {
 	        this.$top.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style.top = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40869,18 +41122,18 @@
 	});
 
 /***/ },
-/* 252 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40897,7 +41150,7 @@
 	    bind: function bind() {
 	        this.$width.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style.width = this.value + 'px';
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40908,18 +41161,18 @@
 	});
 
 /***/ },
-/* 253 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
@@ -40936,7 +41189,7 @@
 	    bind: function bind() {
 	        this.$zindex.on('change.property', function () {
 	            _dataStageDataJs2['default'].curElem.style['z-index'] = this.value;
-	            _pageRenderJs2['default'].renderStep();
+	            _pageRenderJs2['default'].logElemStep();
 	        });
 	    },
 	    callback: function callback(value) {
@@ -40946,42 +41199,42 @@
 	});
 
 /***/ },
-/* 254 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizKeyJs = __webpack_require__(255);
+	var _bizKeyJs = __webpack_require__(258);
 	
 	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _pageRender = __webpack_require__(11);
+	var _pageRender = __webpack_require__(12);
 	
 	var _pageRender2 = _interopRequireDefault(_pageRender);
 	
-	var _pageWatchlistJs = __webpack_require__(13);
+	var _pageElemlistJs = __webpack_require__(13);
 	
-	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
-	var _historyJs = __webpack_require__(8);
+	var _historyJs = __webpack_require__(9);
 	
 	var _historyJs2 = _interopRequireDefault(_historyJs);
 	
@@ -41025,15 +41278,14 @@
 	        // 复制
 	        if (CTRL && C) {
 	            _operationJs2['default'].copyElem();
-	            _pageRender2['default'].renderPage();
-	            _pageWatchlistJs2['default'].render();
+	            _pageElemlistJs2['default'].render();
 	        }
 	
 	        // 粘贴
 	        if (CTRL && V) {
 	            _operationJs2['default'].pasteElem();
-	            _pageRender2['default'].renderPage();
-	            _pageWatchlistJs2['default'].render();
+	            _pageRender2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
+	            _pageElemlistJs2['default'].render();
 	        }
 	
 	        // 保存
@@ -41045,8 +41297,8 @@
 	        if (CTRL && Z) {
 	            _historyJs2['default'].undo(function (data) {
 	                _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	                _pageWatchlistJs2['default'].render();
+	                _pageRender2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
+	                _pageElemlistJs2['default'].render();
 	            });
 	        }
 	
@@ -41054,8 +41306,8 @@
 	        if (CTRL && Y) {
 	            _historyJs2['default'].redo(function (data) {
 	                _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index] = _lodash2['default'].cloneDeep(data);
-	                _pageRender2['default'].renderPage();
-	                _pageWatchlistJs2['default'].render();
+	                _pageRender2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
+	                _pageElemlistJs2['default'].render();
 	            });
 	        }
 	
@@ -41067,7 +41319,7 @@
 	            t = SHIFT && DOWN ? t + 9 : t;
 	            if (t !== top) {
 	                _dataStageDataJs2['default'].curElem.style.top = t + 'px';
-	                _pageRender2['default'].renderStep();
+	                _pageRender2['default'].logElemStep();
 	            }
 	        }
 	
@@ -41079,7 +41331,7 @@
 	            l = SHIFT && RIGHT ? l + 9 : l;
 	            if (l !== left) {
 	                _dataStageDataJs2['default'].curElem.style.left = l + 'px';
-	                _pageRender2['default'].renderStep();
+	                _pageRender2['default'].logElemStep();
 	            }
 	        }
 	    }
@@ -41088,7 +41340,7 @@
 	module.exports = core;
 
 /***/ },
-/* 255 */
+/* 258 */
 /***/ function(module, exports) {
 
 	// 键盘
@@ -41142,36 +41394,40 @@
 	};
 
 /***/ },
-/* 256 */
+/* 259 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _dataStageDataJs = __webpack_require__(6);
+	var _dataStageDataJs = __webpack_require__(7);
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _dataPageDataJs = __webpack_require__(7);
+	var _dataPageDataJs = __webpack_require__(8);
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _templateDataJs = __webpack_require__(257);
+	var _templateDataJs = __webpack_require__(260);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _property = __webpack_require__(17);
+	
+	var _property2 = _interopRequireDefault(_property);
 	
 	/**
 	 *
@@ -41209,8 +41465,13 @@
 	    },
 	
 	    removeElem: function removeElem() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        var current = _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index],
 	            index = _lodash2['default'].findIndex(current.elements, { id: _dataStageDataJs2['default'].curElem.id });
+	
 	        current.elements.splice(index, 1);
 	    },
 	
@@ -41219,6 +41480,10 @@
 	    },
 	
 	    pasteElem: function pasteElem(callback) {
+	        if (!_dataStageDataJs2['default'].clone) {
+	            mu.util.alert('找不到可复制的对象');
+	            return;
+	        }
 	        var clone = _lodash2['default'].cloneDeep(_dataStageDataJs2['default'].clone);
 	        _dataStageDataJs2['default'].countID++;
 	        clone.id = 'm_' + _dataStageDataJs2['default'].countID;
@@ -41227,6 +41492,9 @@
 	        _dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index].elements.push(clone);
 	    },
 	
+	    //================================
+	    // 操作元素
+	    //================================
 	    /**
 	     * 水平居中
 	     */
@@ -41239,8 +41507,12 @@
 	    },
 	
 	    horiCenterlize: function horiCenterlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._horiCenterlize();
-	        _pageRenderJs2['default'].renderStep();
+	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
 	    /**
@@ -41255,17 +41527,23 @@
 	    },
 	
 	    vertCenterlize: function vertCenterlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._vertCenterlize();
-	        _pageRenderJs2['default'].renderStep();
+	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
-	    /**
-	     * 居中
-	     */
+	    // DEPRECATED
 	    centerlize: function centerlize() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._vertCenterlize();
 	        this._horiCenterlize();
-	        _pageRenderJs2['default'].renderStep();
+	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
 	    /**
@@ -41299,46 +41577,41 @@
 	     * 自动修正尺寸，趋向于10的倍数
 	     */
 	    autoAdjust: function autoAdjust() {
+	        if (!_dataStageDataJs2['default'].curElem) {
+	            mu.util.alert('请单击选取元素');
+	            return;
+	        }
 	        this._autoAdjust();
-	        _pageRenderJs2['default'].renderStep();
+	        _pageRenderJs2['default'].logElemStep();
 	    },
 	
 	    alignCallback: function alignCallback() {},
 	
-	    align: function align(direction) {
-	        switch (direction) {
-	            case 'up':
-	                break;
-	            case 'down':
-	                break;
-	            case 'right':
-	                break;
-	            case 'left':
-	                break;
-	        }
-	    },
-	
 	    turn3d: function turn3d() {
-	        $('#stage').toggleClass('stage3D');
+	        _bizUtilJs2['default'].$stage.toggleClass('stage3D');
 	    },
 	
-	    setting: function setting() {},
+	    setGlobal: function setGlobal() {
+	        _dataStageDataJs2['default'].curRole = 'global';
+	        _property2['default'].unSyncAll();
+	        _property2['default'].sync(_dataPageDataJs2['default'].setting);
+	        _property2['default'].sync(_dataPageDataJs2['default'].setting.style);
+	    },
 	
 	    init: function init() {
 	        this._create();
 	        this._bind();
 	    },
 	
-	    $el: $('#page'),
-	
 	    _create: function _create() {
-	        var html = '<div class="quick-key">\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>\n                        <a class="btn btn-default" data-func="centerlize">全屏居中</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="autoAdjust">自动修正</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="turn3d">3D模式</a>\n                    </div>';
-	        this.$el.append(html);
+	        var html = '<div class="quick-key">\n                        <a class="btn btn-default" data-func="setGlobal">全局设置</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>\n                        <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="autoAdjust">自动修正</a>\n                        <p>&nbsp;</p>\n                        <a class="btn btn-default" data-func="turn3d">3D模式</a>\n                    </div>';
+	        this.$el = $(html);
+	        _bizUtilJs2['default'].$helper.append(this.$el);
 	    },
 	
 	    _bind: function _bind() {
 	        var self = this;
-	        this.$el.on('click', '.quick-key a', function () {
+	        this.$el.on('click', 'a', function () {
 	            var func = $(this).data('func');
 	            self[func]();
 	        });
@@ -41349,34 +41622,34 @@
 	module.exports = core;
 
 /***/ },
-/* 257 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
 	var files = ['elements', 'templates', 'resources', 'apis'];
 	
 	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(259)("./" + files[i] + '.js');
+	    __webpack_require__(262)("./" + files[i] + '.js');
 	}
 	
 	module.exports = _listJs2['default'].data;
 
 /***/ },
-/* 258 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
@@ -41394,17 +41667,17 @@
 	};
 
 /***/ },
-/* 259 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./apis.js": 260,
-		"./baseElem.js": 261,
-		"./data.js": 257,
-		"./elements.js": 262,
-		"./list.js": 258,
-		"./resources.js": 263,
-		"./templates.js": 264
+		"./apis.js": 263,
+		"./baseElem.js": 264,
+		"./data.js": 260,
+		"./elements.js": 265,
+		"./list.js": 261,
+		"./resources.js": 266,
+		"./templates.js": 267
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -41417,26 +41690,26 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 259;
+	webpackContext.id = 262;
 
 
 /***/ },
-/* 260 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41447,7 +41720,7 @@
 	});
 
 /***/ },
-/* 261 */
+/* 264 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41491,22 +41764,22 @@
 	};
 
 /***/ },
-/* 262 */
+/* 265 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41862,22 +42135,22 @@
 	};
 
 /***/ },
-/* 263 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(264);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41888,22 +42161,18 @@
 	});
 
 /***/ },
-/* 264 */
+/* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(261);
-	
-	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
-	
-	var _listJs = __webpack_require__(258);
+	var _listJs = __webpack_require__(261);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -42176,34 +42445,38 @@
 	};
 
 /***/ },
-/* 265 */
+/* 268 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _pageWatchlistJs = __webpack_require__(13);
+	var _pageElemlistJs = __webpack_require__(13);
 	
-	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -42218,20 +42491,19 @@
 	     * @return {[type]} [description]
 	     */
 	    _createMenu: function _createMenu() {
-	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="add-elem">\n                                <span class="glyphicon glyphicon-plus"></span>\n                                新建\n                            </li>\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span> 删除\n                            </li>\n                        </ul>\n                    </div>';
+	        var html = '<div class="menu" id="contextMenu" style="display: none;">\n                        <ul class="list-unstyled">\n                            <li data-role="add-elem">\n                                <span class="glyphicon glyphicon-plus"></span>\n                                新建\n                            </li>\n                            <li data-role="copy-elem">\n                                <span class="glyphicon glyphicon-copy"></span>\n                                复制\n                            </li>\n                            <li data-role="paste-elem">\n                                <span class="glyphicon glyphicon-paste"></span>\n                                粘贴\n                            </li>\n                            <li data-role="remove-elem">\n                                <span class="glyphicon glyphicon-trash"></span>\n                                删除\n                            </li>\n                        </ul>\n                    </div>';
 	        this.$menu = $(html);
-	        $('body').append(this.$menu);
+	        _bizUtilJs2['default'].$body.append(this.$menu);
 	    },
 	
 	    _showContextmenu: function _showContextmenu(event) {
-	        var left, top;
-	        left = event.pageX - 20;
-	        top = event.pageY - 10;
+	        var left = event.pageX - 20,
+	            top = event.pageY - 10;
 	
 	        // handle when reach bottom
-	        var target_height = this.$menu.height();
-	        var offset = target_height + this.$menu.offset().top;
-	        var window_height = $(window).height();
+	        var target_height = this.$menu.height(),
+	            offset = target_height + this.$menu.offset().top,
+	            window_height = _bizUtilJs2['default'].$window.height();
 	
 	        if (offset >= window_height) {
 	            top = window_height - target_height - 20;
@@ -42266,7 +42538,7 @@
 	            }
 	        });
 	
-	        self.$menu.find('[data-role="add-elem"]').on('click', function (event) {
+	        this.$menu.on('click', '[data-role="add-elem"]', function (event) {
 	
 	            var offset = $device.offset(),
 	                left = event.pageX - offset.left,
@@ -42277,14 +42549,10 @@
 	            });
 	            self._callbackRender();
 	            _stageHistoryJs2['default'].pushStep();
-	        });
-	
-	        self.$menu.find('[data-role="copy-elem"]').on('click', function () {
+	        }).on('click', '[data-role="copy-elem"]', function () {
 	            _operationJs2['default'].copyElem();
-	            self._callbackRender();
-	        });
-	
-	        self.$menu.find('[data-role="paste-elem"]').on('click', function (event) {
+	            self.$menu.hide();
+	        }).on('click', '[data-role="paste-elem"]', function (event) {
 	            var offset = $device.offset(),
 	                left = event.pageX - offset.left,
 	                top = event.pageY - offset.top;
@@ -42293,9 +42561,7 @@
 	            });
 	            self._callbackRender();
 	            _stageHistoryJs2['default'].pushStep();
-	        });
-	
-	        self.$menu.find('[data-role="remove-elem"]').on('click', function () {
+	        }).on('click', '[data-role="remove-elem"]', function () {
 	            _operationJs2['default'].removeElem();
 	            self._callbackRender();
 	            _stageHistoryJs2['default'].pushStep();
@@ -42312,8 +42578,8 @@
 	    },
 	
 	    _callbackRender: function _callbackRender() {
-	        _pageWatchlistJs2['default'].render();
-	        _pageRenderJs2['default'].renderPage();
+	        _pageElemlistJs2['default'].render();
+	        _pageRenderJs2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
 	        this.$menu.hide();
 	    }
 	};
@@ -42321,43 +42587,47 @@
 	module.exports = core;
 
 /***/ },
-/* 266 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _lodash = __webpack_require__(9);
+	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(12);
+	var _bizUtilJs = __webpack_require__(6);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
-	var _templateDataJs = __webpack_require__(257);
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _templateDataJs = __webpack_require__(260);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
-	var _pageRenderJs = __webpack_require__(11);
+	var _pageRenderJs = __webpack_require__(12);
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _pageWatchlistJs = __webpack_require__(13);
+	var _pageElemlistJs = __webpack_require__(13);
 	
-	var _pageWatchlistJs2 = _interopRequireDefault(_pageWatchlistJs);
+	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _stageHistoryJs = __webpack_require__(8);
+	var _stageHistoryJs = __webpack_require__(9);
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(256);
+	var _operationJs = __webpack_require__(259);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
 	var core = {
-	    $toolBar: $('#toolBar'),
+	    $topbar: $('#topBar'),
 	
 	    init: function init() {
 	        this._create();
@@ -42371,7 +42641,7 @@
 	     * @return {[type]} [description]
 	     */
 	    _create: function _create() {
-	        var html = '<div class="tool-bar">\n                        <ul>';
+	        var html = '<div class="top-bar">\n                        <ul>';
 	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
 	            html += '<li data-id="' + value.id + '">' + value.cn + '</li>';
 	        });
@@ -42379,46 +42649,78 @@
 	        html += '</ul>\n                    </div>';
 	
 	        this.$elem = $(html);
-	        this.$toolBar.append(this.$elem);
+	        this.$topbar.append(this.$elem);
 	    },
 	
 	    _createTabcont: function _createTabcont() {
-	        var html = '<div class="tool-bar-cont">';
+	        var html = '<div class="top-bar-cont">';
 	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
-	            html += '<div class="tool-bar-cont-li cf" id="' + value.id + '"></div>';
+	            html += '<div class="top-bar-cont-li cf" id="' + value.id + '"></div>';
 	        });
 	        html += '</div>';
 	
 	        this.$tabCont = $(html);
-	        this.$toolBar.append(this.$tabCont);
+	        this.$topbar.append(this.$tabCont);
 	    },
 	
 	    _insertData: function _insertData() {
 	        var self = this;
 	        _lodash2['default'].forEach(_templateDataJs2['default'], function (value, key) {
-	            var id = value.id,
-	                html = self._getExtraDom(key);
-	            // 默认循环魔板列表中的数据
-	            _lodash2['default'].forEach(value.list, function (c_value, c_key) {
-	                html += '\n                            <div class="tool-elem">\n                                <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                    <div class="tool-pic">\n                                        <img src="' + c_value.pic + '">\n                                    </div>\n                                </div>\n                            </div>\n                        ';
-	            });
-	
-	            self.$tabCont.find('#' + id).append(html);
-	            // 执行操作不适用循环的那些Tab
+	            var html = self._getExtraDom(key);
+	            html += self._insertTemplateHtml(value.list, key);
+	            self.$tabCont.find('#' + value.id).append(html);
+	            // 除了循环，需要额外操作的那些Tab
 	            self._bindExtra(value, key);
 	        });
 	    },
 	
+	    _insertTemplateHtml: function _insertTemplateHtml(data, key) {
+	        var html = '';
+	        // 默认循环魔板列表中的数据
+	        _lodash2['default'].forEach(data, function (c_value, c_key) {
+	            html += '<div class="tool-elem">\n                            <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                <div class="tool-pic">\n                                    <img src="' + c_value.pic + '">\n                                </div>\n                            </div>\n                        </div>';
+	        });
+	        return html;
+	    },
+	
 	    _bindExtra: function _bindExtra(value, key) {
+	        var self = this;
+	        console.log(value, key);
 	        switch (key) {
 	            case 'resource':
-	                console.log('get ajax request');
+	                // console.log('get ajax request');
 	                /**
 	                 * here need a api
 	                 * 要做一个接口，查找每月或一个query的素材数据
 	                 * 绑定一个加载更多的事件
 	                 */
 	                this.$tabCont.find('#' + value.id).append('get resources from lastest month latest year');
+	                break;
+	            case 'template':
+	                console.log('get ajax request');
+	                $.ajax({
+	                    url: '/api/template/list' + '?v=' + Math.random(),
+	                    type: 'GET',
+	                    data: {
+	                        pageIndex: 1,
+	                        pageSize: 10
+	                    },
+	                    success: function success(data) {
+	                        if (data.Code === 0) {
+	                            var it = data.data.list,
+	                                html = '';
+	                            for (var i = 0; i < it.length; i++) {
+	                                var tmpl = {};
+	                                tmpl[it[i].id] = it[i];
+	                                html += '<div class="tool-elem">\n                                                <div class="tool-src" data-id="' + it[i].id + '" data-category="' + key + '">\n                                                    <div class="tool-pic">\n                                                        <span>' + it[i].name + '</span>\n                                                        <img src="' + it[i].pic + '">\n                                                    </div>\n                                                </div>\n                                            </div>';
+	                                _lodash2['default'].extend(value.list, tmpl);
+	                            }
+	                            self.$tabCont.find('#' + value.id).append(html);
+	                            console.log(data);
+	                        }
+	                    },
+	                    complete: function complete(err) {}
+	                });
 	                break;
 	            default:
 	                break;
@@ -42440,7 +42742,7 @@
 	    _bind: function _bind() {
 	        var self = this;
 	
-	        _bizUtilJs2['default'].$doc.on('click', '.tool-bar li', function () {
+	        _bizUtilJs2['default'].$doc.on('click', '.top-bar li', function () {
 	            var $this = $(this),
 	                index = $this.index(),
 	                id = $this.attr('data-id');
@@ -42454,7 +42756,7 @@
 	
 	        _bizUtilJs2['default'].$doc.on('click', function (event) {
 	            var $this = $(event.target),
-	                isIn = $this.closest('#toolBar').length > 0;
+	                isIn = $this.closest('#topBar').length > 0;
 	            if (!isIn) {
 	                self.hideTab();
 	            }
@@ -42496,8 +42798,8 @@
 	    },
 	
 	    _render: function _render() {
-	        _pageWatchlistJs2['default'].render();
-	        _pageRenderJs2['default'].renderPage();
+	        _pageElemlistJs2['default'].render();
+	        _pageRenderJs2['default'].renderHtmlPage(_dataStageDataJs2['default'].index);
 	        _stageHistoryJs2['default'].pushStep();
 	    },
 	

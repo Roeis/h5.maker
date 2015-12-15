@@ -13,7 +13,7 @@ const text = {
         placeholder: '输入统计事件名'
     }
 };
-var langs = 'en';
+var langs = 'cn';
 tasks.register('analyze', {
     html: `<div class="edit-group">
             <div class="row">

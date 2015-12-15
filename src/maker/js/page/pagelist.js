@@ -29,7 +29,7 @@ var core = {
 
     _createCRUD(){
         let html = `<div class="page-operation">
-                        <button class="btn btn-default" data-role="upload" title="同步至云端，由管理员审核">上传魔板</button>
+                        <a class="btn btn-default post-add-template" title="同步至云端，由管理员审核">上传魔板</a>
                         <a class="btn btn-success post-save">save</a>
                     </div>`;
         util.$pagelist.append(html);
@@ -76,12 +76,6 @@ var core = {
                 elemlist.render();
 
                 history.renderStatus();
-            })
-            .on('click', '[data-role="upload"]', () => {
-                let page = crud.getCurPage();
-
-                console.log(page);
-                console.log('%csync template with cloud', 'color: #f00;');
             });
     },
 

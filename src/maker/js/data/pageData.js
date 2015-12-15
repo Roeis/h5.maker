@@ -42,7 +42,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     },
@@ -78,7 +78,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     },
@@ -114,7 +114,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     }
@@ -160,7 +160,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     },
@@ -196,7 +196,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     },
@@ -232,7 +232,7 @@ var data = {
                             'z-index': 0,
                             'animation-name': 'none',
                             'animation-duration': '1s',
-                            'animation-delay': '1s',
+                            'animation-delay': '0s',
                             'opacity': 1
                         }
                     }
@@ -247,13 +247,13 @@ var data = {
 
     // generate by render function
     output: {
-        html: [],
+        html: '',
         style: ''
     },
 
     setting: {
-        isLoop: true,
-        mode: 'vertical',
+        isloop: true,
+        direction: 'vertical',
         audio: '',
         countID: 6,
         template: 'jump', // slider, commonPage, jump

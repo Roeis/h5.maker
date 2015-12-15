@@ -365,9 +365,6 @@ $dark-bg: $bg - #0c0c0c;
 .edit-group{
     background-color: #fff;
     padding: 20px 10px 0;
-    &:hover{
-        background-color: #fbfbfb;
-    }
     &:last-child{
         .row{
             border-bottom: none;
@@ -456,7 +453,7 @@ $dark-bg: $bg - #0c0c0c;
     height: 60px;
     margin: 10px;
     box-shadow: 0 0 0 1px #eee;
-    background-color: #f8f8f8;
+    background-color: #fff;
     float: left;
     font-size: 1rem;
     cursor: pointer;
@@ -472,23 +469,31 @@ $dark-bg: $bg - #0c0c0c;
     }
     div{
         position: absolute;
-        width: 40px;
-        height: 40px;
-        left: 10px;
-        top: 10px;
+        display: table;
+        width: 50px;
+        height: 50px;
+        left: 5px;
+        top: 5px;
         line-height: 20px;
-        background-color: #fff;
+        background-color: #f8f8f8;
+        span{
+            display: table-cell;
+            vertical-align: middle;
+        }
     }
 }
 .colorpicker{
     width: 50px;
     background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMElEQVQ4T2N89uzZfwY8QFJSEp80A+OoAcMiDP7//483HTx//hx/Ohg1gIFx6IcBALl+VXknOCvFAAAAAElFTkSuQmCC);
 }
+.edit-text-editor{
+    background-color: #fbfbfb;
+}
 .innerHtml{
     padding: 10px;
     border: 1px solid #ddd;
-    border-radius: 3px;
     outline: none;
+    background-color: #fff;
     img{
         max-width: 100%;
     }
@@ -502,6 +507,13 @@ $dark-bg: $bg - #0c0c0c;
 //     border-top: 1px solid #999;
 //     border-bottom: 1px solid #999;
 // }
+
+
+
+
+
+
+
 
 
 
@@ -677,6 +689,23 @@ $dark-bg: $bg - #0c0c0c;
 
 
 
+
+
+// editor
+.ql-container{
+    overflow: initial !important;
+}
+.ql-image-tooltip .preview{
+    height: 100px !important;
+}
+.ql-editor{
+    min-height: 100px !important;
+}
+.ql-toolbar{
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-bottom: none;
+}
 
 
 

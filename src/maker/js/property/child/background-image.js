@@ -1,4 +1,5 @@
 'use strict';
+import util         from '../../biz/util.js';
 import stageData    from '../../data/stageData.js';
 import pageData     from '../../data/pageData.js';
 import render       from '../../page/render.js';
@@ -20,6 +21,7 @@ tasks.register('background-image', {
         this.$image = this.$el.find('[data-role="bg-image"]');
     },
     bind(){
+
         this.$image.on('change.property', function(){
             let role = stageData.curRole;
 
@@ -33,6 +35,8 @@ tasks.register('background-image', {
                     render.logPageStep();
                     break;
                 case 'global':
+                    pageData.setting.style['background-image'] = 'url(' + this.value + ')';
+                    util.$wrapper.attr('style', util.flatStyle(pageData.setting.style));
                     break;
                 default:
                     break;

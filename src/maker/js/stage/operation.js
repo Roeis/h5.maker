@@ -6,6 +6,7 @@ import stageData    from '../data/stageData.js';
 import pageData     from '../data/pageData.js';
 import template     from '../template/data.js';
 import render       from '../page/render.js';
+import property     from '../property';
 
 /**
  *
@@ -44,8 +45,13 @@ var core = {
     },
 
     removeElem(){
+        if(!stageData.curElem){
+            mu.util.alert('请单击选取元素');
+            return;
+        }
         let current = pageData.list[stageData.index],
             index = _.findIndex(current.elements, {id: stageData.curElem.id});
+
         current.elements.splice(index, 1);
     },
 
@@ -54,6 +60,10 @@ var core = {
     },
 
     pasteElem(callback){
+        if(!stageData.clone){
+            mu.util.alert('找不到可复制的对象');
+            return;
+        }
         let clone = _.cloneDeep(stageData.clone);
         stageData.countID ++;
         clone.id = 'm_' + stageData.countID;
@@ -62,6 +72,9 @@ var core = {
         pageData.list[stageData.index].elements.push(clone);
     },
 
+    //================================
+    // 操作元素
+    //================================
     /**
      * 水平居中
      */
@@ -74,6 +87,10 @@ var core = {
     },
 
     horiCenterlize(){
+        if(!stageData.curElem){
+            mu.util.alert('请单击选取元素');
+            return;
+        }
         this._horiCenterlize();
         render.logElemStep();
     },
@@ -90,14 +107,20 @@ var core = {
     },
 
     vertCenterlize(){
+        if(!stageData.curElem){
+            mu.util.alert('请单击选取元素');
+            return;
+        }
         this._vertCenterlize();
         render.logElemStep();
     },
 
-    /**
-     * 居中
-     */
+    // DEPRECATED
     centerlize(){
+        if(!stageData.curElem){
+            mu.util.alert('请单击选取元素');
+            return;
+        }
         this._vertCenterlize();
         this._horiCenterlize();
         render.logElemStep();
@@ -134,6 +157,10 @@ var core = {
      * 自动修正尺寸，趋向于10的倍数
      */
     autoAdjust(){
+        if(!stageData.curElem){
+            mu.util.alert('请单击选取元素');
+            return;
+        }
         this._autoAdjust();
         render.logElemStep();
     },
@@ -142,26 +169,16 @@ var core = {
 
     },
 
-    align(direction){
-        switch(direction){
-            case 'up':
-                break;
-            case 'down':
-                break;
-            case 'right':
-                break;
-            case 'left':
-                break;
-        }
-    },
-
     turn3d(){
         util.$stage.toggleClass('stage3D');
     },
 
 
-    setting(){
-
+    setGlobal(){
+        stageData.curRole = 'global';
+        property.unSyncAll();
+        property.sync(pageData.setting);
+        property.sync(pageData.setting.style);
     },
 
     init(){
@@ -171,9 +188,10 @@ var core = {
 
     _create(){
         let html = `<div class="quick-key">
+                        <a class="btn btn-default" data-func="setGlobal">全局设置</a>
+                        <p>&nbsp;</p>
                         <a class="btn btn-default" data-func="horiCenterlize">水平居中</a>
                         <a class="btn btn-default" data-func="vertCenterlize">垂直居中</a>
-                        <a class="btn btn-default" data-func="centerlize">全屏居中</a>
                         <p>&nbsp;</p>
                         <a class="btn btn-default" data-func="autoAdjust">自动修正</a>
                         <p>&nbsp;</p>
