@@ -64,8 +64,9 @@ var core = {
     },
 
     // 渲染前台页面正式DOM结构，区别于编辑器渲染
-    _generateOne(data) {
-        let html = `<div class="page"><div class="cont">`,
+    _generateOne(data, index) {
+        let html = `<div class="page page-${index}">
+                        <div class="cont">`,
             style = '';
         for(let i = 0; i < data.length; i++){
             let it = data[i];
@@ -74,8 +75,8 @@ var core = {
                                 ${it.child.innerHtml}
                             </div>
                         </div>`;
-                style += '#'+ it.id + '{' + this._generateStyle(it.style) + '}';
-                style += '#'+ it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
+                style += `#${it.id}{${this._generateStyle(it.style)}}\n`;
+                style += `#${it.id} .inner{${this._generateStyle(it.child.style)}}\n`;
             }
 
         html += `</div></div>`;
@@ -95,12 +96,14 @@ var core = {
             style = '';
         for(let i = 0; i < list.length; i++){
             let it = list[i],
-                output = this._generateOne(it.elements),
-                pageStyle = '.page-' + i + '{' + util.flatStyle(it.style) + '}';
+                output = this._generateOne(it.elements, i),
+                pageStyle = `.page-${i}{` + util.flatStyle(it.style) + `}\n`;
+                console.log(output.html)
+                console.log(output.style)
             html += output.html;
             style += pageStyle + output.style;
         }
-        style = '.wrapper{' + util.flatStyle(pageData.setting.style) + '}' + style;
+        style = `.wrapper{` + util.flatStyle(pageData.setting.style) + `}\n` + style;
         pageData.output.html = html;
         pageData.output.style = style;
 

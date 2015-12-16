@@ -22,7 +22,8 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^3.1.0",
     "serve-favicon": "^2.3.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "url-to-screenshot": "^0.6.0"
   },
   "devDependencies": {
     "babel": "^6.0.15",

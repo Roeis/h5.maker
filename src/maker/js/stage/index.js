@@ -96,11 +96,11 @@ var core = {
     },
 
     handleFocusText(){
-        util.$doc.find('input, .ql-editor')
-            .on('focus', function(){
+        util.$doc
+            .on('focus', 'input, .ql-editor', function(){
                 stageData.isFocusText = true;
             })
-            .on('blur',function(){
+            .on('blur','input, .ql-editor', function(){
                 stageData.isFocusText = false;
             });
     },

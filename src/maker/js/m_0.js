@@ -1,18 +1,52 @@
-(function() {
+
+(function(global) {
     'use strict';
 
-    const standardRatio = 540 / 360;
+    var standardRatio = 540 / 360;
 
     var core = {
 
-        init() {
+        init: function() {
             console.log('h5 maker go');
             this.setSize();
-            this.bind();
+            this._bind();
+
+            this.initPage();
+            this.bindPage();
         },
 
-        setSize() {
-            let size = this.getSize();
+        initPage: function() {
+            this.slider = new MuPage('.page', {
+                isLoop: true,
+                mode: 'vertical',
+                beforeSlide: function($inpage, $oupage){
+                    $inpage.find('.cont').show();
+                },
+                afterSlide: function($inpage, $oupage, index){
+                    console.log($inpage, $oupage, index);
+                    $oupage.find('.cont').hide();
+                }
+            });
+        },
+
+        bindPage: function(){
+            var self = this;
+            mu.util.preventScroll();
+            $('.wrapper')
+                .on('swipeUp', function(){
+                    if(!self.slider.isAnimating){
+                        self.slider.next();
+                    }
+                })
+                .on('swipeDown', function(){
+                    if(!self.slider.isAnimating){
+                        self.slider.prev();
+                    }
+                });
+        },
+
+        setSize: function() {
+            var size = this.getSize();
 
 
             $('.cont').css({
@@ -24,9 +58,9 @@
             });
         },
 
-        getSize() {
+        getSize: function() {
             // it reread the value when resize or something like that
-            let winHeight = document.documentElement.clientHeight || window.innerHeight,
+            var winHeight = document.documentElement.clientHeight || window.innerHeight,
                 winWidth = document.documentElement.clientWidth || window.innerWidth,
                 ratio = winHeight / winWidth,
                 width, height, left, top;
@@ -51,12 +85,14 @@
             };
         },
 
-        bind() {
-            $(window).on('resize', () => {
-                this.setSize();
+        _bind: function() {
+            var self = this;
+            $(window).on('resize', function(){
+                self.setSize();
             });
+
         }
     };
-
+    global.h5 = core;
     core.init();
-}());
+})(this);

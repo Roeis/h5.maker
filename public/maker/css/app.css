@@ -593,6 +593,19 @@ p {
   border: 1px dashed #F50;
 }
 
+.dg-upload-template {
+  background-color: #fff;
+  padding: 30px;
+}
+
+.dg-dialog .dg-title {
+  background-color: #ddd;
+  margin: -30px -30px 20px;
+  text-align: center;
+  line-height: 40px;
+  height: 40px;
+}
+
 .ql-container {
   overflow: initial !important;
 }

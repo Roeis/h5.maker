@@ -7,6 +7,7 @@ var home = require('./home.js');
 var user = require('./user.js');
 var api  = require('./api.js');
 var edit = require('./edit.js');
+var front = require('./front.js');
 
 // 首页
 router.get('/', home.index);
@@ -27,6 +28,8 @@ router.get('/api/get', api.getPage);
 
 router.post('/api/template/add', api.addTemplate);
 router.get('/api/template/list', api.getTemplateList);
+
+router.get('/zt/:langs/:alias', front.getPage);
 
 // 编辑页面
 router.get('/edit', edit.index);

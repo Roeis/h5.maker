@@ -1,5 +1,3 @@
-@charset 'utf-8';
-
 body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, input, textarea, p, blockquote, th, td {
   margin: 0;
   padding: 0;
@@ -56,8 +54,6 @@ input, textarea, select {
 }
 
 *, *:before, *:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
   box-sizing: border-box;
 }
 
@@ -80,7 +76,9 @@ body {
 
 html, body {
   -webkit-user-select: none;
-  user-select: none;
+  -moz-user-select: none;
+   -ms-user-select: none;
+       user-select: none;
   width: 100%;
   height: 100%;
 }
@@ -105,12 +103,15 @@ a {
   display: table;
   clear: both;
 }
-.fl{
+
+.fl {
   float: left;
 }
-.fr{
+
+.fr {
   float: right;
 }
+
 .por {
   position: relative;
 }
@@ -124,40 +125,44 @@ a {
   -webkit-overflow-scrolling: touch;
 }
 
-.wrapper{
-    position: relative;
-    height: 100%;
-    width: 100%;
-    overflow: hidden;
-    backface-visibility: hidden;
-    transform-style: preserve-3d;
-    .page{
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        left: 0;
-        top: 0;
-        background-position: center;
-        background-repeat: no-repeat;
-    }
-    .cont{
-        
-        height: 100%;
-    }
+.wrapper {
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
+  position: relative;
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
 }
-//元素
-.elem{
-    position: absolute;
-    display: table;
-    animation-fill-mode: both;
-    .inner{
-        display: table-cell;
-        width: 100%;
-        background-repeat: no-repeat;
-        background-position: center center;
-        background-size: 100% auto;
-        img{
-            max-width: 100%;
-        }
-    }
+.wrapper .page {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+.wrapper .cont {
+  position: relative;
+  height: 100%;
+  background-color: #eee;
+}
+
+.elem {
+  position: absolute;
+  display: table;
+  -webkit-animation-fill-mode: both;
+          animation-fill-mode: both;
+}
+.elem .inner {
+  display: table-cell;
+  width: 100%;
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 100% auto;
+}
+.elem .inner img {
+  max-width: 100%;
 }

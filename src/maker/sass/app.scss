@@ -691,6 +691,29 @@ $dark-bg: $bg - #0c0c0c;
 
 
 
+//
+.dg-upload-template{
+    background-color: #fff;
+    padding: 30px;
+}
+
+.dg-dialog{
+    .dg-title{
+        background-color: #ddd;
+        margin: -30px -30px 20px;
+        text-align: center;
+        line-height: 40px;
+        height: 40px;
+    }
+}
+
+
+
+
+
+
+
+
 // editor
 .ql-container{
     overflow: initial !important;

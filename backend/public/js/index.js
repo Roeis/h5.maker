@@ -49,7 +49,7 @@
                                     '<td>'+
                                         '<a href="'+ link +'" target="_blank" type="type" class="btn btn-default">编辑</a>'+
                                         // '<a href="javascript:;" type="type" class="btn btn-default">设置</a>'+
-                                        // '<a href="javascript:;" type="type" class="btn btn-default">预览</a>'+
+                                        '<a href="/zt/'+ it[i].langs+'/'+ it[i].alias +'" target="_blank" type="type" class="btn btn-default">预览</a>'+
                                     '</td>'+
                                 '</tr>';
                     }

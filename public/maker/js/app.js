@@ -325,22 +325,42 @@
 	        //
 	        // history.initStatus();
 	
+	        this._create();
 	        this._bind();
 	    },
 	
-	    _bind: function _bind() {
+	    _create: function _create() {
 	        var _this = this;
 	
-	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
-	            _this.updatePage();
+	        var html = '<div class="dg-dialog dg-upload-template">\n                        <div class="dg-title">\n                            新增模板\n                        </div>\n                        <div class="row">\n                            <div class="col-md-4">\n                                模板名称\n                            </div>\n                            <div class="col-md-8">\n                                <input class="form-control" type="text" id="template-name">\n                            </div>\n                        </div>\n                        <div class="row">\n                            <a href="javascript:;" class="btn btn-success btn-upload-template">上传</a>\n                        <div>\n                    </div>';
+	        _bizUtilJs2['default'].$body.append(html);
+	        this.updateTemplate = new MuDialog('.dg-upload-template', {
+	            opacity: 0.4
 	        });
-	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
+	        var templateName = document.getElementById('template-name');
+	        this.updateTemplate.$el.find('.btn-upload-template').on('click', function () {
+	            if (!templateName.value) {
+	                alert('please enter a name');
+	                return;
+	            }
 	            var postData = {
-	                name: 'test',
-	                pic: 'pic',
+	                name: templateName,
+	                pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
 	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
 	            };
 	            _this.addTemplate(postData);
+	            _this.updateTemplate.close();
+	        });
+	    },
+	
+	    _bind: function _bind() {
+	        var _this2 = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
+	            _this2.updatePage();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
+	            _this2.updateTemplate.open();
 	        });
 	    }
 	};
@@ -13267,14 +13287,14 @@
 	    },
 	
 	    // 渲染前台页面正式DOM结构，区别于编辑器渲染
-	    _generateOne: function _generateOne(data) {
-	        var html = '<div class="page"><div class="cont">',
+	    _generateOne: function _generateOne(data, index) {
+	        var html = '<div class="page page-' + index + '">\n                        <div class="cont">',
 	            style = '';
 	        for (var i = 0; i < data.length; i++) {
 	            var it = data[i];
 	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
-	            style += '#' + it.id + '{' + this._generateStyle(it.style) + '}';
-	            style += '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}';
+	            style += '#' + it.id + '{' + this._generateStyle(it.style) + '}\n';
+	            style += '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}\n';
 	        }
 	
 	        html += '</div></div>';
@@ -13294,12 +13314,14 @@
 	            style = '';
 	        for (var i = 0; i < list.length; i++) {
 	            var it = list[i],
-	                output = this._generateOne(it.elements),
-	                pageStyle = '.page-' + i + '{' + _bizUtilJs2['default'].flatStyle(it.style) + '}';
+	                output = this._generateOne(it.elements, i),
+	                pageStyle = '.page-' + i + '{' + _bizUtilJs2['default'].flatStyle(it.style) + '}\n';
+	            console.log(output.html);
+	            console.log(output.style);
 	            html += output.html;
 	            style += pageStyle + output.style;
 	        }
-	        style = '.wrapper{' + _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style) + '}' + style;
+	        style = '.wrapper{' + _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style) + '}\n' + style;
 	        _dataPageDataJs2['default'].output.html = html;
 	        _dataPageDataJs2['default'].output.style = style;
 	    },
@@ -13830,9 +13852,9 @@
 	    },
 	
 	    handleFocusText: function handleFocusText() {
-	        _bizUtilJs2['default'].$doc.find('input, .ql-editor').on('focus', function () {
+	        _bizUtilJs2['default'].$doc.on('focus', 'input, .ql-editor', function () {
 	            _dataStageDataJs2['default'].isFocusText = true;
-	        }).on('blur', function () {
+	        }).on('blur', 'input, .ql-editor', function () {
 	            _dataStageDataJs2['default'].isFocusText = false;
 	        });
 	    },

@@ -1,4 +1,3 @@
-
 (function(global) {
     'use strict';
 
@@ -31,22 +30,17 @@
 
         bindPage: function(){
             var self = this;
-            mu.util.preventScroll();
             $('.wrapper')
                 .on('swipeUp', function(){
-                    if(!self.slider.isAnimating){
-                        self.slider.next();
-                    }
+                    self.slider.next();
                 })
                 .on('swipeDown', function(){
-                    if(!self.slider.isAnimating){
-                        self.slider.prev();
-                    }
+                    self.slider.prev();
                 });
         },
 
         setSize: function() {
-            var size = this.getSize();
+            let size = this.getSize();
 
 
             $('.cont').css({
@@ -60,7 +54,7 @@
 
         getSize: function() {
             // it reread the value when resize or something like that
-            var winHeight = document.documentElement.clientHeight || window.innerHeight,
+            let winHeight = document.documentElement.clientHeight || window.innerHeight,
                 winWidth = document.documentElement.clientWidth || window.innerWidth,
                 ratio = winHeight / winWidth,
                 width, height, left, top;
@@ -95,4 +89,4 @@
     };
     global.h5 = core;
     core.init();
-})(this);
+}(this));

@@ -126,23 +126,26 @@ a {
 }
 
 .wrapper {
-  -webkit-backface-visibility: hidden;
-  -webkit-transform-style: preserve-3d;
   position: relative;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+  -webkit-backface-visibility: hidden;
+          backface-visibility: hidden;
+  -webkit-transform-style: preserve-3d;
+          transform-style: preserve-3d;
 }
 .wrapper .page {
+  position: absolute;
   height: 100%;
   width: 100%;
   left: 0;
   top: 0;
-  position: absolute;
+  background-position: center;
+  background-repeat: no-repeat;
 }
 .wrapper .cont {
-  position: relative;
   height: 100%;
-  background-color: #eee;
 }
 
 .elem {
