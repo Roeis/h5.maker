@@ -175,6 +175,7 @@ var core = {
         let curElem = stageData.curElem;
         // style, child.innerHtml, child.style, extra
         // syncValue('link', curElem.extra.link);
+        property.syncValue('analyze', curElem.extra.analyze);
         switch(curElem.type){
             case 'audio':
                 property.syncValue('audio', curElem.extra.audio);
@@ -184,7 +185,6 @@ var core = {
                 break;
             case 'link':
                 property.syncValue('link', curElem.extra.link);
-                property.syncValue('analyze', curElem.extra.analyze);
                 break;
             case 'jump':
                 property.syncValue('jump', curElem.extra.jump);

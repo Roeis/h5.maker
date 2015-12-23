@@ -246,8 +246,13 @@
 	                data: JSON.stringify(postData)
 	            },
 	            success: function success(data) {
-	                console.log(data);
-	                mu.util.alert('保存成功');
+	                if (data.Code === 0) {
+	                    console.log(data);
+	                    mu.util.alert('保存成功');
+	                } else {
+	                    console.log(data);
+	                    mu.util.alert('fail');
+	                }
 	            },
 	            complete: function complete(err) {
 	                isSaving = false;
@@ -264,8 +269,13 @@
 	                data: JSON.stringify(postData)
 	            },
 	            success: function success(data) {
-	                console.log(data);
-	                mu.util.alert('上传成功');
+	                if (data.Code === 0) {
+	                    console.log(data);
+	                    mu.util.alert('上传成功');
+	                } else {
+	                    console.log(data);
+	                    mu.util.alert('fail');
+	                }
 	            },
 	            complete: function complete(err) {}
 	        });
@@ -344,7 +354,7 @@
 	                return;
 	            }
 	            var postData = {
-	                name: templateName,
+	                name: templateName.value,
 	                pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
 	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
 	            };

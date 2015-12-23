@@ -59,7 +59,7 @@
 	
 	var _ui2 = _interopRequireDefault(_ui);
 	
-	var _page = __webpack_require__(5);
+	var _page = __webpack_require__(6);
 	
 	var _page2 = _interopRequireDefault(_page);
 	
@@ -112,7 +112,7 @@
 	
 	var _qrcodeJs2 = _interopRequireDefault(_qrcodeJs);
 	
-	var _warningJs = __webpack_require__(4);
+	var _warningJs = __webpack_require__(5);
 	
 	var _warningJs2 = _interopRequireDefault(_warningJs);
 	
@@ -136,14 +136,18 @@
 
 /***/ },
 /* 3 */
-/***/ function(module, exports) {
+/***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	// 生成二维码
-	// var qrcode = window.CUR_DATA.qrcode;
-	var $helper = $('#helper');
-	var mQrcode = 'http://www.baidu.com/';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(4);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
 	var core = {
 	    init: function init() {
 	        this.create();
@@ -151,11 +155,12 @@
 	    },
 	    create: function create() {
 	        var html = '<div class="qrcode-helper">\n                        <span class="glyphicon glyphicon-qrcode"></span>\n                        <div class="qrcode" id="qrcode"></div>\n                    </div>';
-	        $helper.append(html);
+	        _bizUtilJs2['default'].$helper.append(html);
 	    },
 	    initCode: function initCode() {
+	        var qrcode = window.CUR_DATA.qrcode;
 	        $('#qrcode').qrcode({
-	            text: mQrcode,
+	            text: qrcode,
 	            width: 200,
 	            height: 200
 	        });
@@ -165,210 +170,6 @@
 
 /***/ },
 /* 4 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var core = {
-	    init: function init() {
-	        var app = window.navigator.appVersion.toLowerCase(),
-	            version = app.match(/chrome\/([\d.]+)/),
-	            isChrome = /chrome/i.test(app);
-	
-	        version && (version = parseInt(version[1].slice(0, 2)));
-	
-	        version <= 36 && alert('厂长建议你使用新版Chrome~');
-	        !isChrome && alert('请使用chrome来体验这款神器~');
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 5 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _bizUtilJs = __webpack_require__(6);
-	
-	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
-	
-	var _dataStageDataJs = __webpack_require__(7);
-	
-	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
-	
-	var _dataPageDataJs = __webpack_require__(8);
-	
-	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
-	
-	var _stageHistoryJs = __webpack_require__(9);
-	
-	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
-	
-	var _renderJs = __webpack_require__(12);
-	
-	var _renderJs2 = _interopRequireDefault(_renderJs);
-	
-	var _elemlistJs = __webpack_require__(13);
-	
-	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
-	
-	var _pagelistJs = __webpack_require__(14);
-	
-	var _pagelistJs2 = _interopRequireDefault(_pagelistJs);
-	
-	window.render = _renderJs2['default'];
-	var isSaving = false;
-	var core = {
-	
-	    // 更新数据
-	    updatePage: function updatePage() {
-	        var self = this;
-	        if (isSaving) {
-	            mu.util.alert('还在保存中...');
-	            return;
-	        }
-	        // generate output html
-	        _renderJs2['default'].renderRelease();
-	        _dataPageDataJs2['default'].setting.countID = _dataStageDataJs2['default'].countID;
-	        var postData = {
-	            id: self.id,
-	            content: JSON.stringify(_dataPageDataJs2['default'])
-	        };
-	        isSaving = true;
-	        $.ajax({
-	            url: '/api/update/',
-	            type: 'POST',
-	            data: {
-	                data: JSON.stringify(postData)
-	            },
-	            success: function success(data) {
-	                console.log(data);
-	                mu.util.alert('保存成功');
-	            },
-	            complete: function complete(err) {
-	                isSaving = false;
-	            }
-	        });
-	    },
-	
-	    addTemplate: function addTemplate(postData) {
-	        console.log(postData);
-	        $.ajax({
-	            url: '/api/template/add',
-	            type: 'POST',
-	            data: {
-	                data: JSON.stringify(postData)
-	            },
-	            success: function success(data) {
-	                console.log(data);
-	                mu.util.alert('上传成功');
-	            },
-	            complete: function complete(err) {}
-	        });
-	    },
-	
-	    // 获取数据
-	    getInitData: function getInitData() {
-	        var self = this;
-	        mu.request.get({
-	            url: '/api/get',
-	            data: {
-	                id: self.id
-	            },
-	            dataType: 'json',
-	            success: function success(data) {
-	                if (data.Code === 0) {
-	                    var cloneData = JSON.parse(data.data);
-	                    console.log(cloneData);
-	
-	                    for (var key in cloneData) {
-	                        if (cloneData.hasOwnProperty(key)) {
-	                            _dataPageDataJs2['default'][key] = cloneData[key];
-	                        }
-	                    }
-	
-	                    // get Data
-	                    _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
-	                    _pagelistJs2['default'].init();
-	                    _elemlistJs2['default'].init();
-	
-	                    //渲染页面和管理页面, 包含了初始化页面滚动
-	                    _renderJs2['default'].renderUi();
-	                    _stageHistoryJs2['default'].initStatus();
-	                }
-	            },
-	            complete: function complete() {}
-	        });
-	    },
-	
-	    init: function init() {
-	        // 远程
-	        this.id = mu.util.getQueryString('id');
-	        if (!this.id) {
-	            mu.util.alert('please has a query');
-	            return;
-	        }
-	
-	        this.getInitData();
-	
-	        // 本地
-	        // stageData.countID = pageData.setting.countID;
-	        // pagelist.init();
-	        // elemlist.init();
-	        //
-	        // //渲染页面和管理页面, 包含了初始化页面滚动
-	        // render.renderUi();
-	        //
-	        // history.initStatus();
-	
-	        this._create();
-	        this._bind();
-	    },
-	
-	    _create: function _create() {
-	        var _this = this;
-	
-	        var html = '<div class="dg-dialog dg-upload-template">\n                        <div class="dg-title">\n                            新增模板\n                        </div>\n                        <div class="row">\n                            <div class="col-md-4">\n                                模板名称\n                            </div>\n                            <div class="col-md-8">\n                                <input class="form-control" type="text" id="template-name">\n                            </div>\n                        </div>\n                        <div class="row">\n                            <a href="javascript:;" class="btn btn-success btn-upload-template">上传</a>\n                        <div>\n                    </div>';
-	        _bizUtilJs2['default'].$body.append(html);
-	        this.updateTemplate = new MuDialog('.dg-upload-template', {
-	            opacity: 0.4
-	        });
-	        var templateName = document.getElementById('template-name');
-	        this.updateTemplate.$el.find('.btn-upload-template').on('click', function () {
-	            if (!templateName.value) {
-	                alert('please enter a name');
-	                return;
-	            }
-	            var postData = {
-	                name: templateName,
-	                pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
-	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
-	            };
-	            _this.addTemplate(postData);
-	            _this.updateTemplate.close();
-	        });
-	    },
-	
-	    _bind: function _bind() {
-	        var _this2 = this;
-	
-	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
-	            _this2.updatePage();
-	        });
-	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
-	            _this2.updateTemplate.open();
-	        });
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 6 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -428,6 +229,220 @@
 	};
 
 /***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	'use strict';
+	
+	var core = {
+	    init: function init() {
+	        var app = window.navigator.appVersion.toLowerCase(),
+	            version = app.match(/chrome\/([\d.]+)/),
+	            isChrome = /chrome/i.test(app);
+	
+	        version && (version = parseInt(version[1].slice(0, 2)));
+	
+	        version <= 36 && alert('厂长建议你使用新版Chrome~');
+	        !isChrome && alert('请使用chrome来体验这款神器~');
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _bizUtilJs = __webpack_require__(4);
+	
+	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
+	
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _dataPageDataJs = __webpack_require__(8);
+	
+	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
+	
+	var _stageHistoryJs = __webpack_require__(9);
+	
+	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
+	
+	var _renderJs = __webpack_require__(12);
+	
+	var _renderJs2 = _interopRequireDefault(_renderJs);
+	
+	var _elemlistJs = __webpack_require__(13);
+	
+	var _elemlistJs2 = _interopRequireDefault(_elemlistJs);
+	
+	var _pagelistJs = __webpack_require__(14);
+	
+	var _pagelistJs2 = _interopRequireDefault(_pagelistJs);
+	
+	window.render = _renderJs2['default'];
+	var isSaving = false;
+	var core = {
+	
+	    // 更新数据
+	    updatePage: function updatePage() {
+	        var self = this;
+	        if (isSaving) {
+	            mu.util.alert('还在保存中...');
+	            return;
+	        }
+	        // generate output html
+	        _renderJs2['default'].renderRelease();
+	        _dataPageDataJs2['default'].setting.countID = _dataStageDataJs2['default'].countID;
+	        var postData = {
+	            id: self.id,
+	            content: JSON.stringify(_dataPageDataJs2['default'])
+	        };
+	        isSaving = true;
+	        $.ajax({
+	            url: '/api/update/',
+	            type: 'POST',
+	            data: {
+	                data: JSON.stringify(postData)
+	            },
+	            success: function success(data) {
+	                if (data.Code === 0) {
+	                    console.log(data);
+	                    mu.util.alert('保存成功');
+	                } else {
+	                    console.log(data);
+	                    mu.util.alert('fail');
+	                }
+	            },
+	            complete: function complete(err) {
+	                isSaving = false;
+	            }
+	        });
+	    },
+	
+	    addTemplate: function addTemplate(postData) {
+	        console.log(postData);
+	        $.ajax({
+	            url: '/api/template/add',
+	            type: 'POST',
+	            data: {
+	                data: JSON.stringify(postData)
+	            },
+	            success: function success(data) {
+	                if (data.Code === 0) {
+	                    console.log(data);
+	                    mu.util.alert('上传成功');
+	                } else {
+	                    console.log(data);
+	                    mu.util.alert('fail');
+	                }
+	            },
+	            complete: function complete(err) {}
+	        });
+	    },
+	
+	    // 获取数据
+	    getInitData: function getInitData() {
+	        var self = this;
+	        mu.request.get({
+	            url: '/api/get',
+	            data: {
+	                id: self.id
+	            },
+	            dataType: 'json',
+	            success: function success(data) {
+	                if (data.Code === 0) {
+	                    var cloneData = JSON.parse(data.data);
+	                    console.log(cloneData);
+	
+	                    for (var key in cloneData) {
+	                        if (cloneData.hasOwnProperty(key)) {
+	                            _dataPageDataJs2['default'][key] = cloneData[key];
+	                        }
+	                    }
+	
+	                    // get Data
+	                    _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
+	                    _pagelistJs2['default'].init();
+	                    _elemlistJs2['default'].init();
+	
+	                    //渲染页面和管理页面, 包含了初始化页面滚动
+	                    _renderJs2['default'].renderUi();
+	                    _stageHistoryJs2['default'].initStatus();
+	                }
+	            },
+	            complete: function complete() {}
+	        });
+	    },
+	
+	    init: function init() {
+	        // 远程
+	        // this.id = mu.util.getQueryString('id');
+	        // if(!this.id) {
+	        //     mu.util.alert('please has a query');
+	        //     return;
+	        // }
+	        //
+	        // this.getInitData();
+	
+	        // 本地
+	        _dataStageDataJs2['default'].countID = _dataPageDataJs2['default'].setting.countID;
+	        _pagelistJs2['default'].init();
+	        _elemlistJs2['default'].init();
+	
+	        //渲染页面和管理页面, 包含了初始化页面滚动
+	        _renderJs2['default'].renderUi();
+	
+	        _stageHistoryJs2['default'].initStatus();
+	
+	        this._create();
+	        this._bind();
+	    },
+	
+	    _create: function _create() {
+	        var _this = this;
+	
+	        var html = '<div class="dg-dialog dg-upload-template">\n                        <div class="dg-title">\n                            新增模板\n                        </div>\n                        <div class="row">\n                            <div class="col-md-4">\n                                模板名称\n                            </div>\n                            <div class="col-md-8">\n                                <input class="form-control" type="text" id="template-name">\n                            </div>\n                        </div>\n                        <div class="row">\n                            <a href="javascript:;" class="btn btn-success btn-upload-template">上传</a>\n                        <div>\n                    </div>';
+	        _bizUtilJs2['default'].$body.append(html);
+	        this.updateTemplate = new MuDialog('.dg-upload-template', {
+	            opacity: 0.4
+	        });
+	        var templateName = document.getElementById('template-name');
+	        this.updateTemplate.$el.find('.btn-upload-template').on('click', function () {
+	            if (!templateName.value) {
+	                alert('please enter a name');
+	                return;
+	            }
+	            var postData = {
+	                name: templateName.value,
+	                pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
+	                src: JSON.stringify(_dataPageDataJs2['default'].list[_dataStageDataJs2['default'].index])
+	            };
+	            _this.addTemplate(postData);
+	            _this.updateTemplate.close();
+	        });
+	    },
+	
+	    _bind: function _bind() {
+	        var _this2 = this;
+	
+	        _bizUtilJs2['default'].$doc.on('click', '.post-save', function () {
+	            _this2.updatePage();
+	        });
+	        _bizUtilJs2['default'].$doc.on('click', '.post-add-template', function () {
+	            _this2.updateTemplate.open();
+	        });
+	    }
+	};
+	
+	module.exports = core;
+
+/***/ },
 /* 7 */
 /***/ function(module, exports) {
 
@@ -471,7 +486,6 @@
 	                link: 'template link 1',
 	                audio: 'audio link 1',
 	                video: '',
-	                analyze: 'analyze 1',
 	                jump: ''
 	            },
 	            child: {
@@ -498,6 +512,7 @@
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
 	                'animation-delay': '0s',
+	                'animation-iteration-count': 1,
 	                'opacity': 1
 	            }
 	        }, {
@@ -506,8 +521,7 @@
 	            extra: {
 	                link: 'template link 2',
 	                audio: 'audio link',
-	                video: 'video link',
-	                analyze: 'analyze link 2'
+	                video: 'video link'
 	            },
 	            child: {
 	                innerHtml: '<p>testtsst sfds</p>',
@@ -533,6 +547,7 @@
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
 	                'animation-delay': '0s',
+	                'animation-iteration-count': 1,
 	                'opacity': 1
 	            }
 	        }, {
@@ -541,8 +556,7 @@
 	            extra: {
 	                link: 'template link 3',
 	                audio: 'audio link',
-	                video: 'video link',
-	                analyze: 'analyze link 23'
+	                video: 'video link'
 	            },
 	            child: {
 	                innerHtml: '<p>testtsst sfds</p>',
@@ -568,6 +582,7 @@
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
 	                'animation-delay': '0s',
+	                'animation-iteration-count': 1,
 	                'opacity': 1
 	            }
 	        }],
@@ -584,7 +599,6 @@
 	                link: 'template link 1',
 	                audio: 'audio link 1',
 	                video: '',
-	                analyze: 'analyze 1',
 	                jump: ''
 	            },
 	            child: {
@@ -603,49 +617,15 @@
 	                }
 	            },
 	            style: {
-	                'left': '10px',
-	                'top': '200px',
-	                'width': '320px',
-	                'height': '100px',
-	                'z-index': 0,
-	                'animation-name': 'none',
-	                'animation-duration': '1s',
-	                'animation-delay': '0s',
-	                'opacity': 1
-	            }
-	        }, {
-	            id: 'm_4',
-	            type: 'link',
-	            extra: {
-	                link: 'template link 2',
-	                audio: 'audio link',
-	                video: 'video link',
-	                analyze: 'analyze link 2'
-	            },
-	            child: {
-	                innerHtml: '<p>testtsst sfds</p>',
-	                style: {
-	                    'transform': 'rotate(0deg)',
-	                    'text-align': 'center',
-	                    'vertical-align': 'middle',
-	                    'font-size': '15px',
-	                    'color': '#f50',
-	                    'border-radius': '0px',
-	                    'background-color': '#fff',
-	                    'background-image': 'none',
-	                    'background-size': '100% auto',
-	                    'padding': 0
-	                }
-	            },
-	            style: {
 	                'left': '20px',
-	                'top': 0,
+	                'top': '0px',
 	                'width': '320px',
 	                'height': '100px',
 	                'z-index': 0,
-	                'animation-name': 'none',
+	                'animation-name': 'bounceInDown',
 	                'animation-duration': '1s',
 	                'animation-delay': '0s',
+	                'animation-iteration-count': 1,
 	                'opacity': 1
 	            }
 	        }, {
@@ -654,8 +634,7 @@
 	            extra: {
 	                link: 'template link 3',
 	                audio: 'audio link',
-	                video: 'video link',
-	                analyze: 'analyze link 23'
+	                video: 'video link'
 	            },
 	            child: {
 	                innerHtml: '<p>testtsst sfds</p>',
@@ -681,6 +660,7 @@
 	                'animation-name': 'none',
 	                'animation-duration': '1s',
 	                'animation-delay': '0s',
+	                'animation-iteration-count': 1,
 	                'opacity': 1
 	            }
 	        }],
@@ -13233,7 +13213,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -13292,7 +13272,9 @@
 	            style = '';
 	        for (var i = 0; i < data.length; i++) {
 	            var it = data[i];
-	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '">\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
+	            var analyzeAttr = it.extra.analyze ? ' data-analyze="' + it.extra.analyze + '"' : '';
+	            var valueAttr = it.extra[it.type] ? ' data-value="' + it.extra[it.type] + '"' : '';
+	            html += '<div class="elem" id="' + it.id + '" data-role="' + it.type + '"' + valueAttr + analyzeAttr + '>\n                            <div class="inner">\n                                ' + it.child.innerHtml + '\n                            </div>\n                        </div>';
 	            style += '#' + it.id + '{' + this._generateStyle(it.style) + '}\n';
 	            style += '#' + it.id + ' .inner{' + this._generateStyle(it.child.style) + '}\n';
 	        }
@@ -13316,14 +13298,14 @@
 	            var it = list[i],
 	                output = this._generateOne(it.elements, i),
 	                pageStyle = '.page-' + i + '{' + _bizUtilJs2['default'].flatStyle(it.style) + '}\n';
-	            console.log(output.html);
-	            console.log(output.style);
 	            html += output.html;
 	            style += pageStyle + output.style;
 	        }
 	        style = '.wrapper{' + _bizUtilJs2['default'].flatStyle(_dataPageDataJs2['default'].setting.style) + '}\n' + style;
 	        _dataPageDataJs2['default'].output.html = html;
 	        _dataPageDataJs2['default'].output.style = style;
+	        console.log(html);
+	        console.log(style);
 	    },
 	
 	    // ==========================================
@@ -13340,6 +13322,7 @@
 	        this.resetPageHtml();
 	        this.resetPageUi();
 	    },
+	
 	    //
 	    resetPageHtml: function resetPageHtml() {
 	        var html = '',
@@ -13500,7 +13483,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -13731,7 +13714,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -13755,19 +13738,19 @@
 	
 	var _property2 = _interopRequireDefault(_property);
 	
-	var _hotkeyJs = __webpack_require__(257);
+	var _hotkeyJs = __webpack_require__(258);
 	
 	var _hotkeyJs2 = _interopRequireDefault(_hotkeyJs);
 	
-	var _contextMenuJs = __webpack_require__(268);
+	var _contextMenuJs = __webpack_require__(269);
 	
 	var _contextMenuJs2 = _interopRequireDefault(_contextMenuJs);
 	
-	var _topbarJs = __webpack_require__(269);
+	var _topbarJs = __webpack_require__(270);
 	
 	var _topbarJs2 = _interopRequireDefault(_topbarJs);
 	
-	var _operationJs = __webpack_require__(259);
+	var _operationJs = __webpack_require__(260);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -13925,6 +13908,7 @@
 	        var curElem = _dataStageDataJs2['default'].curElem;
 	        // style, child.innerHtml, child.style, extra
 	        // syncValue('link', curElem.extra.link);
+	        _property2['default'].syncValue('analyze', curElem.extra.analyze);
 	        switch (curElem.type) {
 	            case 'audio':
 	                _property2['default'].syncValue('audio', curElem.extra.audio);
@@ -13934,7 +13918,6 @@
 	                break;
 	            case 'link':
 	                _property2['default'].syncValue('link', curElem.extra.link);
-	                _property2['default'].syncValue('analyze', curElem.extra.analyze);
 	                break;
 	            case 'jump':
 	                _property2['default'].syncValue('jump', curElem.extra.jump);
@@ -13991,7 +13974,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -14001,11 +13984,11 @@
 	
 	var files = [
 	// character
-	'extra/type', 'extra/link', 'extra/audio', 'extra/video', 'extra/analyze', 'extra/jump',
+	'extra/type', 'extra/link', 'extra/audio', 'extra/video', 'extra/jump', 'extra/analyze',
 	// child style
 	'child/innerHtml', 'child/color', 'child/transform', 'child/font-size', 'child/text-align', 'child/vertical-align', 'child/background-color', 'child/background-image', 'child/background-size', 'child/border-radius', 'child/padding',
 	// elem style
-	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-name',
+	'style/zindex', 'style/left', 'style/top', 'style/width', 'style/height', 'style/animation-duration', 'style/animation-delay', 'style/animation-iteration-count', 'style/animation-name',
 	// global
 	'setting/direction', 'setting/template', 'setting/isloop'];
 	
@@ -14067,53 +14050,15 @@
 
 	'use strict';
 	
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
 	var _lodash = __webpack_require__(10);
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _taskJs = __webpack_require__(19);
-	
-	var _taskJs2 = _interopRequireDefault(_taskJs);
-	
-	// make a factory that other property can extend it
-	//
-	
-	var core = {
-	
-	    events: {},
-	    // 注册一个事件
-	    register: function register(name, opts) {
-	        // 注册一个新的任务
-	        var task = new _taskJs2['default']({
-	            html: opts.html,
-	            target: opts.target
-	        });
-	
-	        _lodash2['default'].extend(task, opts);
-	        task._init();
-	
-	        var event = {};
-	        event[name] = function (value) {
-	            task.callback(value);
-	        };
-	        _lodash2['default'].extend(this.events, event);
-	        // events[name](value);
-	    }
-	};
-	
-	module.exports = core;
-
-/***/ },
-/* 19 */
-/***/ function(module, exports) {
-
-	'use strict';
-	
-	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
-	
-	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
 	var Task = (function () {
 	    function Task(opts) {
@@ -14143,9 +14088,33 @@
 	    return Task;
 	})();
 	
-	module.exports = Task;
+	var core = {
+	
+	    events: {},
+	    // 注册一个事件
+	    register: function register(name, opts) {
+	        // 注册一个新的任务
+	        var task = new Task({
+	            html: opts.html,
+	            target: opts.target
+	        });
+	
+	        _lodash2['default'].extend(task, opts);
+	        task._init();
+	
+	        var event = {};
+	        event[name] = function (value) {
+	            task.callback(value);
+	        };
+	        _lodash2['default'].extend(this.events, event);
+	        // events[name](value);
+	    }
+	};
+	
+	module.exports = core;
 
 /***/ },
+/* 19 */,
 /* 20 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -14173,13 +14142,13 @@
 		"./setting/template.js": 247,
 		"./style/animation-delay.js": 248,
 		"./style/animation-duration.js": 249,
-		"./style/animation-name.js": 250,
-		"./style/height.js": 252,
-		"./style/left.js": 253,
-		"./style/top.js": 254,
-		"./style/width.js": 255,
-		"./style/zindex.js": 256,
-		"./task.js": 19,
+		"./style/animation-iteration-count.js": 250,
+		"./style/animation-name.js": 251,
+		"./style/height.js": 253,
+		"./style/left.js": 254,
+		"./style/top.js": 255,
+		"./style/width.js": 256,
+		"./style/zindex.js": 257,
 		"./tasks.js": 18
 	};
 	function webpackContext(req) {
@@ -33861,7 +33830,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -39700,7 +39669,7 @@
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -39937,7 +39906,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -40068,10 +40037,6 @@
 	    html: '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="btn-group" role="group" id="elem-text-group">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="elemFontSize" data-toggle="dropdown">\n                                    <span class="elem-font-size"></span>\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu elem-font-sizes" aria-labelledby="elemFontSize">\n                                    <li data-value="12"><a>12px</a></li>\n                                    <li data-value="14"><a>14px</a></li>\n                                    <li data-value="16"><a>16px</a></li>\n                                    <li data-value="18"><a>18px</a></li>\n                                    <li data-value="24"><a>24px</a></li>\n                                    <li data-value="32"><a>32px</a></li>\n                                    <li data-value="36"><a>36px</a></li>\n                                    <li data-value="48"><a>48px</a></li>\n                                </ul>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>',
 	    target: '#stylePanel',
 	    init: function init() {
-	        // horizontal align text
-	        this.$hori = this.$el.find('.align-horizontal');
-	        // vertical align text
-	        this.$vert = this.$el.find('.align-vertical');
 	        this.$fontsize = this.$el.find('.elem-font-size');
 	        this.$fontsizes = this.$el.find('.elem-font-sizes');
 	    },
@@ -40088,36 +40053,6 @@
 	    callback: function callback(value) {
 	        this.$el.show();
 	        this.$fontsize.html(value);
-	    },
-	    register: function register() {
-	        var _this = this;
-	
-	        this.$vert.on('click', 'a', function () {
-	            var value = $(this).data('value'),
-	                oldValue = _dataStageDataJs2['default'].curElem.child.style['vertical-align'];
-	            if (oldValue !== value) {
-	                _dataStageDataJs2['default'].curElem.child.style['vertical-align'] = value;
-	                _pageRenderJs2['default'].logElemStep();
-	            }
-	        });
-	
-	        this.$hori.on('click', 'a', function () {
-	            var value = $(this).data('value'),
-	                oldValue = _dataStageDataJs2['default'].curElem.child.style['text-align'];
-	            if (oldValue !== value) {
-	                _dataStageDataJs2['default'].curElem.child.style['text-align'] = value;
-	                _pageRenderJs2['default'].logElemStep();
-	            }
-	        });
-	        _tasksJs2['default'].register('text-align', function (value) {
-	            _this.$el.show();
-	            _this.$hori.children().removeClass('btn-active').end().find('[data-value="' + value + '"]').addClass('btn-active');
-	        });
-	
-	        _tasksJs2['default'].register('vertical-align', function (value) {
-	            _this.$el.show();
-	            _this.$vert.children().removeClass('btn-active').end().find('[data-value="' + value + '"]').addClass('btn-active');
-	        });
 	    }
 	});
 
@@ -40530,33 +40465,28 @@
 	
 	var _tasksJs2 = _interopRequireDefault(_tasksJs);
 	
-	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-12">\n                        <div class="elem-character">\n                            <a class="btn btn-default" data-value="link">链接</a>\n                            <a class="btn btn-default" data-value="audio">音频</a>\n                            <a class="btn btn-default" data-value="video">视频</a>\n                            <a class="btn btn-default" data-value="jump">跳转</a>\n                            <a class="btn btn-default" data-value="default">默认</a>\n                        </div>\n                    </div>\n                </div>\n            </div>';
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        元素角色\n                    </div>\n                    <div class="col-md-8">\n                        <div class="btn-group" role="group" id="elem-play-role">\n                            <div class="btn-group" role="group">\n                                <button class="btn btn-default dropdown-toggle" type="button" id="elemPlayRole" data-toggle="dropdown">\n                                    <span class="elem-play-role"></span>\n                                    <span class="caret"></span>\n                                </button>\n                                <ul class="dropdown-menu elem-play-roles" aria-labelledby="elemPlayRole">\n                                    <li data-value="default"><a>默认</a></li>\n                                    <li data-value="link"><a>链接</a></li>\n                                    <li data-value="audio"><a>音频</a></li>\n                                    <li data-value="video"><a>视频</a></li>\n                                    <li data-value="jump"><a>跳转</a></li>\n                                </ul>\n                            </div>\n                        </div>\n                    </div>\n                </div>\n            </div>';
 	
 	_tasksJs2['default'].register('type', {
 	    html: html,
 	    target: '#stylePanel',
 	    init: function init() {
-	        this.$type = this.$el.find('.elem-character');
+	        this.$role = this.$el.find('.elem-play-role');
+	        this.$roles = this.$el.find('.elem-play-roles');
 	    },
 	    bind: function bind() {
-	        this.$type.on('click', 'a', function () {
-	            var value = $(this).data('value');
-	            _dataStageDataJs2['default'].curElem.type = value;
-	
-	            // meet some special value to change the innerHtml
-	            // switch(value){
-	            //     case 'video':
-	            //         stageData.curElem.child.innerHtml = `<video src="http://www.hujinag.com"></video>`;
-	            //         break;
-	            //     default:
-	            //         break;
-	            // }
-	            _pageRenderJs2['default'].logElemStep();
+	        this.$roles.on('click', 'li', function () {
+	            var value = $(this).data('value'),
+	                oldValue = _dataStageDataJs2['default'].curElem.type;
+	            if (oldValue !== value) {
+	                _dataStageDataJs2['default'].curElem.type = value;
+	                _pageRenderJs2['default'].logElemStep();
+	            }
 	        });
 	    },
 	    callback: function callback(value) {
 	        this.$el.show();
-	        this.$type.find('a').removeClass('active').end().find('[data-value="' + value + '"]').addClass('active');
+	        this.$role.html(value);
 	    }
 	});
 
@@ -40795,7 +40725,47 @@
 	
 	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
 	
-	var _bizAnimasJs = __webpack_require__(251);
+	var _tasksJs = __webpack_require__(18);
+	
+	var _tasksJs2 = _interopRequireDefault(_tasksJs);
+	
+	var html = '<div class="edit-group">\n                <div class="row">\n                    <div class="col-md-4">\n                        循环\n                    </div>\n                    <div class="col-md-8">\n                        <input type="number" class="form-control animation-iteration-count" min="1" step="1" />\n                    </div>\n                </div>\n            </div>';
+	_tasksJs2['default'].register('animation-iteration-count', {
+	    html: html,
+	    target: '#animaPanel',
+	    init: function init() {
+	        this.$count = this.$el.find('.animation-iteration-count');
+	    },
+	    bind: function bind() {
+	        this.$count.on('change.property', function () {
+	            _dataStageDataJs2['default'].curElem.style['animation-iteration-count'] = this.value;
+	            _pageRenderJs2['default'].logElemStep();
+	        });
+	    },
+	    callback: function callback(value) {
+	        this.$el.show();
+	        value = parseFloat(value);
+	        this.$count.val(value);
+	    }
+	});
+
+/***/ },
+/* 251 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _dataStageDataJs = __webpack_require__(7);
+	
+	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
+	
+	var _pageRenderJs = __webpack_require__(12);
+	
+	var _pageRenderJs2 = _interopRequireDefault(_pageRenderJs);
+	
+	var _bizAnimasJs = __webpack_require__(252);
 	
 	var _bizAnimasJs2 = _interopRequireDefault(_bizAnimasJs);
 	
@@ -40844,7 +40814,7 @@
 	});
 
 /***/ },
-/* 251 */
+/* 252 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40880,6 +40850,10 @@
 	    },
 	    "pulse": {
 	        cn: "放大",
+	        opacity: 0
+	    },
+	    "rubberBand": {
+	        cn: "橡皮筋",
 	        opacity: 0
 	    },
 	    "flip": {
@@ -41027,7 +41001,7 @@
 	module.exports = animas;
 
 /***/ },
-/* 252 */
+/* 253 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41066,7 +41040,7 @@
 	});
 
 /***/ },
-/* 253 */
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41105,7 +41079,7 @@
 	});
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41144,7 +41118,7 @@
 	});
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41183,7 +41157,7 @@
 	});
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41221,7 +41195,7 @@
 	});
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41232,7 +41206,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizKeyJs = __webpack_require__(258);
+	var _bizKeyJs = __webpack_require__(259);
 	
 	var _bizKeyJs2 = _interopRequireDefault(_bizKeyJs);
 	
@@ -41252,7 +41226,7 @@
 	
 	var _pageElemlistJs2 = _interopRequireDefault(_pageElemlistJs);
 	
-	var _operationJs = __webpack_require__(259);
+	var _operationJs = __webpack_require__(260);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -41362,7 +41336,7 @@
 	module.exports = core;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports) {
 
 	// 键盘
@@ -41416,7 +41390,7 @@
 	};
 
 /***/ },
-/* 259 */
+/* 260 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41427,7 +41401,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -41439,7 +41413,7 @@
 	
 	var _dataPageDataJs2 = _interopRequireDefault(_dataPageDataJs);
 	
-	var _templateDataJs = __webpack_require__(260);
+	var _templateDataJs = __webpack_require__(261);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
@@ -41644,27 +41618,27 @@
 	module.exports = core;
 
 /***/ },
-/* 260 */
+/* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 	
-	var _listJs = __webpack_require__(261);
+	var _listJs = __webpack_require__(262);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
 	var files = ['elements', 'templates', 'resources', 'apis'];
 	
 	for (var i = 0; i < files.length; i++) {
-	    __webpack_require__(262)("./" + files[i] + '.js');
+	    __webpack_require__(263)("./" + files[i] + '.js');
 	}
 	
 	module.exports = _listJs2['default'].data;
 
 /***/ },
-/* 261 */
+/* 262 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41689,17 +41663,17 @@
 	};
 
 /***/ },
-/* 262 */
+/* 263 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var map = {
-		"./apis.js": 263,
-		"./baseElem.js": 264,
-		"./data.js": 260,
-		"./elements.js": 265,
-		"./list.js": 261,
-		"./resources.js": 266,
-		"./templates.js": 267
+		"./apis.js": 264,
+		"./baseElem.js": 265,
+		"./data.js": 261,
+		"./elements.js": 266,
+		"./list.js": 262,
+		"./resources.js": 267,
+		"./templates.js": 268
 	};
 	function webpackContext(req) {
 		return __webpack_require__(webpackContextResolve(req));
@@ -41712,11 +41686,11 @@
 	};
 	webpackContext.resolve = webpackContextResolve;
 	module.exports = webpackContext;
-	webpackContext.id = 262;
+	webpackContext.id = 263;
 
 
 /***/ },
-/* 263 */
+/* 264 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41727,11 +41701,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(264);
+	var _baseElemJs = __webpack_require__(265);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(261);
+	var _listJs = __webpack_require__(262);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41742,7 +41716,7 @@
 	});
 
 /***/ },
-/* 264 */
+/* 265 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -41786,7 +41760,7 @@
 	};
 
 /***/ },
-/* 265 */
+/* 266 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -41797,11 +41771,11 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _baseElemJs = __webpack_require__(264);
+	var _baseElemJs = __webpack_require__(265);
 	
 	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
 	
-	var _listJs = __webpack_require__(261);
+	var _listJs = __webpack_require__(262);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -41815,7 +41789,7 @@
 	list.base = {
 	    author: 'roeis',
 	    name: '基础元件',
-	    pic: '',
+	    pic: 'http://i2.w.hjfile.cn/news/201512/201512161120777071.png',
 	    src: {
 	        id: 'm_0',
 	        type: 'default',
@@ -41827,7 +41801,7 @@
 	            jump: ''
 	        },
 	        child: {
-	            innerHtml: '<p>Base Element</p>',
+	            innerHtml: '<p>base</p>',
 	            style: {
 	                'background-image': 'none',
 	                'background-color': 'rgba(255,255,255,1)',
@@ -42157,32 +42131,6 @@
 	};
 
 /***/ },
-/* 266 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-	
-	var _lodash = __webpack_require__(10);
-	
-	var _lodash2 = _interopRequireDefault(_lodash);
-	
-	var _baseElemJs = __webpack_require__(264);
-	
-	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
-	
-	var _listJs = __webpack_require__(261);
-	
-	var _listJs2 = _interopRequireDefault(_listJs);
-	
-	var resource = _listJs2['default'].register('resource', {
-	    id: 'toolResource',
-	    cn: '素材',
-	    list: {}
-	});
-
-/***/ },
 /* 267 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -42194,7 +42142,33 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _listJs = __webpack_require__(261);
+	var _baseElemJs = __webpack_require__(265);
+	
+	var _baseElemJs2 = _interopRequireDefault(_baseElemJs);
+	
+	var _listJs = __webpack_require__(262);
+	
+	var _listJs2 = _interopRequireDefault(_listJs);
+	
+	var resource = _listJs2['default'].register('resource', {
+	    id: 'toolResource',
+	    cn: '素材',
+	    list: {}
+	});
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+	
+	var _lodash = __webpack_require__(10);
+	
+	var _lodash2 = _interopRequireDefault(_lodash);
+	
+	var _listJs = __webpack_require__(262);
 	
 	var _listJs2 = _interopRequireDefault(_listJs);
 	
@@ -42215,7 +42189,7 @@
 	
 	list.template1 = {
 	    author: 'roeis',
-	    name: '模板名称',
+	    name: '新测试',
 	    pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
 	    src: {
 	        'elements': [{
@@ -42346,7 +42320,7 @@
 	
 	list.template2 = {
 	    author: 'roeis',
-	    name: '模板名称',
+	    name: '周星驰模板',
 	    pic: 'http://i2.w.yun.hjfile.cn/news/201501302081011823.jpg',
 	    src: {
 	        "elements": [{
@@ -42467,7 +42441,7 @@
 	};
 
 /***/ },
-/* 268 */
+/* 269 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42478,7 +42452,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -42498,7 +42472,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(259);
+	var _operationJs = __webpack_require__(260);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -42609,7 +42583,7 @@
 	module.exports = core;
 
 /***/ },
-/* 269 */
+/* 270 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -42620,7 +42594,7 @@
 	
 	var _lodash2 = _interopRequireDefault(_lodash);
 	
-	var _bizUtilJs = __webpack_require__(6);
+	var _bizUtilJs = __webpack_require__(4);
 	
 	var _bizUtilJs2 = _interopRequireDefault(_bizUtilJs);
 	
@@ -42628,7 +42602,7 @@
 	
 	var _dataStageDataJs2 = _interopRequireDefault(_dataStageDataJs);
 	
-	var _templateDataJs = __webpack_require__(260);
+	var _templateDataJs = __webpack_require__(261);
 	
 	var _templateDataJs2 = _interopRequireDefault(_templateDataJs);
 	
@@ -42644,7 +42618,7 @@
 	
 	var _stageHistoryJs2 = _interopRequireDefault(_stageHistoryJs);
 	
-	var _operationJs = __webpack_require__(259);
+	var _operationJs = __webpack_require__(260);
 	
 	var _operationJs2 = _interopRequireDefault(_operationJs);
 	
@@ -42700,7 +42674,7 @@
 	        var html = '';
 	        // 默认循环魔板列表中的数据
 	        _lodash2['default'].forEach(data, function (c_value, c_key) {
-	            html += '<div class="tool-elem">\n                            <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                <div class="tool-pic">\n                                    <img src="' + c_value.pic + '">\n                                </div>\n                            </div>\n                        </div>';
+	            html += '<div class="tool-elem">\n                            <div class="tool-src" data-id="' + c_key + '" data-category="' + key + '">\n                                <div class="tool-pic" title="by ' + c_value.author + '">\n                                    <span>' + c_value.name + '</span>\n                                    <img src="' + c_value.pic + '">\n                                </div>\n                            </div>\n                        </div>';
 	        });
 	        return html;
 	    },

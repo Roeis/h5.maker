@@ -70,7 +70,9 @@ var core = {
             style = '';
         for(let i = 0; i < data.length; i++){
             let it = data[i];
-                html += `<div class="elem" id="${it.id}" data-role="${it.type}">
+                let analyzeAttr = it.extra.analyze ? ` data-analyze="${it.extra.analyze}"` : ``;
+                let valueAttr   = it.extra[it.type] ? ` data-value="${it.extra[it.type]}"` : ``;
+                html += `<div class="elem" id="${it.id}" data-role="${it.type}"${valueAttr}${analyzeAttr}>
                             <div class="inner">
                                 ${it.child.innerHtml}
                             </div>
@@ -98,14 +100,14 @@ var core = {
             let it = list[i],
                 output = this._generateOne(it.elements, i),
                 pageStyle = `.page-${i}{` + util.flatStyle(it.style) + `}\n`;
-                console.log(output.html)
-                console.log(output.style)
             html += output.html;
             style += pageStyle + output.style;
         }
         style = `.wrapper{` + util.flatStyle(pageData.setting.style) + `}\n` + style;
         pageData.output.html = html;
         pageData.output.style = style;
+        console.log(html)
+        console.log(style)
 
     },
 
@@ -125,6 +127,7 @@ var core = {
         this.resetPageHtml();
         this.resetPageUi();
     },
+
     //
     resetPageHtml(){
         let html = '',

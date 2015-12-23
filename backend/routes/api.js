@@ -221,7 +221,7 @@ module.exports = {
                 var out = {
                         Code: err ? -2 : 0,
                         Message: err ? 'error' : 'add ok',
-                        data: err ? null: data
+                        data: err ? err: data
                     };
                 res.json(out);
             });

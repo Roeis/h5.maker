@@ -284,12 +284,26 @@ p {
 .top-bar-cont .tool-elem .tool-src .tool-pic {
   display: table-cell;
   vertical-align: middle;
+  position: relative;
+}
+.top-bar-cont .tool-elem .tool-src .tool-pic span {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  line-height: 30px;
+  text-align: center;
+  background-color: rgba(0, 0, 0, 0.1);
 }
 .top-bar-cont .tool-elem .tool-src:hover {
   background-color: #eee;
 }
 .top-bar-cont .tool-elem .tool-src img {
   max-width: 100%;
+}
+
+#toolTmpl .tool-src img {
+  width: 145px;
+  height: 218px;
 }
 
 .ppd {

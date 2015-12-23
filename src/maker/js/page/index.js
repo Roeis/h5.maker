@@ -34,8 +34,13 @@ var core = {
                 data: JSON.stringify(postData)
             },
             success: function(data){
-                console.log(data);
-                mu.util.alert('保存成功');
+                if(data.Code === 0){
+                    console.log(data);
+                    mu.util.alert('保存成功');
+                }else{
+                    console.log(data);
+                    mu.util.alert('fail');
+                }
             },
             complete: function(err){
                 isSaving = false;
@@ -52,8 +57,13 @@ var core = {
                 data: JSON.stringify(postData)
             },
             success: function(data){
-                console.log(data);
-                mu.util.alert('上传成功');
+                if(data.Code === 0){
+                    console.log(data);
+                    mu.util.alert('上传成功');
+                }else{
+                    console.log(data);
+                    mu.util.alert('fail');
+                }
             },
             complete: function(err){
 
@@ -100,24 +110,24 @@ var core = {
 
     init() {
         // 远程
-        this.id = mu.util.getQueryString('id');
-        if(!this.id) {
-            mu.util.alert('please has a query');
-            return;
-        }
-
-        this.getInitData();
+        // this.id = mu.util.getQueryString('id');
+        // if(!this.id) {
+        //     mu.util.alert('please has a query');
+        //     return;
+        // }
+        //
+        // this.getInitData();
 
         // 本地
-        // stageData.countID = pageData.setting.countID;
-        // pagelist.init();
-        // elemlist.init();
-        //
-        // //渲染页面和管理页面, 包含了初始化页面滚动
-        // render.renderUi();
-        //
-        // history.initStatus();
-        
+        stageData.countID = pageData.setting.countID;
+        pagelist.init();
+        elemlist.init();
+
+        //渲染页面和管理页面, 包含了初始化页面滚动
+        render.renderUi();
+
+        history.initStatus();
+
         this._create();
         this._bind();
     },
@@ -150,7 +160,7 @@ var core = {
                 return;
             }
             let postData = {
-                name: templateName,
+                name: templateName.value,
                 pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
                 src: JSON.stringify(pageData.list[stageData.index])
             };

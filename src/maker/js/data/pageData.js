@@ -16,7 +16,6 @@ var data = {
                             link: 'template link 1',
                             audio: 'audio link 1',
                             video: '',
-                            analyze: 'analyze 1',
                             jump: ''
                         },
                         child: {
@@ -43,6 +42,7 @@ var data = {
                             'animation-name': 'none',
                             'animation-duration': '1s',
                             'animation-delay': '0s',
+                            'animation-iteration-count': 1,
                             'opacity': 1
                         }
                     },
@@ -53,7 +53,6 @@ var data = {
                             link: 'template link 2',
                             audio: 'audio link',
                             video: 'video link',
-                            analyze: 'analyze link 2'
                         },
                         child: {
                             innerHtml: '<p>testtsst sfds</p>',
@@ -79,6 +78,7 @@ var data = {
                             'animation-name': 'none',
                             'animation-duration': '1s',
                             'animation-delay': '0s',
+                            'animation-iteration-count': 1,
                             'opacity': 1
                         }
                     },
@@ -89,7 +89,6 @@ var data = {
                             link: 'template link 3',
                             audio: 'audio link',
                             video: 'video link',
-                            analyze: 'analyze link 23'
                         },
                         child: {
                             innerHtml: '<p>testtsst sfds</p>',
@@ -115,6 +114,7 @@ var data = {
                             'animation-name': 'none',
                             'animation-duration': '1s',
                             'animation-delay': '0s',
+                            'animation-iteration-count': 1,
                             'opacity': 1
                         }
                     }
@@ -134,7 +134,6 @@ var data = {
                             link: 'template link 1',
                             audio: 'audio link 1',
                             video: '',
-                            analyze: 'analyze 1',
                             jump: ''
                         },
                         child: {
@@ -153,53 +152,19 @@ var data = {
                             }
                         },
                         style: {
-                            'left': '10px',
-                            'top': '200px',
-                            'width': '320px',
-                            'height': '100px',
-                            'z-index': 0,
-                            'animation-name': 'none',
-                            'animation-duration': '1s',
-                            'animation-delay': '0s',
-                            'opacity': 1
-                        }
-                    },
-                    {
-                        id: 'm_4',
-                        type: 'link',
-                        extra: {
-                            link: 'template link 2',
-                            audio: 'audio link',
-                            video: 'video link',
-                            analyze: 'analyze link 2'
-                        },
-                        child: {
-                            innerHtml: '<p>testtsst sfds</p>',
-                            style: {
-                                'transform': 'rotate(0deg)',
-                                'text-align': 'center',
-                                'vertical-align': 'middle',
-                                'font-size': '15px',
-                                'color': '#f50',
-                                'border-radius': '0px',
-                                'background-color': '#fff',
-                                'background-image': 'none',
-                                'background-size': '100% auto',
-                                'padding': 0
-                            }
-                        },
-                        style: {
                             'left': '20px',
-                            'top': 0,
+                            'top': '0px',
                             'width': '320px',
                             'height': '100px',
                             'z-index': 0,
-                            'animation-name': 'none',
+                            'animation-name': 'bounceInDown',
                             'animation-duration': '1s',
                             'animation-delay': '0s',
+                            'animation-iteration-count': 1,
                             'opacity': 1
                         }
                     },
+
                     {
                         id: 'm_5',
                         type: 'default',
@@ -207,7 +172,6 @@ var data = {
                             link: 'template link 3',
                             audio: 'audio link',
                             video: 'video link',
-                            analyze: 'analyze link 23'
                         },
                         child: {
                             innerHtml: '<p>testtsst sfds</p>',
@@ -233,6 +197,7 @@ var data = {
                             'animation-name': 'none',
                             'animation-duration': '1s',
                             'animation-delay': '0s',
+                            'animation-iteration-count': 1,
                             'opacity': 1
                         }
                     }

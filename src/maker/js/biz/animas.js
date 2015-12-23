@@ -33,6 +33,10 @@ var animas = {
         cn: "放大",
         opacity: 0
     },
+    "rubberBand": {
+        cn: "橡皮筋",
+        opacity: 0
+    },
     "flip": {
         cn: "翻转",
         opacity: 0

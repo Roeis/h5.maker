@@ -20,7 +20,7 @@ var list = template.list = {};
 
 list.template1 = {
     author: 'roeis',
-    name: '模板名称',
+    name: '新测试',
     pic: 'http://i2.w.hjfile.cn/news/201503/201503264503973418.jpg',
     src: {
         'elements': [{
@@ -157,7 +157,7 @@ list.template1 = {
 
 list.template2 = {
     author: 'roeis',
-    name: '模板名称',
+    name: '周星驰模板',
     pic: 'http://i2.w.yun.hjfile.cn/news/201501302081011823.jpg',
     src: {
         "elements": [{

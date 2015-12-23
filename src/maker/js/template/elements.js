@@ -21,7 +21,7 @@ var list = element.list = {};
 list.base = {
     author: 'roeis',
     name: '基础元件',
-    pic: '',
+    pic: 'http://i2.w.hjfile.cn/news/201512/201512161120777071.png',
     src: {
         id: 'm_0',
         type: 'default',
@@ -33,7 +33,7 @@ list.base = {
             jump: ''
         },
         child: {
-            innerHtml: '<p>Base Element</p>',
+            innerHtml: '<p>base</p>',
             style: {
                 'background-image': 'none',
                 'background-color': 'rgba(255,255,255,1)',

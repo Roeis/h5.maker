@@ -141,8 +141,8 @@ a {
         background-repeat: no-repeat;
     }
     .cont{
-        
         height: 100%;
+        display: none;
     }
 }
 //元素
@@ -159,5 +159,13 @@ a {
         img{
             max-width: 100%;
         }
+    }
+}
+
+.elem,[data-role="link"]{
+    // -webkit-tap-highlight-color: rgba(255, 255, 255, .1);
+    &:active{
+        filter: brightness(.9);
+        // opacity: .9 !important;
     }
 }

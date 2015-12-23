@@ -10,8 +10,8 @@ var files = [
     'extra/link',
     'extra/audio',
     'extra/video',
-    'extra/analyze',
     'extra/jump',
+    'extra/analyze',
     // child style
     'child/innerHtml',
     'child/color',
@@ -32,6 +32,7 @@ var files = [
     'style/height',
     'style/animation-duration',
     'style/animation-delay',
+    'style/animation-iteration-count',
     'style/animation-name',
     // global
     'setting/direction',

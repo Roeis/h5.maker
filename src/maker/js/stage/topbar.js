@@ -64,7 +64,8 @@ var core = {
         _.forEach(data, function(c_value, c_key){
             html += `<div class="tool-elem">
                             <div class="tool-src" data-id="${c_key}" data-category="${key}">
-                                <div class="tool-pic">
+                                <div class="tool-pic" title="by ${c_value.author}">
+                                    <span>${c_value.name}</span>
                                     <img src="${c_value.pic}">
                                 </div>
                             </div>

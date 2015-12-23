@@ -31,10 +31,6 @@ tasks.register('font-size', {
             </div>`,
     target: '#stylePanel',
     init(){
-        // horizontal align text
-        this.$hori = this.$el.find('.align-horizontal');
-        // vertical align text
-        this.$vert = this.$el.find('.align-vertical');
         this.$fontsize = this.$el.find('.elem-font-size');
         this.$fontsizes = this.$el.find('.elem-font-sizes');
     },
@@ -51,36 +47,5 @@ tasks.register('font-size', {
     callback(value){
         this.$el.show();
         this.$fontsize.html(value);
-    },
-    register(){
-
-        this.$vert.on('click', 'a', function(){
-            let value = $(this).data('value'),
-                oldValue = stageData.curElem.child.style['vertical-align'];
-            if(oldValue !== value){
-                stageData.curElem.child.style['vertical-align'] = value;
-                render.logElemStep();
-            }
-        });
-
-        this.$hori.on('click', 'a', function(){
-            let value = $(this).data('value'),
-                oldValue = stageData.curElem.child.style['text-align'];
-            if(oldValue !== value){
-                stageData.curElem.child.style['text-align'] = value;
-                render.logElemStep();
-            }
-        });
-        tasks.register('text-align', (value) => {
-            this.$el.show();
-            this.$hori.children().removeClass('btn-active').end()
-                .find(`[data-value="${value}"]`).addClass('btn-active');
-        });
-
-        tasks.register('vertical-align', (value) => {
-            this.$el.show();
-            this.$vert.children().removeClass('btn-active').end()
-                .find(`[data-value="${value}"]`).addClass('btn-active');
-        });
     }
 });

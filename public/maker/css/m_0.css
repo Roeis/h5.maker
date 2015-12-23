@@ -146,6 +146,7 @@ a {
 }
 .wrapper .cont {
   height: 100%;
+  display: none;
 }
 
 .elem {
@@ -163,4 +164,9 @@ a {
 }
 .elem .inner img {
   max-width: 100%;
+}
+
+.elem:active, [data-role="link"]:active {
+  -webkit-filter: brightness(0.9);
+          filter: brightness(0.9);
 }

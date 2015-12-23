@@ -4,7 +4,6 @@ var PageModel = require('../model/page.js');
 
 module.exports = {
     getPage: function(req, res){
-        console.log(req.params);
         PageModel
             .find({
                 langs: req.params.langs,
@@ -28,8 +27,6 @@ module.exports = {
                                 title: it.title,
                                 createUser: it.createUser
                             };
-                        console.log(data);
-
                         res.render('h5', data);
                     }
                 },

@@ -324,6 +324,15 @@ $dark-bg: $bg - #0c0c0c;
             .tool-pic{
                 display: table-cell;
                 vertical-align: middle;
+                position: relative;
+                span{
+                    position: absolute;
+                    width: 100%;
+                    bottom: 0;
+                    line-height: 30px;
+                    text-align: center;
+                    background-color: rgba(0, 0, 0, .1);
+                }
             }
             &:hover{
                 background-color: #eee;
@@ -334,7 +343,12 @@ $dark-bg: $bg - #0c0c0c;
         }
     }
 }
-
+#toolTmpl{
+    .tool-src img{
+        width: 145px;
+        height: 218px;
+    }
+}
 
 
 

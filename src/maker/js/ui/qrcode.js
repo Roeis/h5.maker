@@ -1,9 +1,8 @@
 'use strict';
 
 // 生成二维码
-// var qrcode = window.CUR_DATA.qrcode;
-var $helper = $('#helper');
-var mQrcode = 'http://www.baidu.com/';
+import util from '../biz/util.js';
+
 var core = {
     init() {
         this.create();
@@ -14,11 +13,12 @@ var core = {
                         <span class="glyphicon glyphicon-qrcode"></span>
                         <div class="qrcode" id="qrcode"></div>
                     </div>`;
-        $helper.append(html);
+        util.$helper.append(html);
     },
     initCode() {
+        let qrcode = window.CUR_DATA.qrcode;
         $('#qrcode').qrcode({
-            text: mQrcode,
+            text: qrcode,
             width: 200,
             height: 200
         });
